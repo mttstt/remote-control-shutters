@@ -3,11 +3,15 @@
 # send.py
 # 2018-02-15
 # Public Domain
-
 import time
 import pigpio
 
 Pulse_len=360
+
+GPIO = 22 # selects gpio
+GP=(1<<GPIO) 
+NONE=0       # selects no gpios
+f1=[]
 
 1up =   ""
 1stop = ""
@@ -36,11 +40,6 @@ Pulse_len=360
 9up =   ""
 9stop = ""
 9down = "
-
-GPIO = 22 # selects gpio
-GP=(1<<GPIO) 
-NONE=0       # selects no gpios
-f1=[]
 
 def transmit_code(code):         
    # ------ Preamble ----------------------------------------
