@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-
 # send.py
 # 2018-02-15
 # Public Domain
 import time
 import pigpio
-
 Pulse_len=360
-
 GPIO = 22 # selects gpio
 GP=(1<<GPIO) 
 NONE=0       # selects no gpios
@@ -40,35 +37,36 @@ f1=[]
 9up =   ''
 9stop = ''
 9down = ''
+canc =  ''
 
-def transmit_code(code):         
-   # ------ Preamble ----------------------------------------
-   f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
-   for i in range(1,12):
-      f1.append(pigpio.pulse(GP, NONE, Pulse_len*1))
-      f1.append(pigpio.pulse(NONE, GP, Pulse_len*1))
-   # ------ End Preamble ------------------------------------
-
-   # -------Segnal ------------------------------------------
-   f1.append(pigpio.pulse(NONE, NONE, 3500)) # added 3,5 millis
-   for c in segnal:
-      if c == '1':
+def transmit_code(code):
+      # ------ Preamble ----------------------------------------
+      f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
+      for i in range(1,12):
          f1.append(pigpio.pulse(GP, NONE, Pulse_len*1))
-         f1.append(pigpio.pulse(NONE, GP, Pulse_len*2))
-      elif c == '0':
-         f1.append(pigpio.pulse(GP, NONE, Pulse_len*2))
          f1.append(pigpio.pulse(NONE, GP, Pulse_len*1))
-      else:
-         continue
-   f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
-   # -------End Segnal ------------------------------------------
+      # ------ End Preamble ------------------------------------
+      # -------Segnal ------------------------------------------
+      f1.append(pigpio.pulse(NONE, NONE, 3500)) # added 3,5 millis
+      for c in segnal:
+         if c == '1':
+            f1.append(pigpio.pulse(GP, NONE, Pulse_len*1))
+            f1.append(pigpio.pulse(NONE, GP, Pulse_len*2))
+         elif c == '0':
+            f1.append(pigpio.pulse(GP, NONE, Pulse_len*2))
+            f1.append(pigpio.pulse(NONE, GP, Pulse_len*1))
+         else:
+            continue
+      f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
+      # -------End Segnal ------------------------------------------
+      
    pi.wave_clear()
    pi.wave_add_generic(f1)
    f = pi.wave_create() # create and save id
    for t in range(NUM_ATTEMPTS):
       pi.wave_send_once(f)
    #pi.wave_send_repeat(f)
-   #time.sleep(0.3)
+   #time.sleep(0.3) 
 
 pi = pigpio.pi() # connect to Pi
 if not pi.connected:
