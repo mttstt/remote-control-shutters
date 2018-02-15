@@ -1,54 +1,35 @@
 #!/usr/bin/env python
-# send.py
-# 2018-02-15
+# send.py 2018-02-15
 # Public Domain
+
 import time
 import pigpio
+import sys
+
 Pulse_len=360
 GPIO = 22 # selects gpio
-GP=(1<<GPIO) 
-NONE=0       # selects no gpios
+GP=(1<<22)
+NONE=0 # selects no gpios
+NUM_ATTEMPTS = 3
 f1=[]
-
-1up =   ''
-1stop = ''
-1down = ''
-2up =   ''
-2stop = ''
-2down = ''
-3up =   ''
-3stop = ''
-3down = ''
-4up =   ''
-4stop = ''
-4down = ''
-5up =   ''
-5stop = ''
-5down = ''
-6up =   '110011000000100100000000000000001011100100000001101000100000000000'
-6stop = ''
-6down = ''
-7up =   ''
-7stop = ''
-7down = ''
-8up =   ''
-8stop = ''
-8down = ''
-9up =   ''
-9stop = ''
-9down = ''
-canc =  ''
+up6 =   '110011000000100100000000000000001011100100000001101000100000000000'
+stop6 = '110011000000011000000000000000001011100100000001101000100000000000'
+down6 = '110011000000001000000000000000001011100100000001101000100000000000'
+up7 =   '110011000000100100000000000000000111100101111110101000100000000000'
+stop7 = '110011000000011000000000000000000111100101111110101000100000000000'
+down7 = '110011000000001000000000000000000111100101111110101000100000000000'
 
 def transmit_code(code):
       # ------ Preamble ----------------------------------------
       f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
-      for i in range(1,12):
+      for i in range(0,12):
          f1.append(pigpio.pulse(GP, NONE, Pulse_len*1))
          f1.append(pigpio.pulse(NONE, GP, Pulse_len*1))
       # ------ End Preamble ------------------------------------
+
       # -------Segnal ------------------------------------------
       f1.append(pigpio.pulse(NONE, NONE, 3500)) # added 3,5 millis
-      for c in segnal:
+      for c in code:
          if c == '1':
             f1.append(pigpio.pulse(GP, NONE, Pulse_len*1))
             f1.append(pigpio.pulse(NONE, GP, Pulse_len*2))
@@ -59,25 +40,25 @@ def transmit_code(code):
             continue
       f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
       # -------End Segnal ------------------------------------------
-      
-   pi.wave_clear()
-   pi.wave_add_generic(f1)
-   f = pi.wave_create() # create and save id
-   for t in range(NUM_ATTEMPTS):
-      pi.wave_send_once(f)
-   #pi.wave_send_repeat(f)
-   #time.sleep(0.3) 
+      pi.wave_clear()
+      pi.wave_add_generic(f1)
+      f = pi.wave_create() # create and save id
+      for t in range(NUM_ATTEMPTS):
+         print("sending {}".format(t))
+         pi.wave_send_repeat(f)
+         time.sleep(0.2)
 
 pi = pigpio.pi() # connect to Pi
 if not pi.connected:
    exit()
-   
+
 pi.set_mode(GPIO, pigpio.OUTPUT)
 
 if __name__ == '__main__':
     for argument in sys.argv[1:]:
-        print("sending {}".format(argument))   
+        print("sending {}".format(argument))
         exec('transmit_code(' + str(argument) + ')')
-   
+
 pi.wave_tx_stop()
+
 pi.stop()
