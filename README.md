@@ -1,2 +1,2 @@
 # remote-control-shutters
-remote control shutter
+Remote control shutter using Raspberry and pigpio library
