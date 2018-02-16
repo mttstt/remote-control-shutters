@@ -38,7 +38,6 @@ up9 = '010101010000100100000000000000000000010101011110101000100000000000'
 st9 = '010101010000011000000000000000000000010101011110101000100000000000'
 do9 = '010101010000001000000000000000000000010101011110101000100000000000'
 
-
 def transmit_code(code):
       # ------ Preamble ----------------------------------------
       f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
@@ -73,12 +72,10 @@ if not pi.connected:
    exit()
 
 pi.set_mode(GPIO, pigpio.OUTPUT)
-
 if __name__ == '__main__':
     for argument in sys.argv[1:]:
         print("sending {}".format(argument))
         exec('transmit_code(' + str(argument) + ')')
 
 pi.wave_tx_stop()
-
 pi.stop()
