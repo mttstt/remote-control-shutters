@@ -15,5 +15,4 @@ http.createServer(function (req, res) {
 
   res.write(command);
   res.end();
-}).listen(8888);
-
+}).listen(8889);
