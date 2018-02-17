@@ -1,0 +1,15 @@
+[Unit]
+Description=Shutter
+
+[Service]
+ExecStart=/home/pi/shutter.js
+Restart=always
+User=pi
+# Note RHEL/Fedora uses 'nobody', Debian/Ubuntu uses 'nogroup'
+Group=pi
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/home/pi
+
+[Install]
+WantedBy=multi-user.target
