@@ -1,7 +1,7 @@
 # remote-control-shutters
 Remote control shutter using Raspberry and pigpio library
 
-Note: Use power supply more than 1.0 watt
+Note: Use power supply more than 1.0 Ampere
 
 # Instructions as a service
 
