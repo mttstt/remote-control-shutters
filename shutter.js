@@ -11,7 +11,7 @@ http.createServer(function (req, res) {
   var q = url.parse(req.url, true).query;
   console.log('=>',q);
 
- if (q.shutter != undefined) {
+  if (q.shutter != undefined) {
         var command = '/home/pi/send.py '+ q.shutter;
         console.log('command',command);
         exec(command, function callback(error, stdout, stderr){
@@ -22,8 +22,6 @@ http.createServer(function (req, res) {
                 }
         });
         res.write(command);
-
-}
-
-  res.end();
+  }
+ res.end();
 }).listen(8889);
