@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+# Attende chiamate del tipo:
+# http://matteosetti.dlinkddns.com:8889/?shutter=do6&up7&do8
 
 var http = require('http');
 var url = require('url');
