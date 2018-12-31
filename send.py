@@ -12,6 +12,15 @@ GP=(1<<22)
 NONE=0 # selects no gpios
 NUM_ATTEMPTS = 3
 
+
+# ------- gate ---------
+short_delay = 0.000760
+long_delay = 0.001520
+extended_delay = 0.005
+canc = '01111010010000'
+# ----------------------
+
+
 up0 = '110011000000100100000000000000000001100101010001101000100000000000'
 st0 = '110011000000011000000000000000000001100101010001101000100000000000'
 do0 = '110011000000001000000000000000000001100101010001101000100000000000'
@@ -80,6 +89,32 @@ def transmit_code(code):
          pi.wave_send_repeat(f)
          time.sleep(0.2)
 
+ def transmit_code_canc(code):
+      f1=[]
+      # -------Segnal ------------------------------------------
+      f1.append(pigpio.pulse(NONE, NONE, 3500)) # added 3,5 millis
+      for c in code:
+         if c == '1':
+            f1.append(pigpio.pulse(GP, NONE, short_delay))
+            f1.append(pigpio.pulse(NONE, GP, long_delay))
+         elif c == '0':
+            f1.append(pigpio.pulse(GP, NONE, long_delay))
+            f1.append(pigpio.pulse(NONE, GP, short_delay))
+         else:
+            continue
+      f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
+      # -------End Segnal ------------------------------------------
+      pi.wave_clear()
+      pi.wave_add_generic(f1)
+      f = pi.wave_create() # create and save id
+      for t in range(NUM_ATTEMPTS):
+         print("sending {}".format(t))
+         pi.wave_send_repeat(f)
+         time.sleep(extended_delay)
+     
+      
+      
+      
 pi = pigpio.pi() # connect to Pi
 if not pi.connected:
    exit()
@@ -88,7 +123,10 @@ pi.set_mode(GPIO, pigpio.OUTPUT)
 if __name__ == '__main__':
     for argument in sys.argv[1:]:
         print("sending {}".format(argument))
-        exec('transmit_code(' + str(argument) + ')')
+        if argument == 'canc':
+                exec('transmit_code_canc(' + str(argument) + ')')
+        else:
+                exec('transmit_code(' + str(argument) + ')')
 
 pi.wave_tx_stop()
 pi.stop()
