@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-# Attende chiamate del tipo:
+#
+# Example input command:
 # http://matteosetti.dlinkddns.com:8889/?shutter=do6&up7&do8
 
 var http = require('http');
@@ -13,26 +14,24 @@ http.createServer(function (req, res) {
 
   var q = url.parse(req.url, true).query;
 
+ console.log('shutter: ',q);
+
+
  if (q.shutter != undefined) {
   var qshutter = q.shutter;
 
-  //console.log('shutter: ',q' where: ',q.where);
+  console.log('shutter: ',q.shutter,' where: ',q.where);
 
   if ((q.where == 'up') || (q.where == 'do') || (q.where == 'st')) {
-        var id;
-        //switch (q.shutter.split(" ").splice(-1)[0]){
-
-//switch (q.shutter.trim()){
-
-switch (true){
-
+      var id;
+      switch (true){
         case /cameretta/.test(q.shutter):
                 id="1";
                 break;
-        case (/camera/.test(q.shutter) &&/nonna/.test(q.shutter) ):
+        case (/camera/.test(q.shutter) && /nonna/.test(q.shutter) ):
                 id="2";
                 break;
-        case /camera grande/.test(q.shutter):
+        case /bagno grande/.test(q.shutter):
                 id="3";
                 break;
         case /camera matrimoniale/.test(q.shutter):
@@ -61,11 +60,10 @@ switch (true){
         }
 
         qshutter=q.where+id;
-        if (id="6&7") {qshutter = q.where+"6 "+q.where+"7" }
+        if (id == "6&7") {qshutter = q.where+"6 "+q.where+"7" }
    }
 
    console.log('command: ',qshutter);
-
    var command = '/home/pi/send.py '+ qshutter;
    //console.log('command',command);
    exec(command, function callback(error, stdout, stderr){
@@ -75,7 +73,9 @@ switch (true){
                 console.log('exec error: ' + error);
         }
    });
-   res.write(command);
  }
+ res.write(command);
  res.end();
-}).listen(8889);
+}).listen(7000);
+
+
