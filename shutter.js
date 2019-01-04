@@ -26,43 +26,38 @@ http.createServer(function (req, res) {
       var id;
       switch (true){
         case /cameretta/.test(q.shutter):
-                id="1";
+                qshutter=q.where+"1";
                 break;
         case /nonna/.test(q.shutter):
-                id="2";
+                qshutter=q.where+"2";
                 break;
         case /bagno grande/.test(q.shutter):
-                id="3";
+                qshutter=q.where+"3";
                 break;
         case /camera matrimoniale/.test(q.shutter):
-                id="4";
+                qshutter=q.where+"4";
                 break;
         case (/bagno/.test(q.shutter) && /piccolo/.test(q.shutter) ):
-                id="5";
+                qshutter=q.where+"5";
                 break;
         case (/sala/.test(q.shutter) && /piccola/.test(q.shutter) ):
-                id="6";
+                qshutter=q.where+"6";
                 break;
         case (/sala/.test(q.shutter) && /grande/.test(q.shutter) ):
-                id="7";
+                qshutter=q.where+"7";
                 break;
         case /ripostiglio/.test(q.shutter):
-                id="8";
+                qshutter=q.where+"8";
                 break;
         case /cucina/.test(q.shutter):
-                id="9"
+                qshutter=q.where+"9";
                 break;
         case /sala/.test(q.shutter):
-                id="6&7"
+                qshutter=q.where+"6"+q.where+"7";
                 break;
         default:
                 console.log("Error in input: "+q.shutter+" => "+(q.shutter.split(" ").splice(-1)));
         }
-
-        qshutter=q.where+id;
-        if (id == "6&7") {qshutter = q.where+"6 "+q.where+"7" }
-   }
-
    console.log('command: ',qshutter);
    var command = '/home/pi/send.py '+ qshutter;
    //console.log('command',command);
