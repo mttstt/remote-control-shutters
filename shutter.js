@@ -47,7 +47,7 @@ http.createServer(function (req, res) {
                 qshutter=q.where+"9";
                 break;
         case /sala/.test(q.shutter):
-                qshutter=q.where+"6"+q.where+"7";
+                qshutter=q.where+"6 "+q.where+"7";
                 break;
         default:
                 console.log("Error in input: "+q.shutter+" => "+(q.shutter.split(" ").splice(-1)));
