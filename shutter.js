@@ -28,7 +28,7 @@ http.createServer(function (req, res) {
         case /cameretta/.test(q.shutter):
                 id="1";
                 break;
-        case (/camera/.test(q.shutter) && /nonna/.test(q.shutter) ):
+        case /nonna/.test(q.shutter):
                 id="2";
                 break;
         case /bagno grande/.test(q.shutter):
