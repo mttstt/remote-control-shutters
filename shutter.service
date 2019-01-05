@@ -2,7 +2,7 @@
 Description=Shutter
 
 [Service]
-ExecStart=/home/pi/shutter.js
+ExecStart=/home/pi/remote-control-shutters/shutter.js
 Restart=always
 User=pi
 # Note RHEL/Fedora uses 'nobody', Debian/Ubuntu uses 'nogroup'
