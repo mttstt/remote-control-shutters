@@ -22,6 +22,9 @@ http.createServer(function (req, res) {
         case /cameretta/.test(q.shutter):
                 qshutter=q.where+"1";
                 break;
+        case /bimbe/.test(q.shutter):
+                qshutter=q.where+"1";
+                break;  
         case /nonna/.test(q.shutter):
                 qshutter=q.where+"2";
                 break;
@@ -43,6 +46,9 @@ http.createServer(function (req, res) {
         case /ripostiglio/.test(q.shutter):
                 qshutter=q.where+"8";
                 break;
+        case /stanzino/.test(q.shutter):
+                qshutter=q.where+"8";
+                break; 
         case /cucina/.test(q.shutter):
                 qshutter=q.where+"9";
                 break;
