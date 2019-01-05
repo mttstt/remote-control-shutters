@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-#
-# Example input command:
-# http://matteosetti.dlinkddns.com:8889/?shutter=do6&up7&do8
+//
+// Example input command:
+// http://matteosetti.dlinkddns.com:8889/?shutter=do6&up7&do8
 
 var http = require('http');
 var url = require('url');
@@ -55,7 +55,7 @@ http.createServer(function (req, res) {
         case /sala/.test(q.shutter):
                 qshutter=q.where+"6 "+q.where+"7";
                 break;
-        case (/zona/.test(q.shutter) && /giorno/.test(q.shutter):
+        case (/zona/.test(q.shutter) && /giorno/.test(q.shutter) ):
                 qshutter=q.where+"6 "+q.where+"7 "+q.where+"8 "+q.where+"9";
                 break;
         default:
