@@ -13,7 +13,7 @@ http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
   var q = url.parse(req.url, true).query;
   console.log('shutter: ',q);
-  if (q.shutter != undefined) {
+  if (q.where != undefined) {
     var qshutter = q.shutter;
     console.log('shutter: ',q.shutter,' where: ',q.where);
     if ((q.where == 'up') || (q.where == 'do') || (q.where == 'st')) {
