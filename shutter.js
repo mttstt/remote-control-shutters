@@ -61,6 +61,7 @@ http.createServer(function (req, res) {
         default:
                 console.log("Error in input: "+q.shutter+" => "+(q.shutter.split(" ").splice(-1)));
         }
+    }  
    console.log('command: ',qshutter);
    var command = '/home/pi/send.py '+ qshutter;
    //console.log('command',command);
