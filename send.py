@@ -89,7 +89,7 @@ def transmit_code(code):
          pi.wave_send_repeat(f)
          time.sleep(0.2)
 
- def transmit_code_canc(code):
+def transmit_code_canc(code):
       f1=[]
       # -------Segnal ------------------------------------------
       f1.append(pigpio.pulse(NONE, NONE, 3500)) # added 3,5 millis
