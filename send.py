@@ -88,6 +88,7 @@ def transmit_code(code):
          pi.wave_send_repeat(f)
          time.sleep(0.2)
 
+
 def transmit_code_canc(code):
       f1=[]
       # -------Segnal ------------------------------------------
@@ -118,7 +119,6 @@ if not pi.connected:
 pi.set_mode(GPIO, pigpio.OUTPUT)
 if __name__ == '__main__':
     for argument in sys.argv[1:]:
-        print("sending {}".format(argument))
         if argument == 'canc':
                 exec('transmit_code_canc(' + str(argument) + ')')
         else:
