@@ -6,18 +6,18 @@
 var http = require('http');
 var url = require('url');
 var exec = require('child_process').exec;
+var command;
 
 console.log("Http server starting...");
 
 http.createServer(function (req, res) {
+  var command;
   res.writeHead(200, {'Content-Type': 'text/html'});
   var q = url.parse(req.url, true).query;
-  console.log('shutter: ',q);
-  if (q.where != undefined) {
-    var qshutter = q.shutter;
-    console.log('shutter: ',q.shutter,' where: ',q.where);
-    if ((q.where == 'up') || (q.where == 'do') || (q.where == 'st')) {
-      var id;
+  console.log('shutter: ',q.shutter,' where: ',q.where);
+
+  var qshutter = q.shutter;
+  if ((q.where == 'up') || (q.where == 'do') || (q.where == 'st')) {
       switch (true){
         case /cameretta/.test(q.shutter):
                 qshutter=q.where+"1";
@@ -55,24 +55,26 @@ http.createServer(function (req, res) {
         case /sala/.test(q.shutter):
                 qshutter=q.where+"6 "+q.where+"7";
                 break;
-        case (/zona/.test(q.shutter) && /giorno/.test(q.shutter) ):
+        case (/zona/.test(q.shutter) && /giorno/.test(q.shutter)):
                 qshutter=q.where+"6 "+q.where+"7 "+q.where+"8 "+q.where+"9";
                 break;
         default:
                 console.log("Error in input: "+q.shutter+" => "+(q.shutter.split(" ").splice(-1)));
-        }
-    }  
-   console.log('command: ',qshutter);
-   var command = '/home/pi/send.py '+ qshutter;
+      }
+   }
+
+
+ if (qshutter === null){ qshutter=q.where; }
+ command = '~/remote-control-shutters/send.py '+ qshutter;
+ console.log('command: ',command);
+
    //console.log('command',command);
    exec(command, function callback(error, stdout, stderr){
      console.log('stdout: ' + stdout);
      console.log('stderr: ' + stderr);
-        if (error !== null) {
-                console.log('exec error: ' + error);
-        }
+     if (error !== null) {console.log('exec error: ' + error); }
    });
- }
+
  res.write(command);
  res.end();
 }).listen(7000);
