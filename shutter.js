@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 //
-// Example input command:
-// http://matteosetti.dlinkddns.com:8889/?shutter=do6&up7&do8
+// The input can be GOOGLE ASSISTANT + IFTTT
+//
+// Example input compatible:
+// http://XXX.ddns.net:7000/?shutter=do6&up7&do8
+// http://XXX.ddns.net:7000/?shutter=canc
+// http://XXX.ddns.net:7000/?shutter=up0
 
 var http = require('http');
 var url = require('url');
