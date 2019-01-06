@@ -12,11 +12,10 @@ GP=(1<<22)
 NONE=0 # selects no gpios
 NUM_ATTEMPTS = 3
 
-
 # ------- gate ---------
-short_delay = 0.000760
-long_delay = 0.001520
-extended_delay = 0.005
+short_delay = 760
+long_delay = 1520
+extended_delay = 0.5
 canc = '01111010010000'
 # ----------------------
 
@@ -111,10 +110,7 @@ def transmit_code_canc(code):
          print("sending {}".format(t))
          pi.wave_send_repeat(f)
          time.sleep(extended_delay)
-     
-      
-      
-      
+
 pi = pigpio.pi() # connect to Pi
 if not pi.connected:
    exit()
