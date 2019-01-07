@@ -4,7 +4,7 @@
 ##### Added features
 * Remote control for blinds
 * remote control for sliding gate
-* Interfaced with Assistant Google + IFTTT
+* Interfaced with Google Assistant/ Google Home + IFTTT
 
 ### 0.1 (19-11-2017) - never released
 ##### New code
