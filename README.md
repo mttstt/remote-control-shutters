@@ -22,5 +22,5 @@ https://stackoverflow.com/questions/4018154/how-do-i-run-a-node-js-app-as-a-back
 
 
 ### Command
-http://192.168.1.110:8889/?shutter=up6
+http://xxx.ddns.net:7000/?shutter=up6
 
