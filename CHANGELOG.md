@@ -2,10 +2,10 @@
 ##### License
 * Added MIT License 
 ##### Added features
-* Remote control for blins
+* Remote control for blinds
 * remote control for sliding gate
 * Interfaced with Assistant Google + IFTTT
 
 ### 0.1 (19-11-2017) - never released
 ##### New code
-* First relese for shutters
+* First release for blinds
