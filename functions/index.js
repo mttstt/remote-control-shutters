@@ -25,7 +25,7 @@ const temperatura = () => {
 };
 
 app.intent('Ciao Mora', conv => {
-  conv.close('Mora viva e vegeta!')
+  conv.close(`Mora viva e vegeta!`)
 })
 
 app.intent('temperature', async (conv,{stanza}) => {
