@@ -1,6 +1,6 @@
 {
   "name": "ESP8266 sensor",
-  "description": "Fun way to inquiry ESP sensors!",
+  "description": "Fun way to inquiry ESP8266 sensors!",
   "version": "0.0.1",
   "private": true,
   "license": "MIT",
@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint --fix \"**/*.js\"",
     "test": "npm run remote-control-shutters",
-    "start": "firebase serve --only functions",
+    "start": "node ./start.js",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
