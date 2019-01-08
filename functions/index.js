@@ -11,6 +11,8 @@ const {dialogflow} = require('actions-on-google');
 
 const app = dialogflow({debug: true});
 
+const map = { "sala": "192.168.1.1", "cucina": "192.168.1.113", "camera matrimoniale": "192.168.1.113"};
+
 const temperatura = () => {
   var ip = '192.168.1.112';
   try { var response = HTTP.get("http://"+ip+"/json", {});     
@@ -25,6 +27,7 @@ const temperatura = () => {
 app.intent('Ciao Mora', conv => {
   conv.close('Mora viva e vegeta!')
 })
+
 app.intent('temperature', async (conv,{stanza}) => {
   const data = await temperatura();
   conv.close(`La tempertura in ${name} è pari a ${data[0]} e l'umidità è pari al ${data[1]} percento.`);
