@@ -29,6 +29,7 @@ app.intent('Ciao Mora', conv => {
 })
 
 app.intent('temperature', async (conv,{stanza}) => {
+  conv.ask(`Connessione mora ok.`)
   const data = await temperatura();
   conv.close(`La tempertura in ${name} è pari a ${data[0]} e l'umidità è pari al ${data[1]} percento.`);
 });
