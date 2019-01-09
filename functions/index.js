@@ -55,7 +55,7 @@ app.intent('Ciao Mora', conv => {
 
 app.intent('dimmi la temperatura in camera', (conv,{stanza}) => {
   return temperatura(stanza).then((data) => {
-    conv.close(`La tempertura in ${stanza} è pari a ${data} e l'umidità è pari al ${data} percento.`);
+    conv.close(`La tempertura in ${stanza} è pari a ${data[0]} gradi centigradi e l'umidità è pari al ${data[1]} percento.`);
   })
 })	
 
