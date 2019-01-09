@@ -12,7 +12,8 @@ const app = dialogflow({debug: true});
 var http = require('http');
 const map = { "sala": "192.168.1.112", "cucina": "192.168.1.113", "camera matrimoniale": "192.168.1.113"};
 
-const temperatura = () => {
+function temperatura(stanza) {
+   return new Promise(((data) => { 
 	var ip = '192.168.1.112';
 	http.get("http://"+ip+"/json", (res) => {
 	  const { statusCode } = res;
@@ -43,6 +44,7 @@ const temperatura = () => {
 	    }
 	  });
 	  }).on('error', (e) => { console.error(`Got error: ${e.message}`);});
+  }));
 }
 
 
@@ -52,7 +54,7 @@ app.intent('Ciao Mora', conv => {
 
 
 app.intent('dimmi la temperatura in camera', (conv,{stanza}) => {
-  return temperatura().then((data) => {
+  return temperatura(stanza).then((data) => {
     conv.close(`La tempertura in ${stanza} è pari a ${data} e l'umidità è pari al ${data} percento.`);
 });
 
