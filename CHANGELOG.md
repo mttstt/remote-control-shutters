@@ -15,3 +15,4 @@
 ### 0.1 (19-11-2017) - never released
 ##### New code
 * First release for blinds
+* Captuterd remote control shutter impulses (cu8 files)
