@@ -1,3 +1,9 @@
+### 0.3 (12-01-2019)
+##### Added features
+* Ask temperature and humidity in the rooms thanks to ESP8266 sensors 
+##### Code
+* Implemented Webhook with Assistant Google libray for integration with Dialogflow
+
 ### 0.2 (07-01-2019)
 ##### License
 * Added MIT License 
