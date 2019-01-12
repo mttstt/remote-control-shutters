@@ -24,3 +24,10 @@ https://stackoverflow.com/questions/4018154/how-do-i-run-a-node-js-app-as-a-back
 ### Command
 http://xxx.ddns.net:7000/?shutter=up6
 
+
+### ToDO
+- [x] Implemnented a subdomain url with DDNS: used free dlinkddns thank tom modem dlink DVA 5292  
+- [x] Implmented HTTPS domain using letscript
+- [ ] Use only HTTPS for shutters
+- [ ] Add ESP8266 sensors
+- [ ] Decode Air conditioner remote controller
