@@ -30,5 +30,5 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [x] Implmented HTTPS domain using letscript
 - [ ] Use only HTTPS for shutters
 - [ ] Add ESP8266 sensors
-- [ ] Publish Google actions in order to avoid beging test message 
-- [ ] Decode Air conditioner remote controller
+- [x] Alpha test Google actions in order to avoid beging test message 
+
