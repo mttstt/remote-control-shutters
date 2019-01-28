@@ -28,7 +28,10 @@ http://xxx.ddns.net:7000/?shutter=up6
 ### ToDO
 - [x] Implemnented a subdomain url with DDNS: used free dlinkddns thank tom modem dlink DVA 5292  
 - [x] Implmented HTTPS domain using letscript
-- [ ] Use only HTTPS for shutters
-- [ ] Add ESP8266 sensors
+- [ ] Use HTTPS for shutters
 - [x] Alpha test Google actions in order to avoid beging test message 
+- [ ] Migrate blind programs from Raspberry to ESP8266
+- [ ] Migrate 8266 program to plugin EspEasy
+- [ ] Interrogate Inverter Aurora with ESp8266
+
 
