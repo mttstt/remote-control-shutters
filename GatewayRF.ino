@@ -22,6 +22,7 @@
 #include <EX_RCSwitch.h> // UTILIZZA LA LIBRERIA https://github.com/perivar/rc-switch
 			 // https://github.com/perivar/ST_Anything_NodeMCU
 			 // https://community.smartthings.com/t/st-anything-433mhz-rf-devices-arduino-thingshield/19084/36
+			 //https://github.com/sui77/rc-switch/pull/170 ---transmittimingsarray---
 
 #define SERVER_PORT 80
 const int pulse = 360; //μs
