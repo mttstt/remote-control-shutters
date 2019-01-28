@@ -30,6 +30,12 @@ byte up6[] = {1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 #define pin 4  //GPIO4 = 2
 #define NUM_ATTEMPTS 3
 #define TRACE 1  // 0= trace off 1 = trace on Do we want to see trace for debugging purposes
+
+
+
+unsigned int data[]   = { 0};
+
+
 void trc(String msg);              // function prototypes 
 void transmit_code(char code[]);
 
@@ -92,7 +98,7 @@ void loop(void){
 void trc(String msg){if (TRACE) { Serial.println(msg); } }
 
 void transmit_code(byte code[]){
-	 mySwitch.send("0000011010100110100101100110010110101010100110101010");		
+  mySwitch.send(data);
 }
  
  trc("transmit preamble");
