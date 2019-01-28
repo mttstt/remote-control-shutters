@@ -10,12 +10,18 @@
 // TODO: objective: integrate in ESPEASY. See _P112_RFTX.ino plugin
 
 
+
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WiFiMulti.h> 
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>   // Include the WebServer library
-#include <EX_RCSwitch.h>
+
+
+#include <EX_RCSwitch.h> // UTILIZZA LA LIBRERIA https://github.com/perivar/rc-switch
+			 // https://github.com/perivar/ST_Anything_NodeMCU
+			 // https://community.smartthings.com/t/st-anything-433mhz-rf-devices-arduino-thingshield/19084/36
 
 #define SERVER_PORT 80
 const int pulse = 360; //μs
@@ -28,9 +34,6 @@ void trc(String msg);              // function prototypes
 void transmit_code(char code[]);
 
 
-mySwitch.enableTransmit(pin);
-mySwitch.setPulseLength(pulse);
-mySwitch.setRepeatTransmit(3);
 
 
 
@@ -69,24 +72,28 @@ void setup(void){
   server.onNotFound([]() { server.send(404, "text/plain", "404: Not Found"); });
   server.begin();                           // Actually start the server
   Serial.println("HTTP server started");
-  
- 
-
+	
+	
+mySwitch.enableTransmit(pin);
+mySwitch.setPulseLength(pulse);
+mySwitch.setRepeatTransmit(3);
+	
+	
   
 }
+
 
 void loop(void){
-  server.handleClient();                    // Listen for HTTP requests from clients
+  server.handleClient();  // Listen for HTTP requests from clients 	
 }
+
 
 // trace function
 void trc(String msg){if (TRACE) { Serial.println(msg); } }
 
 void transmit_code(byte code[]){
- // Examples where Pulse Length is not used
- mySwitch.send("0000011010100110100101100110010110101010100110101010");	
-	
- }
+	 mySwitch.send("0000011010100110100101100110010110101010100110101010");		
+}
  
  trc("transmit preamble");
 }
