@@ -61,7 +61,16 @@ void setup(void){
   } else {
     Serial.println("Error setting up MDNS responder!");
   }
-  server.on("/", HTTP_GET, []() { transmit_code(up6); 
+  server.on("/", HTTP_GET, []() {  
+                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> READY ");  
+                                });
+  server.on("/up6", HTTP_GET, []() { transmit_code(up6); 
+                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> ");  
+                                });
+  server.on("/do6", HTTP_GET, []() { transmit_code(do6); 
+                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> ");  
+                                });
+  server.on("/st6", HTTP_GET, []() { transmit_code(st6); 
                                   server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> ");  
                                 });
   server.onNotFound([]() { server.send(404, "text/plain", "404: Not Found"); });
