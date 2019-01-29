@@ -18,15 +18,12 @@
 
 #define SERVER_PORT 80
 const int pulse = 360; //μs
-#define UP6_SIZE 67
 
 String up6 = "110011000000100100000000000000001011100100000001101000100000000000";
 String st6 = "110011000000011000000000000000001011100100000001101000100000000000";
 String do6 = "110011000000001000000000000000001011100100000001101000100000000000";
   
-  
-#define pin 2  //GPIO4 (D2)
-//#define LED_BUILTIN 16
+#define pin D2  //GPIO4
 #define NUM_ATTEMPTS 3
 #define TRACE 1  // 0= trace off 1 = trace on Do we want to see trace for debugging purposes
 void trc(String msg);              // function prototypes 
@@ -38,11 +35,13 @@ ESP8266WebServer server(80);    // Create a webserver object that listens for HT
 
 void setup(void){
   pinMode(pin,OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);   
+  
   Serial.begin(115200);         // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
 
-  wifiMulti.addAP("MTT_2.4", "xxxxx");   // add Wi-Fi networks you want to connect to
+  wifiMulti.addAP("MTT_2.4", "999999999");   // add Wi-Fi networks you want to connect to
 
   Serial.println("Connecting ...");
   int i = 0;
@@ -75,11 +74,9 @@ void setup(void){
                                 });
   server.onNotFound([]() { server.send(404, "text/plain", "404: Not Found"); });
   server.begin();                           // Actually start the server
-  Serial.println("HTTP server started");
-  
-  pinMode(LED_BUILTIN, OUTPUT); 
-  
+  Serial.println("HTTP server started"); 
 }
+
 
 void loop(void){
   server.handleClient();                    // Listen for HTTP requests from clients
@@ -91,9 +88,11 @@ void trc(String msg){if (TRACE) { Serial.println(msg); } }
 
 void transmit_code(String code){
   int len = code.length();
-  for (int i = 0; i < NUM_ATTEMPTS; i++) {        
+  trc(code);
+  for (int i = 0; i < NUM_ATTEMPTS; i++) 
+  {        
       // ----------------------- Preamble ----------------------
-      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(LED_BUILTIN, LOW);
       digitalWrite(pin, LOW);
       delay(50);  // sleep for 0,3 seconds
       for (int i = 0; i < 12; ++i) 
@@ -108,29 +107,30 @@ void transmit_code(String code){
       //trc("transmit segnal");
       digitalWrite(pin, LOW);
       delayMicroseconds(3500); // added 3,5 millis
-      //  for (ch=0;ch<UP6_SIZE;ch++) {
-      for (i=0;i<len;++i) {
-         char ch = code.charAt(i);        
+      for (int j=0;j<len;++j) 
+      {
+         char ch = code.charAt(j);        
          if (ch == '1')
          {
+           //trc("1");
            digitalWrite(pin, HIGH);         
            delayMicroseconds(pulse);
            digitalWrite(pin, LOW);          
            delayMicroseconds(pulse*2);
          } 
          else 
-         {
+         { 
+           //trc("0");
            digitalWrite(pin, HIGH); 
            delayMicroseconds(pulse*2);
            digitalWrite(pin, LOW); 
            delayMicroseconds(pulse);
          }
       }
-      digitalWrite(pin, LOW);         
+      digitalWrite(pin, LOW);
+      delayMicroseconds(2000); // added 2 millis
+      digitalWrite(LED_BUILTIN, LOW);         
     // ---------------------End Segnal --------------------------   
     }
-    yield();
-    delayMicroseconds(2000); // added 2 millis
-    digitalWrite(LED_BUILTIN, LOW);
- trc("Segnal sended ");
+    trc("Segnal sended ");
 }
