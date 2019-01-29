@@ -90,9 +90,9 @@ void transmit_code(byte code[]){
       for (c=0;c<UP6_SIZE;c++) {
          //Serial.print(code[c]);     
          if (code[c] == '1'){
-             digitalWrite(pin, HIGH); 
+             digitalWrite(pin, HIGH);         
              delayMicroseconds(pulse);
-             digitalWrite(pin, LOW); 
+             digitalWrite(pin, LOW);          
              delayMicroseconds(pulse*2);
          } 
          else if (code[c] == '0'){
