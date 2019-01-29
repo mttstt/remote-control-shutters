@@ -26,7 +26,7 @@ String do6 = '110011000000001000000000000000001011100100000001101000100000000000
   
   
 #define pin 2  //GPIO4 (D2)
-  
+//#define LED_BUILTIN 16
 #define NUM_ATTEMPTS 3
 #define TRACE 1  // 0= trace off 1 = trace on Do we want to see trace for debugging purposes
 void trc(String msg);              // function prototypes 
