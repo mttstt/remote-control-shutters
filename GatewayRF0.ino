@@ -1,3 +1,15 @@
+// References:
+// https://1technophile.blogspot.com/2016/08/low-cost-low-power-6ua-garden-433mhz.html
+// https://github.com/esp8266/Arduino/blob/master/doc/reference.rst
+// https://arduino.stackexchange.com/questions/44531/arduino-esp8266-direct-fast-control-of-the-digital-pins
+// https://www.instructables.com/id/Using-an-ESP8266-to-Control-Mains-Sockets-Using-43/
+// http://nerdralph.blogspot.com/2015/04/a-4mbps-shiftout-for-esp8266arduino.html
+
+// Note(1): Watt OK. max pinout watt of Nodemcu 1.0 10mW, Cheap transmitter 433mhz 10 10mW
+// Note(2): The segnal of blinks is not rcswitch compliant, so I have write a program without this library
+// Note(3): digitalwrite() Esp8286 function runs to 160Khz (6,25 μs): it is enough for this program
+
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WiFiMulti.h> 
