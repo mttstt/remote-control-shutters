@@ -20,7 +20,7 @@
 const int pulse = 360; //μs
 #define UP6_SIZE 67
 byte up6[] = {1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0};
-#define pin 4  //GPIO4 = 2
+#define pin 2  //GPIO4 (D2)
 #define NUM_ATTEMPTS 3
 #define TRACE 1  // 0= trace off 1 = trace on Do we want to see trace for debugging purposes
 void trc(String msg);              // function prototypes 
