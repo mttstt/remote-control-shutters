@@ -19,7 +19,12 @@
 #define SERVER_PORT 80
 const int pulse = 360; //μs
 #define UP6_SIZE 67
-byte up6[] = {1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0};
+
+String up6 = '110011000000100100000000000000001011100100000001101000100000000000'
+String st6 = '110011000000011000000000000000001011100100000001101000100000000000'
+String do6 = '110011000000001000000000000000001011100100000001101000100000000000'
+  
+  
 #define pin 2  //GPIO4 (D2)
 #define NUM_ATTEMPTS 3
 #define TRACE 1  // 0= trace off 1 = trace on Do we want to see trace for debugging purposes
@@ -70,7 +75,8 @@ void loop(void){
 // trace function
 void trc(String msg){if (TRACE) { Serial.println(msg); } }
 
-void transmit_code(byte code[]){
+
+void transmit_code(String code){
   for (int i = 0; i < NUM_ATTEMPTS; i++) {        
       // ----------------------- Preamble ----------------------
       digitalWrite(pin, LOW); 
@@ -86,26 +92,23 @@ void transmit_code(byte code[]){
       //trc("transmit segnal");
       digitalWrite(pin, LOW);
       delayMicroseconds(3500); // added 3,5 millis
-      int c=0;
-      for (c=0;c<UP6_SIZE;c++) {
+      char ch;
+      for (ch=0;c<UP6_SIZE;ch++) {
          //Serial.print(code[c]);     
-         if (code[c] == '1'){
+         if (code.chartAt(ch) == '1'){
              digitalWrite(pin, HIGH);         
              delayMicroseconds(pulse);
              digitalWrite(pin, LOW);          
              delayMicroseconds(pulse*2);
          } 
-         else if (code[c] == '0'){
+         else {
              digitalWrite(pin, HIGH); 
              delayMicroseconds(pulse*2);
              digitalWrite(pin, LOW); 
              delayMicroseconds(pulse);
-         } 
-         else
-         {     
-            digitalWrite(pin, LOW);
-            delayMicroseconds(3000); // added 3 millis
          }
+      }
+      digitalWrite(pin, LOW);         
     // ---------------------End Segnal --------------------------   
     }
     yield();
