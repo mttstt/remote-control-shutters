@@ -20,9 +20,9 @@
 const int pulse = 360; //μs
 #define UP6_SIZE 67
 
-String up6 = '110011000000100100000000000000001011100100000001101000100000000000'
-String st6 = '110011000000011000000000000000001011100100000001101000100000000000'
-String do6 = '110011000000001000000000000000001011100100000001101000100000000000'
+String up6 = "110011000000100100000000000000001011100100000001101000100000000000";
+String st6 = "110011000000011000000000000000001011100100000001101000100000000000";
+String do6 = "110011000000001000000000000000001011100100000001101000100000000000";
   
   
 #define pin 2  //GPIO4 (D2)
@@ -109,8 +109,9 @@ void transmit_code(String code){
       digitalWrite(pin, LOW);
       delayMicroseconds(3500); // added 3,5 millis
       //  for (ch=0;ch<UP6_SIZE;ch++) {
-      for (i=0;i<len;++i) {        
-         if (code.chartAt(i) == '1')
+      for (i=0;i<len;++i) {
+         char ch = code.charAt(i);        
+         if (ch == '1')
          {
            digitalWrite(pin, HIGH);         
            delayMicroseconds(pulse);
@@ -131,6 +132,5 @@ void transmit_code(String code){
     yield();
     delayMicroseconds(2000); // added 2 millis
     digitalWrite(LED_BUILTIN, LOW);
- }
  trc("Segnal sended ");
 }
