@@ -30,7 +30,7 @@ String do6 = '110011000000001000000000000000001011100100000001101000100000000000
 #define NUM_ATTEMPTS 3
 #define TRACE 1  // 0= trace off 1 = trace on Do we want to see trace for debugging purposes
 void trc(String msg);              // function prototypes 
-void transmit_code(char code[]);
+void transmit_code(String code);
 
 ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 
