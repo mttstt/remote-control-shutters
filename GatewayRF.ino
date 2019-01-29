@@ -81,12 +81,14 @@ void trc(String msg){if (TRACE) { Serial.println(msg); } }
 
 
 void transmit_code(String code){
+  int len = code.length();
   for (int i = 0; i < NUM_ATTEMPTS; i++) {        
       // ----------------------- Preamble ----------------------
       digitalWrite(LED_BUILTIN, HIGH);
       digitalWrite(pin, LOW);
       delay(50);  // sleep for 0,3 seconds
-      for (int i = 0; i < 12; i++) {
+      for (int i = 0; i < 12; ++i) 
+      {
         digitalWrite(pin, HIGH); 
         delayMicroseconds(pulse);
         digitalWrite(pin, LOW); 
@@ -97,12 +99,9 @@ void transmit_code(String code){
       //trc("transmit segnal");
       digitalWrite(pin, LOW);
       delayMicroseconds(3500); // added 3,5 millis
-      char ch;
-      len = sizeof(code);
-    //  for (ch=0;ch<UP6_SIZE;ch++) {
-        for (ch=0;ch<len;ch++) {
-         //Serial.print(code[c]);     
-         if (code.chartAt(ch) == '1'){
+      //  for (ch=0;ch<UP6_SIZE;ch++) {
+      for (i=0;i<len;++i) {        
+         if (code.chartAt(i) == '1'){
              digitalWrite(pin, HIGH);         
              delayMicroseconds(pulse);
              digitalWrite(pin, LOW);          
