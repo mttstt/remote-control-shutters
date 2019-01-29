@@ -101,17 +101,19 @@ void transmit_code(String code){
       delayMicroseconds(3500); // added 3,5 millis
       //  for (ch=0;ch<UP6_SIZE;ch++) {
       for (i=0;i<len;++i) {        
-         if (code.chartAt(i) == '1'){
-             digitalWrite(pin, HIGH);         
-             delayMicroseconds(pulse);
-             digitalWrite(pin, LOW);          
-             delayMicroseconds(pulse*2);
+         if (code.chartAt(i) == '1')
+         {
+           digitalWrite(pin, HIGH);         
+           delayMicroseconds(pulse);
+           digitalWrite(pin, LOW);          
+           delayMicroseconds(pulse*2);
          } 
-         else {
-             digitalWrite(pin, HIGH); 
-             delayMicroseconds(pulse*2);
-             digitalWrite(pin, LOW); 
-             delayMicroseconds(pulse);
+         else 
+         {
+           digitalWrite(pin, HIGH); 
+           delayMicroseconds(pulse*2);
+           digitalWrite(pin, LOW); 
+           delayMicroseconds(pulse);
          }
       }
       digitalWrite(pin, LOW);         
