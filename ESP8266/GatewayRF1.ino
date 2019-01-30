@@ -1,3 +1,5 @@
+// Copyright 2019, mtt stt, Inc.
+
 // References:
 // https://1technophile.blogspot.com/2016/08/low-cost-low-power-6ua-garden-433mhz.html
 // https://github.com/esp8266/Arduino/blob/master/doc/reference.rst
@@ -16,7 +18,7 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>   // Include the WebServer library
 
-#define SERVER_PORT 80
+#define SERVER_PORT 7000
 const int pulse = 360; //μs
 
 //# ------- gate ---------
@@ -68,6 +70,7 @@ do99 ='010101010000001000000000000000000000010101011110101000100000000000';
 #define TRACE 1  // 0= trace off 1 = trace on Do we want to see trace for debugging purposes
 void trc(String msg);              // function prototypes 
 void transmit_code(String code);
+void shuttercommand();
 
 ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 
@@ -76,13 +79,10 @@ ESP8266WebServer server(80);    // Create a webserver object that listens for HT
 void setup(void){
   pinMode(pin,OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);   
-  
   Serial.begin(115200);         // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
-
   wifiMulti.addAP("MTT_2.4", "999999999");   // add Wi-Fi networks you want to connect to
-
   Serial.println("Connecting ...");
   int i = 0;
   while (wifiMulti.run() != WL_CONNECTED) { // Wait for the Wi-Fi to connect: scan for Wi-Fi networks, and connect to the strongest of the networks above
@@ -100,28 +100,36 @@ void setup(void){
   } else {
     Serial.println("Error setting up MDNS responder!");
   }
-  server.on("/", HTTP_GET, []() {  
-                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> READY ");  
+  
+  server.on("/", HTTP_GET, []() { server.send(200, "text/html", "<h1> GatewayRF </h1> <p>"+server.uri()+" Web Serber ready !"); });
+  server.on("/gate", HTTP_GET, []() {  transmit_gate_code(canc); 
+                                       server.send(200, "text/html", "<h1> GatewayRF </h1> <p>"+server.uri()+"</p> server.uri() ");  
                                 });
-  server.on("/up6", HTTP_GET, []() { transmit_code( server.uri() ); 
-                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> ");  
-                                });
-  server.on("/do6", HTTP_GET, []() { transmit_code(do6); 
-                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> ");  
-                                });
-  server.on("/st6", HTTP_GET, []() { transmit_code(st6); 
-                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> ");  
-                                });
-                                
-  server.on("/canc", HTTP_GET, []() { transmit_gate_code(canc); 
-                                  server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.uri()+"</p> ");  
-                                });
-                                
+  server.on("/shutter", HTTP_POST, shuttercommand);   
+  
+  // le chimate di questo tipo vanno indirizzate tramite Home Assistant
+  //server.on("/clima", HTTP_POST, climacommand);   
+  
   server.onNotFound([]() { server.send(404, "text/plain", "404: Not Found"); });
   server.begin();                           // Actually start the server
   Serial.println("HTTP server started"); 
 }
 
+//Examples:
+// const POST={ "room1":"up6" };
+// const POST={ "room1":"up6","room2":"up7", "room3":"up8"};
+//
+//  curl --request POST --data '{ "room1":"up6"}' http://XXX.dlinkddns.com:7000/shutter
+//
+void shuttercommand() {
+int numArgs = server.args()
+for (int i=0; i<numArgs; i++) {
+   Serial.println(server.argName(i) + "=" + server.arg(i));
+  // transmit_gate_code(server.arg(i)); 
+  trc("pronto a trasmettere");
+ }
+ server.send(200, "text/html", "<h1> Gateway Rf </h1> <p>"+server.arg()+"</p> ");    
+}
 
 void loop(void){
   server.handleClient();                    // Listen for HTTP requests from clients
