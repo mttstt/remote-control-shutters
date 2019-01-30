@@ -83,13 +83,14 @@ void setup(void){
   Serial.begin(115200);         // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
-  wifiMulti.addAP("MTT_2.4", "999999999");   // add Wi-Fi networks you want to connect to
+  wifiMulti.addAP("MTT_2.4", "xxx");   // add Wi-Fi networks you want to connect to
   Serial.println("Connecting ...");
   int i = 0;
   while (wifiMulti.run() != WL_CONNECTED) { // Wait for the Wi-Fi to connect: scan for Wi-Fi networks, and connect to the strongest of the networks above
     delay(250);
     Serial.print('.');
   }
+	
   Serial.println('\n');
   Serial.print("Connected to ");
   Serial.println(WiFi.SSID());              // Tell us what network we're connected to
