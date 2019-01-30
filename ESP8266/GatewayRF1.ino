@@ -17,16 +17,15 @@
 #include <ESP8266WiFiMulti.h> 
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>   // Include the WebServer library
-#include <ArduinoJson.h>
 
 #define SERVER_PORT 7000
 const int pulse = 360; //μs
 
 //# ------- gate ---------
-const int short_gate = 760; //μs
+const int short_delay = 760; //μs
 const int long_delay = 1520;
 const int extended_delay = 0.5;
-String canc = '01111010010000';
+String canc = "01111010010000";
 //# ----------------------
 
 String up0 = "110011000000100100000000000000000001100101010001101000100000000000";
@@ -77,20 +76,20 @@ ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti cl
 
 ESP8266WebServer server(SERVER_PORT);    // Create a webserver object that listens for HTTP request on port 80
 
+
 void setup(void){
   pinMode(pin,OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);   
   Serial.begin(115200);         // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
-  wifiMulti.addAP("MTT_2.4", "xxx");   // add Wi-Fi networks you want to connect to
+  wifiMulti.addAP("MTT_2.4", "999999999");   // add Wi-Fi networks you want to connect to
   Serial.println("Connecting ...");
   int i = 0;
   while (wifiMulti.run() != WL_CONNECTED) { // Wait for the Wi-Fi to connect: scan for Wi-Fi networks, and connect to the strongest of the networks above
     delay(250);
     Serial.print('.');
   }
-	
   Serial.println('\n');
   Serial.print("Connected to ");
   Serial.println(WiFi.SSID());              // Tell us what network we're connected to
@@ -104,40 +103,18 @@ void setup(void){
   }
   
   server.on("/", HTTP_GET, []() { server.send(200, "text/html", "<h1> GatewayRF </h1> <p>"+server.uri()+" Web Serber ready !"); });
-  server.on("/gate", HTTP_GET, []() { server.send(200, "text/html", "<h1> GatewayRF </h1> <p>"+server.uri()+"</p> server.uri() ");
+  server.on("/gate", HTTP_GET, []() { server.send(200, "text/html", "<h1> GatewayRF </h1> <p>"+server.uri()+"</p>");
                                       transmit_gate_code(canc); 
                                     });
-  server.on("/shutter", HTTP_POST, shuttercommand);   
-  
-  // le chimate di questo tipo vanno indirizzate tramite Home Assistant
-  //server.on("/clima", HTTP_POST, climacommand);   
+  server.on("/shutter", HTTP_GET, []() { 
+                                         shuttercommand();
+                                       });  
   
   server.onNotFound([]() { server.send(404, "text/plain", "404: Not Found"); });
   server.begin();                           // Actually start the server
   Serial.println("HTTP server started"); 
 }
 
-//Examples:
-// 
-//  curl http://XXX.dlinkddns.com:7000/shutter/?s=up6&s=up7&s=up8&s=up9
-//
-void shuttercommand() { 
-  String message = "<h1> Gateway Rf </h1>\n\n";
-	message += "URI: ";
-	message += server.uri();
-	message += "\nMethod: ";
-	message += ( server.method() == HTTP_GET ) ? "GET" : "POST";
-	message += "\nArguments: ";
- // message += server.args();
-	message += "\n";
-	for ( uint8_t i = 0; i < server.args(); i++ ) {
-		message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
-    if (server.argName(i) == 's') {
-        transmit_gate_code(server.arg ( i ) );
-    } 
-	}  
-	server.send ( 200, "text/plain", message );
-}
 
 void loop(void){ 
   server.handleClient();            // Listen for HTTP requests from clients    
@@ -209,14 +186,14 @@ void transmit_gate_code(String code){
          if (ch == '1')
          {
            digitalWrite(pin, HIGH);         
-           delayMicroseconds(short_pulse);
+           delayMicroseconds(short_delay);
            digitalWrite(pin, LOW);          
-           delayMicroseconds(long_gate);
+           delayMicroseconds(long_delay);
          } 
          else 
          {            
            digitalWrite(pin, HIGH); 
-           delayMicroseconds(long_gate);
+           delayMicroseconds(long_delay);
            digitalWrite(pin, LOW); 
            delayMicroseconds(short_delay);
          }
@@ -227,4 +204,27 @@ void transmit_gate_code(String code){
       digitalWrite(LED_BUILTIN, LOW);         
     }
     trc("Segnal sended ");
+}
+
+
+//Examples:
+// 
+//  curl http://XXX.dlinkddns.com:7000/shutter/?s=up6&s=up7&s=up8&s=up9
+//
+void shuttercommand() { 
+  String message = "<h1> Gateway Rf </h1>\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += ( server.method() == HTTP_GET ) ? "GET" : "POST";
+  message += "\nArguments: ";
+ // message += server.args();
+  message += "\n";
+  for ( uint8_t i = 0; i < server.args(); i++ ) {
+    message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
+    if (server.argName(i) == "s") {
+        transmit_gate_code(server.arg ( i ) );
+    } 
+  }  
+  server.send ( 200, "text/plain", message );
 }
