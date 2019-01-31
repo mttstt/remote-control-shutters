@@ -105,12 +105,10 @@ void setup(void){
   server.on("/", HTTP_GET, []() { server.send(200, "text/html", "<h1> GatewayRF </h1> <p>"+server.uri()+" Web Serber ready !"); });
   server.on("/gate", HTTP_GET, []() { server.send(200, "text/html", "<h1> GatewayRF </h1> <p>"+server.uri()+"</p>");
                                       transmit_gate_code(canc); 
-                                    });
-  server.on("/shutter", HTTP_GET, []() { 
-                                         shuttercommand();
-                                       });  
-  
+                                    });  
+  server.on("/shutter", HTTP_GET, []() { shuttercommand(); });  
   server.onNotFound([]() { server.send(404, "text/plain", "404: Not Found"); });
+  
   server.begin();                           // Actually start the server
   Serial.println("HTTP server started"); 
 }
@@ -218,12 +216,44 @@ void shuttercommand() {
   message += "\nMethod: ";
   message += ( server.method() == HTTP_GET ) ? "GET" : "POST";
   message += "\nArguments: ";
- // message += server.args();
+  message += server.args();
   message += "\n";
   for ( uint8_t i = 0; i < server.args(); i++ ) {
     message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
     if (server.argName(i) == "s") {
-        transmit_gate_code(server.arg ( i ) );
+        string ch;      
+        if ( server.arg (i) == "up0" ) { ch = up0 }
+        else if ( server.arg (i) == "st0" ) { ch = st0 }
+        else if ( server.arg(i) == "do0" ) { ch = do0 }      
+        else if ( server.arg(i) == "up1" ) { ch = up1 }
+        else if ( server.arg(i) == "st1" ) { ch = st1 }
+        else if ( server.arg(i) == "do1" ) { ch = do1 }      
+        else if ( server.arg(i) == "up2" ) { ch = up2 }
+        else if ( server.arg(i) == "st2" ) { ch = st2 }
+        else if ( server.arg(i) == "do2" ) { ch = do2 }      
+        else if ( server.arg(i) == "up3" ) { ch = up3 }
+        else if ( server.arg(i) == "st3" ) { ch = st3 }
+        else if ( server.arg(i) == "do3" ) { ch = do3 }      
+        else if ( server.arg(i) == "up4" ) { ch = up4 }
+        else if ( server.arg(i) == "st4" ) { ch = st4 }
+        else if ( server.arg(i) == "do4" ) { ch = do4 }      
+        else if ( server.arg(i) == "up5" ) { ch = up5 }
+        else if ( server.arg(i) == "st5" ) { ch = st5 }
+        else if ( server.arg(i) == "do5" ) { ch = do5 }     
+        else if ( server.arg(i) == "up6" ) { ch = up6 }
+        else if ( server.arg(i) == "st6" ) { ch = st6 }
+        else if ( server.arg(i) == "do6" ) { ch = do6 }      
+        else if ( server.arg(i) == "up7" ) { ch = up7 }
+        else if ( server.arg(i) == "st7" ) { ch = st7 }
+        else if ( server.arg(i) == "do7" ) { ch = do7 }      
+        else if ( server.arg(i) == "up8" ) { ch = up8 }
+        else if ( server.arg(i) == "st8" ) { ch = st8 }
+        else if ( server.arg(i) == "do8" ) { ch = do8 }      
+        else if ( server.arg(i) == "up9" ) { ch = up9 }
+        else if ( server.arg(i) == "st9" ) { ch = st9 }
+        else if ( server.arg(i) == "do9" ) { ch = do9 }
+        else {Serial.print("Input error\n");  message += "\Error"; }      
+        transmit_gate_code(ch);
     } 
   }  
   server.send ( 200, "text/plain", message );
