@@ -223,7 +223,7 @@ void shuttercommand() {
     if (server.argName(i) == "s") {
         string ch;      
         if ( server.arg (i) == "up0" ) { ch = up0 }
-        else if ( server.arg (i) == "st0" ) { ch = st0 }
+        else if ( server.arg (i) == "st0") { ch = st0 }
         else if ( server.arg(i) == "do0" ) { ch = do0 }      
         else if ( server.arg(i) == "up1" ) { ch = up1 }
         else if ( server.arg(i) == "st1" ) { ch = st1 }
