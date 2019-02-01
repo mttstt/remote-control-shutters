@@ -129,8 +129,8 @@ void transmit_code(String code){
   {        
       // ----------------------- Preamble ----------------------
       digitalWrite(LED_BUILTIN, LOW);
-      digitalWrite(pin, LOW);
-      delay(50);  // sleep for 0,3 seconds
+      //digitalWrite(pin, LOW);
+      //delay(50);  // sleep for 0,3 seconds
       for (int i = 0; i < 12; ++i) 
       {
         digitalWrite(pin, HIGH); 
@@ -164,7 +164,8 @@ void transmit_code(String code){
          }
       }
       digitalWrite(pin, LOW);
-      delayMicroseconds(2000); // added 2 millis
+      delayMicroseconds(50
+      00); // added 2 millis
       digitalWrite(LED_BUILTIN, LOW);         
     // ---------------------End Segnal --------------------------   
     }
@@ -221,38 +222,38 @@ void shuttercommand() {
   for ( uint8_t i = 0; i < server.args(); i++ ) {
     message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
     if (server.argName(i) == "s") {
-        string ch;      
-        if ( server.arg (i) == "up0" ) { ch = up0 }
-        else if ( server.arg (i) == "st0") { ch = st0 }
-        else if ( server.arg(i) == "do0" ) { ch = do0 }      
-        else if ( server.arg(i) == "up1" ) { ch = up1 }
-        else if ( server.arg(i) == "st1" ) { ch = st1 }
-        else if ( server.arg(i) == "do1" ) { ch = do1 }      
-        else if ( server.arg(i) == "up2" ) { ch = up2 }
-        else if ( server.arg(i) == "st2" ) { ch = st2 }
-        else if ( server.arg(i) == "do2" ) { ch = do2 }      
-        else if ( server.arg(i) == "up3" ) { ch = up3 }
-        else if ( server.arg(i) == "st3" ) { ch = st3 }
-        else if ( server.arg(i) == "do3" ) { ch = do3 }      
-        else if ( server.arg(i) == "up4" ) { ch = up4 }
-        else if ( server.arg(i) == "st4" ) { ch = st4 }
-        else if ( server.arg(i) == "do4" ) { ch = do4 }      
-        else if ( server.arg(i) == "up5" ) { ch = up5 }
-        else if ( server.arg(i) == "st5" ) { ch = st5 }
-        else if ( server.arg(i) == "do5" ) { ch = do5 }     
-        else if ( server.arg(i) == "up6" ) { ch = up6 }
-        else if ( server.arg(i) == "st6" ) { ch = st6 }
-        else if ( server.arg(i) == "do6" ) { ch = do6 }      
-        else if ( server.arg(i) == "up7" ) { ch = up7 }
-        else if ( server.arg(i) == "st7" ) { ch = st7 }
-        else if ( server.arg(i) == "do7" ) { ch = do7 }      
-        else if ( server.arg(i) == "up8" ) { ch = up8 }
-        else if ( server.arg(i) == "st8" ) { ch = st8 }
-        else if ( server.arg(i) == "do8" ) { ch = do8 }      
-        else if ( server.arg(i) == "up9" ) { ch = up9 }
-        else if ( server.arg(i) == "st9" ) { ch = st9 }
-        else if ( server.arg(i) == "do9" ) { ch = do9 }
-        else {Serial.print("Input error\n");  message += "\Error"; }      
+        String ch;      
+        if ( server.arg (i) == "up0" ) { ch = up0; }
+        else if ( server.arg (i) == "st0") { ch = st0; }
+        else if ( server.arg(i) == "do0" ) { ch = do0; }      
+        else if ( server.arg(i) == "up1" ) { ch = up1; }
+        else if ( server.arg(i) == "st1" ) { ch = st1; }
+        else if ( server.arg(i) == "do1" ) { ch = do1; }      
+        else if ( server.arg(i) == "up2" ) { ch = up2; }
+        else if ( server.arg(i) == "st2" ) { ch = st2; }
+        else if ( server.arg(i) == "do2" ) { ch = do2; }      
+        else if ( server.arg(i) == "up3" ) { ch = up3; }
+        else if ( server.arg(i) == "st3" ) { ch = st3; }
+        else if ( server.arg(i) == "do3" ) { ch = do3; }      
+        else if ( server.arg(i) == "up4" ) { ch = up4; }
+        else if ( server.arg(i) == "st4" ) { ch = st4; }
+        else if ( server.arg(i) == "do4" ) { ch = do4; }      
+        else if ( server.arg(i) == "up5" ) { ch = up5; }
+        else if ( server.arg(i) == "st5" ) { ch = st5; }
+        else if ( server.arg(i) == "do5" ) { ch = do5; }     
+        else if ( server.arg(i) == "up6" ) { ch = up6; }
+        else if ( server.arg(i) == "st6" ) { ch = st6; }
+        else if ( server.arg(i) == "do6" ) { ch = do6; }      
+        else if ( server.arg(i) == "up7" ) { ch = up7; }
+        else if ( server.arg(i) == "st7" ) { ch = st7; }
+        else if ( server.arg(i) == "do7" ) { ch = do7; }      
+        else if ( server.arg(i) == "up8" ) { ch = up8; }
+        else if ( server.arg(i) == "st8" ) { ch = st8; }
+        else if ( server.arg(i) == "do8" ) { ch = do8; }      
+        else if ( server.arg(i) == "up9" ) { ch = up9; }
+        else if ( server.arg(i) == "st9" ) { ch = st9; }
+        else if ( server.arg(i) == "do9" ) { ch = do9; }
+        else {Serial.print("Input error\n");  message += "\nError"; }      
         transmit_gate_code(ch);
     } 
   }  
