@@ -3,20 +3,22 @@
 //#######################################################################################################
 /*
    Version: 2.0
-   Description: use this script to send RF with a cheap FS1000A alike sender
+   Description: use this script to send RF with a cheap FS1000A alike sender. 
+                This plugin differs from the original one as it allows you to send custom messages
    Example of usage:
+   
+      http://<ESP IP address>/control?cmd=RFSEND,canc
+      http://<ESP IP address>/control?cmd=RFSEND,up7
 
    Learn codes via _P112_RFTX_NORCSwitch.ino plugin!
-   Needs: RCSwitch library
+   Needs: EspEasy
    Tested on GPIO:14
    Author: mtt
    Copyright: (c) 2019-2020 mttstt
    License: MIT
    License URI: http://en.wikipedia.org/wiki/MIT_License
    Status : "Proof of concept"  
-   
-   http://<ESP IP address>/control?cmd=RFSEND,canc,up8,do7
-   
+
  */
 
 #ifdef PLUGIN_BUILD_TESTING
@@ -26,12 +28,12 @@
 #define PLUGIN_NAME_112       "RF Transmit - FS1000A alike sender"
 
 //==============================================================================
-#define pin D2        //GPIO4
+#define pin D2             //GPIO4
 #define NUM_ATTEMPTS 3
 
 //# ------- gate ---------
-const int short_delay =  760; //μs
-const int long_delay =  1520; //μs
+const int short_delay =    760; //μs
+const int long_delay =    1520; //μs
 const int extended_delay = 0.5;
 String canc = "01111010010000";
 
