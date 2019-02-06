@@ -6,7 +6,7 @@
    Description: use this script to send RF with a cheap FS1000A alike sender
    Example of usage:
 
-   Learn codes via _P111_RF.ino plugin!
+   Learn codes via _P112_RFTX_NORCSwitch.ino plugin!
    Needs: RCSwitch library
    Tested on GPIO:14
    Author: mtt
@@ -26,14 +26,17 @@
 #define PLUGIN_NAME_112       "RF Transmit - FS1000A alike sender"
 
 //==============================================================================
-const int pulse = 360; //μs
+#define pin D2        //GPIO4
+#define NUM_ATTEMPTS 3
+
 //# ------- gate ---------
-const int short_delay = 760; //μs
-const int long_delay = 1520;
+const int short_delay =  760; //μs
+const int long_delay =  1520; //μs
 const int extended_delay = 0.5;
 String canc = "01111010010000";
-//# ----------------------
 
+//# -----Blinds------------
+const int pulse = 360; //μs
 String up0 = "110011000000100100000000000000000001100101010001101000100000000000";
 String st0 = "110011000000011000000000000000000001100101010001101000100000000000";
 String do0 = "110011000000001000000000000000000001100101010001101000100000000000";
@@ -70,9 +73,6 @@ String do88 ="010101010000001000000000000000001111100100111110101000100000000000
 String up99 ="010101010000100100000000000000000000010101011110101000100000000000";
 String st99 ="010101010000011000000000000000000000010101011110101000100000000000";
 String do99 ="010101010000001000000000000000000000010101011110101000100000000000";
-#define pin D2        //GPIO4
-#define NUM_ATTEMPTS 3
-//=================================================================================
 
 
 boolean Plugin_112(byte function, struct EventStruct *event, String& string)
@@ -134,60 +134,60 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
         {
            char command[80]; command[0] = 0;
            char TmpStr1[80]; TmpStr1[0] = 0;
-           
-           // nella variabile "stringa" c'è il contenuto della stringa
-           string.toCharArray(command, 80);
+           String IrType;
+           // nella variabile "stringa" c'è il contenuto del comando
+           string.toCharArray(command, 80);          
            String tmpString = string;
-           int argIndex = tmpString.indexOf(',');
-           
+           int argIndex = tmpString.indexOf(',');           
            // tmpString = assume il valore del primo pezzo della stringa fino alla virgola
-           if (argIndex) tmpString = tmpString.substring(2, argIndex);
-           
-           if (tmpString.equalsIgnoreCase("RFSEND")) {
-               Serial.println("RFSEND");
-               if ( GetArgv(command, TmpStr1, 2) ) { transmit_code(canc); };       !!!!       
-               else {
-                String ch;      
-                if ( server.arg (i) == "up0" ) { ch = up0; }
-                 else if ( server.arg(i) == "st0") { ch = st0; }
-                 else if ( server.arg(i) == "do0" ) { ch = do0; }      
-                 else if ( server.arg(i) == "up1" ) { ch = up1; }
-                 else if ( server.arg(i) == "st1" ) { ch = st1; }
-                 else if ( server.arg(i) == "do1" ) { ch = do1; }      
-                 else if ( server.arg(i) == "up2" ) { ch = up2; }
-                 else if ( server.arg(i) == "st2" ) { ch = st2; }
-                 else if ( server.arg(i) == "do2" ) { ch = do2; }      
-                 else if ( server.arg(i) == "up3" ) { ch = up3; }
-                 else if ( server.arg(i) == "st3" ) { ch = st3; }
-                 else if ( server.arg(i) == "do3" ) { ch = do3; }      
-                 else if ( server.arg(i) == "up4" ) { ch = up4; }
-                 else if ( server.arg(i) == "st4" ) { ch = st4; }
-                 else if ( server.arg(i) == "do4" ) { ch = do4; }      
-                 else if ( server.arg(i) == "up5" ) { ch = up5; }
-                 else if ( server.arg(i) == "st5" ) { ch = st5; }
-                 else if ( server.arg(i) == "do5" ) { ch = do5; }     
-                 else if ( server.arg(i) == "up6" ) { ch = up6; }
-                 else if ( server.arg(i) == "st6" ) { ch = st6; }
-                 else if ( server.arg(i) == "do6" ) { ch = do6; }      
-                 else if ( server.arg(i) == "up7" ) { ch = up7; }
-                 else if ( server.arg(i) == "st7" ) { ch = st7; }
-                 else if ( server.arg(i) == "do7" ) { ch = do7; }      
-                 else if ( server.arg(i) == "up8" ) { ch = up8; }
-                 else if ( server.arg(i) == "st8" ) { ch = st8; }
-                 else if ( server.arg(i) == "do8" ) { ch = do8; }      
-                 else if ( server.arg(i) == "up9" ) { ch = up9; }
-                 else if ( server.arg(i) == "st9" ) { ch = st9; }
-                 else if ( server.arg(i) == "do9" ) { ch = do9; }
-                 else {addLog(LOG_LEVEL_INFO,"Input error"); }      
-                 transmit_gate_code(ch);
-                 success = true;
+           if (argIndex) tmpString = tmpString.substring(2, argIndex);           
+           if ( tmpString.equalsIgnoreCase("RFSEND") ) {
+              Serial.println("RFSEND");
+              if (GetArgv(command, TmpStr1, 2)) rfType = TmpStr1;              
+              addLog(LOG_LEVEL_INFO, "RF Code Sent: " + rfType);
+              if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); };
+              else {
+                      String ch;      
+                      if ( rfType == "up0" ) { ch = up0; }
+                       else if ( rfType == "st0") { ch = st0; }
+                       else if ( rfType == "do0" ) { ch = do0; }      
+                       else if ( rfType == "up1" ) { ch = up1; }
+                       else if ( rfType == "st1" ) { ch = st1; }
+                       else if ( rfType == "do1" ) { ch = do1; }      
+                       else if ( rfType == "up2" ) { ch = up2; }
+                       else if ( rfType == "st2" ) { ch = st2; }
+                       else if ( rfType == "do2" ) { ch = do2; }      
+                       else if ( rfType == "up3" ) { ch = up3; }
+                       else if ( rfType == "st3" ) { ch = st3; }
+                       else if ( rfType == "do3" ) { ch = do3; }      
+                       else if ( rfType == "up4" ) { ch = up4; }
+                       else if ( rfType == "st4" ) { ch = st4; }
+                       else if ( rfType == "do4" ) { ch = do4; }      
+                       else if ( rfType == "up5" ) { ch = up5; }
+                       else if ( rfType == "st5" ) { ch = st5; }
+                       else if ( rfType == "do5" ) { ch = do5; }     
+                       else if ( rfType == "up6" ) { ch = up6; }
+                       else if ( rfType == "st6" ) { ch = st6; }
+                       else if ( rfType == "do6" ) { ch = do6; }      
+                       else if ( rfType == "up7" ) { ch = up7; }
+                       else if ( rfType == "st7" ) { ch = st7; }
+                       else if ( rfType == "do7" ) { ch = do7; }      
+                       else if ( rfType == "up8" ) { ch = up8; }
+                       else if ( rfType == "st8" ) { ch = st8; }
+                       else if ( rfType == "do8" ) { ch = do8; }      
+                       else if ( rfType == "up9" ) { ch = up9; }
+                       else if ( rfType == "st9" ) { ch = st9; }
+                       else if ( rfType == "do9" ) { ch = do9; }
+                       else {addLog(LOG_LEVEL_INFO,"Input error"); }      
+                       transmit_gate_code(ch);
+                       success = true;
                }
             }
-               if (success)
-                {
-                 //String url = String(Settings.Name) + "/control?cmd=" + string;
-                 addLog(LOG_LEVEL_INFO, "RF Code Sent. ";                        
-                }
+            if (success)
+              {
+                //String url = String(Settings.Name) + "/control?cmd=" + string;
+                addLog(LOG_LEVEL_INFO, "RF Code Sent. ";                        
+              }
         }
         break;
         }
