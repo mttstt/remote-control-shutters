@@ -116,14 +116,13 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 
                 if (txPin != -1)
                 {
-                        addLog(LOG_LEVEL_INFO, "INIT: RF433 TX created!");
-                        pinMode(txPin,OUTPUT);
+                    addLog(LOG_LEVEL_INFO, "INIT: RF433 TX created!");
+                    pinMode(txPin,OUTPUT);
                 }
-
                 if (txPin == -1)
                 {
-                        addLog(LOG_LEVEL_INFO, "INIT: RF433 TX REMOVED!");
-                        pinMode(txPin,INPUT);
+                    addLog(LOG_LEVEL_INFO, "INIT: RF433 TX REMOVED!");
+                    pinMode(txPin,INPUT);
                 }
                 success = true;
                 break;
@@ -143,12 +142,12 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
            if (argIndex) tmpString = tmpString.substring(2, argIndex);           
            if ( tmpString.equalsIgnoreCase("RFSEND") ) {
               Serial.println("RFSEND");
-              if (GetArgv(command, TmpStr1, 2)) rfType = TmpStr1;              
+              if ( GetArgv(command, TmpStr1, 2) ) rfType = TmpStr1;        
               addLog(LOG_LEVEL_INFO, "RF Code Sent: " + rfType);
-              if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); };
+              if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); success = true; };
               else {
-                      String ch;      
-                      if ( rfType == "up0" ) { ch = up0; }
+                       String ch;      
+                       if ( rfType == "up0" ) { ch = up0; }
                        else if ( rfType == "st0") { ch = st0; }
                        else if ( rfType == "do0" ) { ch = do0; }      
                        else if ( rfType == "up1" ) { ch = up1; }
@@ -183,17 +182,12 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                        success = true;
                }
             }
-            if (success)
-              {
-                //String url = String(Settings.Name) + "/control?cmd=" + string;
-                addLog(LOG_LEVEL_INFO, "RF Code Sent. ";                        
-              }
-        }
-        break;
-        }
-        return success;
+            if (success) { addLog(LOG_LEVEL_INFO + "RF Code Sent"); }
+            break;
+        }       
+     }
+     return success;
 }
-
 
 static void transmit_code(const char* code);
 static void transmit_gate_code(const char* code);
