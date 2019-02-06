@@ -14,6 +14,9 @@
    License: MIT
    License URI: http://en.wikipedia.org/wiki/MIT_License
    Status : "Proof of concept"  
+   
+   http://<ESP IP address>/control?cmd=RFSEND,canc,up8,do7
+   
  */
 
 #ifdef PLUGIN_BUILD_TESTING
@@ -129,9 +132,21 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WRITE:
         {
-            if (????) { transmit_code(ch); } 
-            else 
-            {
+           char command[80]; command[0] = 0;
+           char TmpStr1[80]; TmpStr1[0] = 0;
+           
+           // nella variabile "stringa" c'è il contenuto della stringa
+           string.toCharArray(command, 80);
+           String tmpString = string;
+           int argIndex = tmpString.indexOf(',');
+           
+           // tmpString = assume il valore del primo pezzo della stringa fino alla virgola
+           if (argIndex) tmpString = tmpString.substring(2, argIndex);
+           
+           if (tmpString.equalsIgnoreCase("RFSEND")) {
+               Serial.println("RFSEND");
+               if ( GetArgv(command, TmpStr1, 2) ) { transmit_code(canc); };       !!!!       
+               else {
                 String ch;      
                 if ( server.arg (i) == "up0" ) { ch = up0; }
                  else if ( server.arg(i) == "st0") { ch = st0; }
@@ -167,16 +182,11 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                  transmit_gate_code(ch);
                  success = true;
                }
+            }
                if (success)
                 {
-                        String url = String(Settings.Name) + "/shutter?s=" + string;
-                        addLog(LOG_LEVEL_INFO, "RF Code Sent: " + String(Plugin_112_iCode) + Plugin_112_sCodeWord);
-                        addLog(LOG_LEVEL_INFO, "To send this command again, ");
-                        addLog(LOG_LEVEL_INFO, "use this: <a href=\"http://" + url + "\">URL</a>");
-                        if (printToWeb)
-                        {
-                                printWebString += F("RCSwitch Code Sent!");
-                        }
+                 //String url = String(Settings.Name) + "/control?cmd=" + string;
+                 addLog(LOG_LEVEL_INFO, "RF Code Sent. ";                        
                 }
         }
         break;
@@ -187,7 +197,6 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
 static void transmit_code(const char* code);
 static void transmit_gate_code(const char* code);
-
 
 void transmit_code(String code){
   int len = code.length();
@@ -261,6 +270,5 @@ void transmit_gate_code(String code){
       digitalWrite(LED_BUILTIN, LOW);         
     } 
 }
-
 
 #endif
