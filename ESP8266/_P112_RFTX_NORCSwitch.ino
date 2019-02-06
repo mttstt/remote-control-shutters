@@ -111,9 +111,8 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_INIT:
         {
-                LoadTaskSettings(event->TaskIndex);
-
-                // ????? int txPin = Settings.TaskDevicePin1[event->TaskIndex];
+                // LoadTaskSettings(event->TaskIndex);           
+               // int txPin = Settings.TaskDevicePin1[event->TaskIndex];
                 int txPin = pin;
                 
                 if (txPin != -1)
@@ -133,6 +132,25 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WRITE:
         {
+          
+         /*
+          String command = parseString(string, 1);
+          if (command == F("RFSEND"))
+          {
+               String taskName = parseString(string, 2);
+               int8_t taskIndex = getTaskIndexByName(taskName);
+               if (taskIndex != -1)
+               {
+                  success = true;
+                  // from here you can use the taskIndex to acces all stuff from the task that is referenced!
+                  // show something on serial to prove that this works:
+                  Serial.println(ExtraTaskSettings.TaskDeviceName);
+                  Serial.println(Settings.TaskDevicePluginConfig[taskIndex];
+               }
+          }
+          break;
+         }
+        */
            char command[80]; command[0] = 0;
            char TmpStr1[80]; TmpStr1[0] = 0;
            String IrType;
@@ -142,6 +160,7 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
            int argIndex = tmpString.indexOf(',');           
            // tmpString = assume il valore del primo pezzo della stringa fino alla virgola
            if (argIndex) tmpString = tmpString.substring(2, argIndex);           
+                      
            if ( tmpString.equalsIgnoreCase("RFSEND") ) {
               Serial.println("RFSEND");
               if ( GetArgv(command, TmpStr1, 2) ) rfType = TmpStr1;        
