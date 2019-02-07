@@ -1,3 +1,5 @@
+#ifdef USES_P112
+
 //#######################################################################################################
 //########################### Plugin 112: Output 433 MHZ - RF                 ###########################
 //#######################################################################################################
@@ -164,8 +166,8 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
            if ( tmpString.equalsIgnoreCase("RFSEND") ) {
               Serial.println("RFSEND");
               if ( GetArgv(command, TmpStr1, 2) ) rfType = TmpStr1;        
-              addLog(LOG_LEVEL_INFO, "RF Code Sent: " + rfType);
-              if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); success = true; };
+              addLog(LOG_LEVEL_INFO, "RF Code Sent: ", rfType);
+              if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); success = true; }
               else {
                        String ch;      
                        if ( rfType == "up0" ) { ch = up0; }
