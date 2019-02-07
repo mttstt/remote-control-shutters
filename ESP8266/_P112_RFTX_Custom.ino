@@ -543,9 +543,6 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 }
 
 
-static void transmit_code(const char* code);
-static void transmit_gate_code(const char* code);
-
 void transmit_code(String code){
   int len = code.length();
   for (int i = 0; i < NUM_ATTEMPTS; i++) 
