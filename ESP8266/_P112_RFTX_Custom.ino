@@ -51,7 +51,7 @@
    This program was developed independently and it is not supported in any way.
  */
 
-#ifdef PLUGIN_BUILD_TESTING
+// #ifdef PLUGIN_BUILD_TESTING
 
 #include <RCSwitch.h>
 RCSwitch *rcswitchSender;
@@ -447,7 +447,7 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                         Serial.println("command: ");
                         Serial.println(rfType);
                         if ( rfType == '\0') break;
-                        if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); };
+                        if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); }
                         else {
                            String ch;      
                            if ( rfType == "up0" ) { ch = up0; }
