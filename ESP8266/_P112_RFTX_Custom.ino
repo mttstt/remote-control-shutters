@@ -1,4 +1,5 @@
 
+#ifdef USES_P112
 
 //#######################################################################################################
 //########################### Plugin 112: Output 433 MHZ - RF                 ###########################
@@ -7,7 +8,7 @@
    Version: 2.0
    Description: use this script to send RF with a cheap FS1000A alike sender.
    This plugin extends _P112_RFTX.ino in order to send custom segnals (RFCUSTOM).
-   
+
    Example of usage:
 
    Learn codes via _P111_RF.ino plugin!
@@ -27,11 +28,11 @@
    5=group (for DIP switches only)
    6=device (for DIP switches only)
    7=family (for DIP switches only)
-   
+
    RFSEND
                                        1      2              3  4
    http://<ESP IP address>/control?cmd=RFSEND,blablacommando,10,24
-   
+
    RFCUSTOM
                                        1        2   3
    http://<ESP IP address>/control?cmd=RFCUSTOM,up6,10
@@ -59,6 +60,8 @@ RCSwitch *rcswitchSender;
 #define PLUGIN_112
 #define PLUGIN_ID_112         112
 #define PLUGIN_NAME_112       "RF Transmit - FS1000A alike sender"
+#define CPLUGIN_NAME_112       "RF433"
+
 
 unsigned int Plugin_112_iCode;
 unsigned int Plugin_112_Repeat;
@@ -77,8 +80,8 @@ char Plugin_112_sFamily;
 
 
 //==============================================================================
-// #define pin D2             //GPIO4
-// #define NUM_ATTEMPTS 3
+#define pin 2             //GPIO4
+#define NUM_ATTEMPTS 3
 
 //# ------- gate ---------
 const int short_delay =    760; //μs
@@ -296,10 +299,10 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 {
                         /* For DIP switches type B */
                         Serial.println("RFSWITCHTYPEB");
-                        if (GetArgv(command, TmpStr1, 2)) Plugin_112_iCode = str2int(TmpStr1);
-                        if (GetArgv(command, TmpStr1, 3)) Plugin_112_nAddressCode = str2int(TmpStr1);
-                        if (GetArgv(command, TmpStr1, 4)) Plugin_112_nChannelCode = str2int(TmpStr1);
-                        if (GetArgv(command, TmpStr1, 5)) Plugin_112_Repeat = str2int(TmpStr1);
+                        if (GetArgv(command, TmpStr1, 2)) {Plugin_112_iCode = str2int(TmpStr1);  };
+                        if (GetArgv(command, TmpStr1, 3)) {Plugin_112_nAddressCode = str2int(TmpStr1);  };
+                        if (GetArgv(command, TmpStr1, 4)) {Plugin_112_nChannelCode = str2int(TmpStr1);  };
+                        if (GetArgv(command, TmpStr1, 5)) {Plugin_112_Repeat = str2int(TmpStr1);  };
 
                         /* checks */
                         if (Plugin_112_iCode == 0) break;
@@ -441,52 +444,52 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 else if (tmpString.equalsIgnoreCase("RFCUSTOM") && rcswitchSender != 0)
                    {
                         /* For general commands */
-                        Serial.println("RFCUSTOM");                        
-                        char* rfType;
-                        if (GetArgv(command, TmpStr1, 2)) rfType = (TmpStr1);                        
+                        Serial.println("RFCUSTOM");
+                        String rfType;
+                        if (GetArgv(command, TmpStr1, 2)) rfType = (TmpStr1);
                         Serial.println("command: ");
                         Serial.println(rfType);
                         if ( rfType == '\0') break;
                         if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); }
                         else {
-                           String ch;      
+                           String ch;
                            if ( rfType == "up0" ) { ch = up0; }
                            else if ( rfType == "st0") { ch = st0; }
-                           else if ( rfType == "do0" ) { ch = do0; }      
+                           else if ( rfType == "do0" ) { ch = do0; }
                            else if ( rfType == "up1" ) { ch = up1; }
                            else if ( rfType == "st1" ) { ch = st1; }
-                           else if ( rfType == "do1" ) { ch = do1; }      
+                           else if ( rfType == "do1" ) { ch = do1; }
                            else if ( rfType == "up2" ) { ch = up2; }
                            else if ( rfType == "st2" ) { ch = st2; }
-                           else if ( rfType == "do2" ) { ch = do2; }      
+                           else if ( rfType == "do2" ) { ch = do2; }
                            else if ( rfType == "up3" ) { ch = up3; }
                            else if ( rfType == "st3" ) { ch = st3; }
-                           else if ( rfType == "do3" ) { ch = do3; }      
+                           else if ( rfType == "do3" ) { ch = do3; }
                            else if ( rfType == "up4" ) { ch = up4; }
                            else if ( rfType == "st4" ) { ch = st4; }
-                           else if ( rfType == "do4" ) { ch = do4; }      
+                           else if ( rfType == "do4" ) { ch = do4; }
                            else if ( rfType == "up5" ) { ch = up5; }
                            else if ( rfType == "st5" ) { ch = st5; }
-                           else if ( rfType == "do5" ) { ch = do5; }     
+                           else if ( rfType == "do5" ) { ch = do5; }
                            else if ( rfType == "up6" ) { ch = up6; }
                            else if ( rfType == "st6" ) { ch = st6; }
-                           else if ( rfType == "do6" ) { ch = do6; }      
+                           else if ( rfType == "do6" ) { ch = do6; }
                            else if ( rfType == "up7" ) { ch = up7; }
                            else if ( rfType == "st7" ) { ch = st7; }
-                           else if ( rfType == "do7" ) { ch = do7; }      
+                           else if ( rfType == "do7" ) { ch = do7; }
                            else if ( rfType == "up8" ) { ch = up8; }
                            else if ( rfType == "st8" ) { ch = st8; }
-                           else if ( rfType == "do8" ) { ch = do8; }      
+                           else if ( rfType == "do8" ) { ch = do8; }
                            else if ( rfType == "up9" ) { ch = up9; }
                            else if ( rfType == "st9" ) { ch = st9; }
                            else if ( rfType == "do9" ) { ch = do9; }
                            /**
                            * Transmit the first 'length' bits of the integer 'code'. The
                            */
-                         
+
                            transmit_gate_code(ch);
-                           
-                        }                        
+
+                        }
                         success = true;
                 }
 
@@ -540,82 +543,81 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
         }
         return success;
-}
+};
 
 
-void transmit_code(String code){
+void transmit_code ( String code ) {
   int len = code.length();
-  for (int i = 0; i < NUM_ATTEMPTS; i++) 
-  {        
+  for (int i = 0; i < NUM_ATTEMPTS; i++ )
+  {
       // ----------------------- Preamble ----------------------
       digitalWrite(LED_BUILTIN, LOW);
-      for (int i = 0; i < 12; ++i) 
+      for ( int k = 0; k < 12; ++k )
       {
-        digitalWrite(pin, HIGH); 
+        digitalWrite(pin, HIGH);
         delayMicroseconds(pulse);
-        digitalWrite(pin, LOW); 
-        delayMicroseconds(pulse);  
+        digitalWrite(pin, LOW);
+        delayMicroseconds(pulse);
       }
       // -------------------End Preamble--Segnal ---------------
-      digitalWrite(pin, LOW);
-      delayMicroseconds(3500); // added 3,5 millis
-      for (int j=0;j<len;++j) 
+      digitalWrite( pin, LOW );
+      delayMicroseconds( 3500 ); // added 3,5 millis
+      for ( int j=0; j<len; ++j )
       {
-         char ch = code.charAt(j);        
+         char ch = code.charAt( j );
          if (ch == '1')
          {
-           digitalWrite(pin, HIGH);         
-           delayMicroseconds(pulse);
-           digitalWrite(pin, LOW);          
-           delayMicroseconds(pulse*2);
-         } 
-         else 
-         { 
+           digitalWrite( pin, HIGH );
+           delayMicroseconds( pulse );
+           digitalWrite( pin, LOW );
+           delayMicroseconds( pulse*2 );
+         }
+         else
+         {
            //trc("0");
-           digitalWrite(pin, HIGH); 
+           digitalWrite(pin, HIGH);
            delayMicroseconds(pulse*2);
-           digitalWrite(pin, LOW); 
+           digitalWrite(pin, LOW);
            delayMicroseconds(pulse);
          }
       }
       digitalWrite(pin, LOW);
       delayMicroseconds(5000); // added 2 millis
-      digitalWrite(LED_BUILTIN, LOW);         
-    // ---------------------End Segnal --------------------------   
+      digitalWrite(LED_BUILTIN, LOW);
+    // ---------------------End Segnal --------------------------
     }
 }
 
 
-void transmit_gate_code(String code){
+void transmit_gate_code( String code ) {
   int len = code.length();
-  for (int i = 0; i < NUM_ATTEMPTS; i++) 
-  {              
-      digitalWrite(pin, LOW);
-      for (int j=0;j<len;++j) 
+  for (int i = 0; i < NUM_ATTEMPTS; i++)
+  {
+      digitalWrite( pin, LOW );
+      for (int j=0; j<len; ++j )
       {
-         char ch = code.charAt(j);        
+         char ch = code.charAt(j);
          if (ch == '1')
          {
-           digitalWrite(pin, HIGH);         
+           digitalWrite(pin, HIGH);
            delayMicroseconds(short_delay);
-           digitalWrite(pin, LOW);          
+           digitalWrite(pin, LOW);
            delayMicroseconds(long_delay);
-         } 
-         else 
-         {            
-           digitalWrite(pin, HIGH); 
+         }
+         else
+         {
+           digitalWrite(pin, HIGH);
            delayMicroseconds(long_delay);
-           digitalWrite(pin, LOW); 
+           digitalWrite(pin, LOW);
            delayMicroseconds(short_delay);
          }
       }
       digitalWrite(pin, LOW);
       delayMicroseconds(extended_delay); // added 2 millis
       delay(extended_delay);
-      digitalWrite(LED_BUILTIN, LOW);         
-    } 
+      digitalWrite(LED_BUILTIN, LOW);
+    }
 }
-
 
 
 #endif
