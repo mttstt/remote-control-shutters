@@ -165,7 +165,7 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                       
            if ( tmpString.equalsIgnoreCase("RFSEND") ) {
               Serial.println("RFSEND");
-              if ( GetArgv(command, TmpStr1, 2) ) rfType = TmpStr1;        
+             // if ( GetArgv(command, TmpStr1, 2) ) rfType = TmpStr1;        
               addLog(LOG_LEVEL_INFO, "RF Code Sent: ", rfType);
               if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); success = true; }
               else {
@@ -211,9 +211,6 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
      }
      return success;
 }
-
-static void transmit_code(const char* code);
-static void transmit_gate_code(const char* code);
 
 void transmit_code(String code){
   int len = code.length();
