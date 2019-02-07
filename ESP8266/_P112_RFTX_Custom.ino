@@ -76,7 +76,6 @@ char Plugin_112_sFamily;
 
 
 
-
 //==============================================================================
 // #define pin D2             //GPIO4
 // #define NUM_ATTEMPTS 3
@@ -442,14 +441,12 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 else if (tmpString.equalsIgnoreCase("RFCUSTOM") && rcswitchSender != 0)
                    {
                         /* For general commands */
-                        Serial.println("RFCUSTOM");
-                        if (GetArgv(command, TmpStr1, 2)) Plugin_112_iCode = str2int(TmpStr1);
-                   
-                        // Potrei passare Repeat invece di usare NUMATTEMPTS
-                        //
-                        // if (GetArgv(command, TmpStr1, 3)) Plugin_112_Repeat = str2int(TmpStr1);
-                        //
-                        
+                        Serial.println("RFCUSTOM");                        
+                        char* rfType;
+                        if (GetArgv(command, TmpStr1, 2)) rfType = (TmpStr1);                        
+                        Serial.println("command: ");
+                        Serial.println(rfType);
+                        if ( rfType == '\0') break;
                         if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); };
                         else {
                            String ch;      
