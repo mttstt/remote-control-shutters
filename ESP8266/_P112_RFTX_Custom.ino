@@ -5,14 +5,16 @@
 //#######################################################################################################
 /*
    Version: 2.0
-   Description: use this script to send RF with a cheap FS1000A alike sender
+   Description: use this script to send RF with a cheap FS1000A alike sender.
+   This plugin extends _P112_RFTX.ino in order to send custom segnals (RFCUSTOM).
+   
    Example of usage:
 
    Learn codes via _P111_RF.ino plugin!
    Needs: RCSwitch library
    Tested on GPIO:14
-   Author: S4nder
-   Copyright: (c) 2015-2016 Sander Pleijers (s4nder)
+   Author: mttstt
+   Copyright: (c) 2019-2020 (mttstt)
    License: MIT
    License URI: http://en.wikipedia.org/wiki/MIT_License
    Status : "Proof of concept"
@@ -25,12 +27,14 @@
    5=group (for DIP switches only)
    6=device (for DIP switches only)
    7=family (for DIP switches only)
+   
+   RFSEND
                                        1      2              3  4
    http://<ESP IP address>/control?cmd=RFSEND,blablacommando,10,24
    
    RFCUSTOM
-                                       1        2
-   http://<ESP IP address>/control?cmd=RFCUSTOM,up6
+                                       1        2   3
+   http://<ESP IP address>/control?cmd=RFCUSTOM,up6,10
 
    DIP switches A+B+D:
                                        1             2 5     6     3
@@ -75,7 +79,7 @@ char Plugin_112_sFamily;
 
 //==============================================================================
 // #define pin D2             //GPIO4
-#define NUM_ATTEMPTS 3
+// #define NUM_ATTEMPTS 3
 
 //# ------- gate ---------
 const int short_delay =    760; //μs
@@ -440,8 +444,13 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                         /* For general commands */
                         Serial.println("RFCUSTOM");
                         if (GetArgv(command, TmpStr1, 2)) Plugin_112_iCode = str2int(TmpStr1);
+                   
+                        // Potrei passare Repeat invece di usare NUMATTEMPTS
+                        //
+                        // if (GetArgv(command, TmpStr1, 3)) Plugin_112_Repeat = str2int(TmpStr1);
+                        //
                         
-                        if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); success = true; };
+                        if ( rfType.equalsIgnoreCase("canc") ) { transmit_code(canc); };
                         else {
                            String ch;      
                            if ( rfType == "up0" ) { ch = up0; }
