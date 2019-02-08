@@ -1,5 +1,5 @@
 
-#ifdef USES_P112
+// #ifdef USES_P112
 
 //#######################################################################################################
 //########################### Plugin 112: Output 433 MHZ - RF                 ###########################
@@ -52,14 +52,14 @@
    This program was developed independently and it is not supported in any way.
  */
 
-// #ifdef PLUGIN_BUILD_TESTING
+#ifdef PLUGIN_BUILD_TESTING
 
 #include <RCSwitch.h>
 RCSwitch *rcswitchSender;
 
 #define PLUGIN_112
 #define PLUGIN_ID_112         112
-#define PLUGIN_NAME_112       "RF Transmit - FS1000A alike sender"
+#define PLUGIN_NAME_112       "RF Transmit (custom) - FS1000A alike sender"
 #define CPLUGIN_NAME_112       "RF433"
 
 
