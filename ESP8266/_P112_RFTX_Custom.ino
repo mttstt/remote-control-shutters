@@ -34,8 +34,8 @@
    http://<ESP IP address>/control?cmd=RFSEND,blablacommando,10,24
 
    RFCUSTOM
-                                       1        2   3
-   http://<ESP IP address>/control?cmd=RFCUSTOM,up6,10
+                                       1        2   
+   http://<ESP IP address>/control?cmd=RFCUSTOM,up6
 
    DIP switches A+B+D:
                                        1             2 5     6     3
