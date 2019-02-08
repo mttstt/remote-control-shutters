@@ -2,7 +2,7 @@
 // #ifdef USES_P112
 
 //#######################################################################################################
-//########################### Plugin 312: Output 433 MHZ - RF                 ###########################
+//########################### Plugin 112: Output 433 MHZ - RF                 ###########################
 //#######################################################################################################
 /*
    Version: 2.0
@@ -52,7 +52,7 @@
    This program was developed independently and it is not supported in any way.
  */
 
-#ifdef PLUGIN_BUILD_DEV
+// #ifdef PLUGIN_BUILD_TESTING
 
 #include <RCSwitch.h>
 RCSwitch *rcswitchSender;
