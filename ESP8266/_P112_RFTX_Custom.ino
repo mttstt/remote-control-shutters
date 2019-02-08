@@ -52,7 +52,7 @@
    This program was developed independently and it is not supported in any way.
  */
 
-#ifdef PLUGIN_BUILD_TESTING
+#ifdef PLUGIN_BUILD_DEV
 
 #include <RCSwitch.h>
 RCSwitch *rcswitchSender;
