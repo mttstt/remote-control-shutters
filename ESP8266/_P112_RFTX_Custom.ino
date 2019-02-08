@@ -52,7 +52,7 @@
    This program was developed independently and it is not supported in any way.
  */
 
-// #ifdef PLUGIN_BUILD_TESTING
+#ifdef PLUGIN_BUILD_DEVELOPMENT
 
 #include <RCSwitch.h>
 RCSwitch *rcswitchSender;
@@ -619,5 +619,5 @@ void transmit_gate_code( String code ) {
     }
 }
 
-// #endif
+#endif
 
