@@ -28,7 +28,7 @@
  */
 
 //uncomment one of the following as needed
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <ESPeasySerial.h>
 //#include <TimeLib.h>
 
@@ -989,8 +989,11 @@ String stampaDataTime(unsigned long scn)
 
 // ==============================================
 // ID inverter da cambiare a mano !!!
- clsAurora Inverter = clsAurora(1); // 
-// ============================================== 
+ //clsAurora Inverter = clsAurora(1); //
+
+ clsAurora*  Inverter = NULL;
+
+// ==============================================
 
 boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 {
@@ -1007,7 +1010,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
                 Device[deviceCount].PullUpOption = false;
                 Device[deviceCount].InverseLogicOption = false;
                 Device[deviceCount].FormulaOption = false;
-                Device[deviceCount].ValueCount = 9;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
+                Device[deviceCount].ValueCount = 4;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
                 Device[deviceCount].TimerOption = false;
                 Device[deviceCount].TimerOptional = false;
                 Device[deviceCount].GlobalSyncOption = true;
@@ -1025,8 +1028,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         {
            //called when the user opens the module configuration page
            //it allows to add a new row for each output variable of the plugin
-           
-           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[0], PSTR(PLUGIN_VALUENAME1_111));           
+
+           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[0], PSTR(PLUGIN_VALUENAME1_111));
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[3], PSTR(PLUGIN_VALUENAME4_111));
@@ -1069,14 +1072,20 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            // this case defines code to be executed when the plugin is initialised
            //clsAurora Inverter = clsAurora( PCONFIG(0) );  //verificare l'id dell'Inverter !!!
 
+           if (Inverter)
+             delete Inverter;
+           Inverter = new clsAurora( PCONFIG(0) );
+
+
            Plugin_111_txPin = CONFIG_PIN1;
 
            Serial.print("Plugin_111_txPin: "); Serial.println(Plugin_111_txPin);
-           addLog(LOG_LEVEL_INFO, "Plugin_111_txPin: "); addLog(LOG_LEVEL_INFO, Plugin_111_txPin);
+           addLog(LOG_LEVEL_INFO, "Plugin_111_txPin: ");
+           //addLog(LOG_LEVEL_INFO, Plugin_111_txPin);
 
            if ( Plugin_111_txPin != -1)
            {
-               addLog(LOG_LEVEL_INFO, "INIT: Aurora 123 Inverter created!");
+               addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
                // Serial.begin(9600);
                Serial1.setTimeout(500);
                Serial1.begin(19200);  // initialize serial connection to the inverter
@@ -1089,7 +1098,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if ( Plugin_111_txPin == -1)
            {
-               addLog(LOG_LEVEL_INFO, "INIT: Aurora 123 Inverter removed!");
+               addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter removed!");
                pinMode(Plugin_111_txPin, INPUT);
            }
            //after the plugin has been initialised successfuly, set success and break
@@ -1103,16 +1112,16 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //It is executed according to the delay configured on the device configuration page, only once
            //after the plugin has read data successfuly, set success and break
 
-           UserVar[event->BaseVarIndex + 0] = Inverter.ReadCumulatedEnergy(0);
-           UserVar[event->BaseVarIndex + 1] = Inverter.ReadTimeDate();          
-           UserVar[event->BaseVarIndex + 3] = Inverter.ReadSystemPN();
-           UserVar[event->BaseVarIndex + 4] = Inverter.ReadSystemSerialNumber();
-           UserVar[event->BaseVarIndex + 5] = Inverter.ReadManufacturingWeekYear();
-           UserVar[event->BaseVarIndex + 6] = Inverter.ReadFirmwareRelease();
-           UserVar[event->BaseVarIndex + 7] = Inverter.ReadVersion();
-           UserVar[event->BaseVarIndex + 8] = Inverter.ReadState();
+           UserVar[event->BaseVarIndex + 0] = Inverter->ReadCumulatedEnergy(0);
+           UserVar[event->BaseVarIndex + 1] = Inverter->ReadTimeDate();
+           UserVar[event->BaseVarIndex + 3] = Inverter->ReadSystemPN();
+           UserVar[event->BaseVarIndex + 4] = Inverter->ReadSystemSerialNumber();
+           UserVar[event->BaseVarIndex + 5] = Inverter->ReadManufacturingWeekYear();
+           UserVar[event->BaseVarIndex + 6] = Inverter->ReadFirmwareRelease();
+           UserVar[event->BaseVarIndex + 7] = Inverter->ReadVersion();
+           UserVar[event->BaseVarIndex + 8] = Inverter->ReadState();
 
-           String log = F("INVERTER LOGGER: ");
+           String log = F("READ LOGGER: ");
            log += UserVar[event->BaseVarIndex + 0]; log +=',';
            log += UserVar[event->BaseVarIndex + 1]; log +=',';
            log += UserVar[event->BaseVarIndex + 2]; log +=',';
@@ -1124,7 +1133,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            log += UserVar[event->BaseVarIndex + 8];
            addLog(LOG_LEVEL_INFO,log);
            Serial.println(log);
-           
+
            success = true;
            break;
         }
@@ -1180,17 +1189,17 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 //==========================================================================
 
 void read_RS485(){
-   
+
   String log = F("INVERTER LOGGER: ");
-  log += Inverter.ReadCumulatedEnergy(0); log +=',';
-  log += Inverter.ReadTimeDate(); log +=',';
-  log += Inverter.ReadLastFourAlarms(); log +=',';
-  log += Inverter.ReadSystemPN(); log +=',';
-  log += Inverter.ReadSystemSerialNumber(); log +=',';
-  log += Inverter.ReadManufacturingWeekYear(); log +=',';
-  log += Inverter.ReadVersion(); log +=',';
-  log += Inverter.ReadState(); log +=',';
-  log += Inverter.ReadDSP(50,1); log +=',';
+  log += Inverter->ReadCumulatedEnergy(0); log +=',';
+  log += Inverter->ReadTimeDate(); log +=',';
+  log += Inverter->ReadLastFourAlarms(); log +=',';
+  log += Inverter->ReadSystemPN(); log +=',';
+  log += Inverter->ReadSystemSerialNumber(); log +=',';
+  log += Inverter->ReadManufacturingWeekYear(); log +=',';
+  log += Inverter->ReadVersion(); log +=',';
+  log += Inverter->ReadState(); log +=',';
+  log += Inverter->ReadDSP(50,1); log +=',';
   addLog(LOG_LEVEL_INFO,log);
   Serial.println(log);
 
