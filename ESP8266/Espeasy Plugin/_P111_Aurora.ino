@@ -1039,7 +1039,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WEBFORM_LOAD:
         {
-           addFormNumericBox(F("PVI Address (AT THE MOMENT IS NOT USED"), F("plugin_111_pviaddr"), PCONFIG(0),1,255);
+           addFormNumericBox(F("PVI Address"), F("plugin_111_pviaddr"), PCONFIG(0),1,255);
 
            //after the form has been loaded, set success and break
            success = true;
@@ -1070,18 +1070,17 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         case PLUGIN_INIT:
         {
            // this case defines code to be executed when the plugin is initialised
-           //clsAurora Inverter = clsAurora( PCONFIG(0) );  //verificare l'id dell'Inverter !!!
 
-           if (Inverter)
-             delete Inverter;
+           if (Inverter) delete Inverter;
            Inverter = new clsAurora( PCONFIG(0) );
-
 
            Plugin_111_txPin = CONFIG_PIN1;
 
            Serial.print("Plugin_111_txPin: "); Serial.println(Plugin_111_txPin);
-           addLog(LOG_LEVEL_INFO, "Plugin_111_txPin: ");
-           //addLog(LOG_LEVEL_INFO, Plugin_111_txPin);
+           Serial.print("PVI Address: "); Serial.println( PCONFIG(0) );
+
+           //addLog(LOG_LEVEL_INFO, "Plugin_111_txPin: "); addLog(LOG_LEVEL_INFO, Plugin_111_txPin);
+           //addLog(LOG_LEVEL_INFO, "PVI Address: "); addLog(LOG_LEVEL_INFO, PCONFIG(0) );
 
            if ( Plugin_111_txPin != -1)
            {
