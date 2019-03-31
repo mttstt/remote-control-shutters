@@ -47,7 +47,6 @@
 // CONFIG_PIN3 - The third GPIO pin selected within the task
 // CONFIG_PORT - The port in case the device has multiple in/out pins
 
-int8_t Plugin_111_txPin;  //5 => GPIO5 (D1)
 
 //RS485 control
 #define RS485Transmit HIGH
@@ -57,6 +56,7 @@ int8_t Plugin_111_txPin;  //5 => GPIO5 (D1)
 class clsAurora {
 private:
   int MaxAttempt = 1;
+  int Plugin_111_txPin = 5;
   byte Address = 0;
   void clearData(byte *data, byte len) {
     for (int i = 0; i < len; i++) {
@@ -114,7 +114,7 @@ private:
     log += SendData[8]; log +=',';
     log += SendData[9];
     addLog(LOG_LEVEL_INFO, log);
-    Serial.println(log);
+    //Serial.println(log);
    //=================================================
 
     for (int i = 0; i < MaxAttempt; i++)
@@ -151,7 +151,8 @@ public:
   bool SendStatus = false;
   bool ReceiveStatus = false;
   byte ReceiveData[8];
-  clsAurora(byte address) {
+  clsAurora(byte address, int plugin_111_txpin ) {
+    Plugin_111_txPin = plugin_111_txpin;
     Address = address;
     SendStatus = false;
     ReceiveStatus = false;
@@ -1072,33 +1073,31 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            // this case defines code to be executed when the plugin is initialised
 
            if (Inverter) delete Inverter;
-           Inverter = new clsAurora( PCONFIG(0) );
+           Inverter = new clsAurora( PCONFIG(0) , CONFIG_PIN1 );
 
-           Plugin_111_txPin = CONFIG_PIN1;
-
-           Serial.print("Plugin_111_txPin: "); Serial.println(Plugin_111_txPin);
+           Serial.print("Tx Pin: "); Serial.println(CONFIG_PIN1);
            Serial.print("PVI Address: "); Serial.println( PCONFIG(0) );
 
            //addLog(LOG_LEVEL_INFO, "Plugin_111_txPin: "); addLog(LOG_LEVEL_INFO, Plugin_111_txPin);
            //addLog(LOG_LEVEL_INFO, "PVI Address: "); addLog(LOG_LEVEL_INFO, PCONFIG(0) );
 
-           if ( Plugin_111_txPin != -1)
+           if ( CONFIG_PIN1 != -1)
            {
                addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
                // Serial.begin(9600);
                Serial1.setTimeout(500);
                Serial1.begin(19200);  // initialize serial connection to the inverter
-               pinMode( Plugin_111_txPin, OUTPUT);
+               pinMode( CONFIG_PIN1, OUTPUT);
                // pinMode(rxPin, INPUT);  // set pin modes
                // pinMode(txPin, OUTPUT);
                // pinMode(rtsPin, OUTPUT);
                // digitalWrite( Plugin_111_txPin, RS485Receive);  // Init Transceiver
            }
 
-           if ( Plugin_111_txPin == -1)
+           if ( CONFIG_PIN1 == -1)
            {
                addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter removed!");
-               pinMode(Plugin_111_txPin, INPUT);
+               pinMode(CONFIG_PIN1, INPUT);
            }
            //after the plugin has been initialised successfuly, set success and break
            success = true;
