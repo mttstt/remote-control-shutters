@@ -100,9 +100,8 @@ private:
     SendData[8] = lowByte(crc);
     SendData[9] = highByte(crc);
     clearReceiveData();
-
     //=================================================
-    String log = "PLUGIN INVERTER AURORA - Send Function:";
+    String log = "AURORA - Send:";
     log += SendData[0]; log +=',';
     log += SendData[1]; log +=',';
     log += SendData[2]; log +=',';
@@ -112,11 +111,11 @@ private:
     log += SendData[6]; log +=',';
     log += SendData[7]; log +=',';
     log += SendData[8]; log +=',';
-    log += SendData[9];
+    log += SendData[9]; log +='-';
+    log += Plugin_111_txPin;
     addLog(LOG_LEVEL_INFO, log);
     //Serial.println(log);
    //=================================================
-
     for (int i = 0; i < MaxAttempt; i++)
     {
       digitalWrite(Plugin_111_txPin, RS485Transmit);
@@ -126,6 +125,11 @@ private:
         SendStatus = true;
         digitalWrite(Plugin_111_txPin, RS485Receive);
         if (Serial1.readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
+          //====================================
+          String log1 = "AURORA - Receive: ";
+          log1 += sizeof(ReceiveData); log +='-';
+          addLog(LOG_LEVEL_INFO, log1);
+          //====================================
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
             break;
