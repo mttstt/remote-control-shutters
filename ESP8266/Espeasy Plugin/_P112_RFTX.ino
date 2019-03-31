@@ -152,7 +152,7 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 LoadTaskSettings(event->TaskIndex);
 
                 Plugin_112_Repeat = ExtraTaskSettings.TaskDevicePluginConfigLong[0];
-                txPin_112 = Settings.TaskDevicePin1[event->TaskIndex];
+               // txPin_112 = Settings.TaskDevicePin1[event->TaskIndex];
                 
               //  Serial.println("txPin_112: "); Serial.println(txPin_112);
 
