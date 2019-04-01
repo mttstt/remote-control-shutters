@@ -300,7 +300,7 @@ void transmit_gate_code(String code){
   int len = code.length();
   for (int i = 0; i < Plugin_112_Repeat; i++)
   {
-      digitalWrite(txPin_112, LOW);
+      //digitalWrite(txPin_112, LOW);
       for (int j=0;j<len;++j)
       {
          char ch = code.charAt(j);
@@ -310,6 +310,7 @@ void transmit_gate_code(String code){
            delayMicroseconds(short_delay);
            digitalWrite(txPin_112, LOW);
            delayMicroseconds(long_delay);
+           addLog(LOG_LEVEL_INFO, "cancello: 1");
          }
          else
          {
@@ -317,10 +318,11 @@ void transmit_gate_code(String code){
            delayMicroseconds(long_delay);
            digitalWrite(txPin_112, LOW);
            delayMicroseconds(short_delay);
+           addLog(LOG_LEVEL_INFO, "cancello: 0");
          }
       }
-      digitalWrite(txPin_112, LOW);
-      delayMicroseconds(extended_delay); // added 2 millis
+      //digitalWrite(txPin_112, LOW);
+      //delayMicroseconds(extended_delay); // added 2 millis
       delay(extended_delay);
     //  digitalWrite(LED_BUILTIN, LOW);
     }
