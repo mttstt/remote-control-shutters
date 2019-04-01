@@ -155,7 +155,7 @@ public:
   bool SendStatus = false;
   bool ReceiveStatus = false;
   byte ReceiveData[8];
-  clsAurora(byte address, int plugin_111_txpin ) {
+  clsAurora(byte address, byte plugin_111_txpin ) {
     Plugin_111_txPin = plugin_111_txpin;
     Address = address;
     SendStatus = false;
