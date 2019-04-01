@@ -152,7 +152,7 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 LoadTaskSettings(event->TaskIndex);
 
                 Plugin_112_Repeat = ExtraTaskSettings.TaskDevicePluginConfigLong[0];
-               // txPin_112 = Settings.TaskDevicePin1[event->TaskIndex];
+                txPin_112 = Settings.TaskDevicePin1[event->TaskIndex];
                 
               //  Serial.println("txPin_112: "); Serial.println(txPin_112);
 
@@ -181,7 +181,7 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
            if (command == F("rfsend")) {
 
              String taskName = parseString(string, 2);
-             int8_t taskIndex = getTaskIndexByName(taskName);
+             //int8_t taskIndex = getTaskIndexByName(taskName);
 
              if ( GetArgv(string.c_str(), TmpStr1, 2) ) rfType = TmpStr1.c_str();
               addLog(LOG_LEVEL_INFO, "command: RFSEND ");
