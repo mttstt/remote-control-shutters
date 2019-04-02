@@ -125,7 +125,7 @@ private:
       digitalWrite(Plugin_111_RS485, RS485Transmit);
       delay(50);
       if (easySerial->write(SendData, sizeof(SendData)) != 0) {
-        Serial.flush();
+        easySerial->flush();
         SendStatus = true;
         digitalWrite(Plugin_111_RS485, RS485Receive);
         if (easySerial->readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
@@ -162,6 +162,7 @@ public:
   bool SendStatus = false;
   bool ReceiveStatus = false;
   byte ReceiveData[8];
+
   clsAurora(byte address, byte plugin_111_RS485 ) {
     Plugin_111_RS485 = plugin_111_RS485;
     Address = address;
@@ -1001,9 +1002,7 @@ String stampaDataTime(unsigned long scn)
 
 // ==============================================
 // ID inverter da cambiare a mano !!!
- //clsAurora Inverter = clsAurora(1); //
-
- clsAurora*  Inverter = NULL;
+clsAurora*  Inverter = NULL;
 
 // ==============================================
 
