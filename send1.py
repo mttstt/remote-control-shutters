@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# send.py 2018-02-15
+# send.py 2019-03-02
 # Public Domain
 
 import time
@@ -66,9 +66,8 @@ if not pi.connected:
 
 pi.set_mode(GPIO, pigpio.OUTPUT)
 if __name__ == '__main__':
-    for argument in sys.argv[1:]:
-        print repr(argument)
-        exec('transmit_code(' + argument + ')')
+        print sys.argv[1:] 
+        exec('transmit_code(' + str(sys.argv[1:]) + ')')
 
 pi.wave_tx_stop()
 pi.stop()
