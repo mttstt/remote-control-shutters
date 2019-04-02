@@ -28,7 +28,7 @@
 
 //uncomment one of the following as needed
 //#include <Arduino.h>
-#include <ESPeasySerial.h>
+// #include <ESPeasySerial.h>
 //#include <TimeLib.h>
 
 #define PLUGIN_111
