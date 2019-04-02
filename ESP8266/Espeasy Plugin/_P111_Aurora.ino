@@ -16,8 +16,7 @@
    Status : "Proof of concept"
 
    PIN Wemos D1 mini successuful tested: GPIO-5(D1)
-                                         GPIO-4(D2)
-                                         GPIO-2(D4)
+                                         GPIO-16(D0)                                         
    References:
    https://github.com/H4ndl3/pvimon/blob/master/pvimon.ino
    http://www.drhack.it/images/PDF/AuroraCommunicationProtocol_4_2.pdf
