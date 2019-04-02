@@ -55,7 +55,7 @@
 #define RS485 D3 //GPIO-0 (D3)
 
 ESPeasySerial serDebug(RX, TX); // RX, TX
-bool serDebug = true;
+serDebug.begin(9600);
 
 void serDebugPrintData(byte *data) {
   for (int i = 0; i < 8; i++) {
