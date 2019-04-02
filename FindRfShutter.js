@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const fs = require('fs');
-var exec = require('child_process').exec;
+//var exec = require('child_process').exec;
 var command;
 
 function dec2bin(dec){
@@ -22,11 +22,15 @@ function go () {
           { var tentativo = preambolo+direction+zero+id+fine;
             var command = '~/remote-control-shutters/send1.py '+ tentativo;
            console.log(command);
-           exec(command, function callback(error, stdout, stderr){
-                     console.log('stdout: ' + stdout + i + id);
-                     console.log('stderr: ' + stderr);
-                     console.log('exec error: ' + error);
-           });
+                    
+           require('child_process').execSync(command, {stdio: 'inherit'} );        
+                    
+           //exec(command, function callback(error, stdout, stderr){
+           //          console.log('stdout: ' + stdout + i + id);
+           //          console.log('stderr: ' + stderr);
+           //          console.log('exec error: ' + error);
+           //});
+                    
          }
       }
 }
