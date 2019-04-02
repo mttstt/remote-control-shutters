@@ -56,13 +56,14 @@
 class clsAurora {
 private:
   int MaxAttempt = 1;
-  int Plugin_111_txPin = 5;
+  int Plugin_111_RS485 = 5;
   byte Address = 0;
   void clearData(byte *data, byte len) {
     for (int i = 0; i < len; i++) {
       data[i] = 0;
     }
   }
+   
   int Crc16(byte *data, int offset, int count)
   {
     byte BccLo = 0xFF;
@@ -111,19 +112,18 @@ private:
     log += SendData[6]; log +=',';
     log += SendData[7]; log +=',';
     log += SendData[8]; log +=',';
-    log += SendData[9]; log +='-';
-    log += Plugin_111_txPin;
-    addLog(LOG_LEVEL_INFO, log);
-    //Serial.println(log);
+    log += SendData[9]; log +=' - ';
+    log += Plugin_111_RS485;
+    addLog(LOG_LEVEL_INFO, log);   
    //=================================================
     for (int i = 0; i < MaxAttempt; i++)
     {
-      digitalWrite(Plugin_111_txPin, RS485Transmit);
+      digitalWrite(Plugin_111_RS485, RS485Transmit);
       delay(50);
       if (Serial1.write(SendData, sizeof(SendData)) != 0) {
         Serial1.flush();
         SendStatus = true;
-        digitalWrite(Plugin_111_txPin, RS485Receive);
+        digitalWrite(Plugin_111_RS485, RS485Receive);
         if (Serial1.readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
           //====================================
           String log1 = "AURORA - Receive: ";
@@ -136,7 +136,7 @@ private:
           }
         }
       }
-      else { Serial.println("Error while sending data"); digitalWrite(Plugin_111_txPin, RS485Receive); return(false); }
+      else { addLog(LOG_LEVEL_INFO,"Error while sending data"); digitalWrite(Plugin_111_RS485, RS485Receive); return(false); }
     }
     return ReceiveStatus;
   }
@@ -155,8 +155,8 @@ public:
   bool SendStatus = false;
   bool ReceiveStatus = false;
   byte ReceiveData[8];
-  clsAurora(byte address, byte plugin_111_txpin ) {
-    Plugin_111_txPin = plugin_111_txpin;
+  clsAurora(byte address, byte plugin_111_RS485 ) {
+    Plugin_111_RS485 = plugin_111_RS485;
     Address = address;
     SendStatus = false;
     ReceiveStatus = false;
@@ -1007,20 +1007,20 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         {
         case PLUGIN_DEVICE_ADD:
         {
-                Device[++deviceCount].Number = PLUGIN_ID_111;
-                Device[deviceCount].Type = DEVICE_TYPE_SINGLE; //how the device is connected
-                Device[deviceCount].SendDataOption = false;
-                Device[deviceCount].Ports = 0;
-                Device[deviceCount].VType = SENSOR_TYPE_SWITCH; //type of value the plugin will return, used only for Domoticz
-                Device[deviceCount].PullUpOption = false;
-                Device[deviceCount].InverseLogicOption = false;
-                Device[deviceCount].FormulaOption = false;
-                Device[deviceCount].ValueCount = 4;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
-                Device[deviceCount].TimerOption = false;
-                Device[deviceCount].TimerOptional = false;
-                Device[deviceCount].GlobalSyncOption = true;
-                Device[deviceCount].DecimalsOnly = true;
-                break;
+          Device[++deviceCount].Number = PLUGIN_ID_111;
+          Device[deviceCount].Type = DEVICE_TYPE_SINGLE; //how the device is connected
+          Device[deviceCount].SendDataOption = false;
+          Device[deviceCount].Ports = 0;
+          Device[deviceCount].VType = SENSOR_TYPE_SWITCH; //type of value the plugin will return, used only for Domoticz
+          Device[deviceCount].PullUpOption = false;
+          Device[deviceCount].InverseLogicOption = false;
+          Device[deviceCount].FormulaOption = false;
+          Device[deviceCount].ValueCount = 4;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
+          Device[deviceCount].TimerOption = false;
+          Device[deviceCount].TimerOptional = false;
+          Device[deviceCount].GlobalSyncOption = true;
+          Device[deviceCount].DecimalsOnly = true;
+          break;
         }
 
         case PLUGIN_GET_DEVICENAME:
@@ -1033,7 +1033,6 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         {
            //called when the user opens the module configuration page
            //it allows to add a new row for each output variable of the plugin
-
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[0], PSTR(PLUGIN_VALUENAME1_111));
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
@@ -1045,6 +1044,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         case PLUGIN_WEBFORM_LOAD:
         {
            addFormNumericBox(F("PVI Address"), F("plugin_111_pviaddr"), PCONFIG(0),1,255);
+           addFormNumericBox(F("RE/DE RS485 Pinout"), F("plugin_111_RS485"), PCONFIG(1),1,15);
 
            //after the form has been loaded, set success and break
            success = true;
@@ -1058,6 +1058,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //ping configuration should be read from CONFIG_PIN1 and stored
 
            PCONFIG(0) = getFormItemInt(F("plugin_111_pviaddr"));
+           PCONFIG(1) = getFormItemInt(F("plugin_111_RS485"));
 
            //after the form has been saved successfuly, set success and break
            success = true;
@@ -1077,28 +1078,29 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            // this case defines code to be executed when the plugin is initialised
 
            if (Inverter) delete Inverter;
-           Inverter = new clsAurora( PCONFIG(0) , CONFIG_PIN1 );
-
-           Serial.print("Tx Pin: "); Serial.println(CONFIG_PIN1);
-           Serial.print("PVI Address: "); Serial.println( PCONFIG(0) );
-
-           //addLog(LOG_LEVEL_INFO, "Plugin_111_txPin: "); addLog(LOG_LEVEL_INFO, Plugin_111_txPin);
-           //addLog(LOG_LEVEL_INFO, "PVI Address: "); addLog(LOG_LEVEL_INFO, PCONFIG(0) );
-
-           if ( CONFIG_PIN1 != -1)
+           Inverter = new clsAurora( PCONFIG(0), PCONFIG(1) );
+           
+           //==============================================
+           String log = F("PVI Address: ");
+           log += PCONFIG(0); log +=',';
+           log += F("RE/DE RS485 Pinout: ");
+           log += PCONFIG(1);
+           addLog(LOG_LEVEL_INFO, log);           
+           //============================================
+           
+           if ( PCONFIG(1) )
            {
-               addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
-               // Serial.begin(9600);
+               addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");              
                Serial1.setTimeout(500);
                Serial1.begin(19200);  // initialize serial connection to the inverter
-               pinMode( CONFIG_PIN1, OUTPUT);
+               pinMode( PCONFIG(1), OUTPUT);              
                // pinMode(rxPin, INPUT);  // set pin modes
                // pinMode(txPin, OUTPUT);
                // pinMode(rtsPin, OUTPUT);
-               // digitalWrite( Plugin_111_txPin, RS485Receive);  // Init Transceiver
+               // digitalWrite( Plugin_111_RS485, RS485Receive);  // Init Transceiver
            }
 
-           if ( CONFIG_PIN1 == -1)
+           if (!(PCONFIG(1)))
            {
                addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter removed!");
                pinMode(CONFIG_PIN1, INPUT);
@@ -1134,7 +1136,6 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            log += UserVar[event->BaseVarIndex + 7]; log +=',';
            log += UserVar[event->BaseVarIndex + 8];
            addLog(LOG_LEVEL_INFO,log);
-           Serial.println(log);
 
            success = true;
            break;
@@ -1156,7 +1157,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
              //int8_t taskIndex = getTaskIndexByName(taskName);
              if ( GetArgv(string.c_str(), TmpStr1, 2) ) rfType = TmpStr1.c_str();
              addLog(LOG_LEVEL_INFO, "HTTP command: aurora ");
-             addLog(LOG_LEVEL_INFO, rfType); Serial.println(rfType);
+             addLog(LOG_LEVEL_INFO, rfType); 
              if ( rfType.equalsIgnoreCase("ask") ) {
                 read_RS485();
                 success = true;  //set to true only if plugin has executed a command successfully
@@ -1203,7 +1204,7 @@ void read_RS485(){
   log += Inverter->ReadState(); log +=',';
   log += Inverter->ReadDSP(50,1); log +=',';
   addLog(LOG_LEVEL_INFO,log);
-  Serial.println(log);
+
 
 /*
   String log = F("INVERTER LOGGER: ");
