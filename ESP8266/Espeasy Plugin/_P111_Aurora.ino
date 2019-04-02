@@ -28,7 +28,7 @@
 
 //uncomment one of the following as needed
 //#include <Arduino.h>
-// #include <ESPeasySerial.h>
+#include <ESPeasySerial.h>
 //#include <TimeLib.h>
 
 #define PLUGIN_111
@@ -50,12 +50,26 @@
 //RS485 control
 #define RS485Transmit HIGH
 #define RS485Receive LOW
-// TX1 at GPIO15 and RX1 at GPIO13 => Serial1.println
+#define TX D1
+#define RX D2
+#define RS485 D3 //GPIO-0 (D3)
+
+ESPeasySerial serDebug(RX, TX); // RX, TX
+bool serDebug = true;
+
+void serDebugPrintData(byte *data) {
+  for (int i = 0; i < 8; i++) {
+    serDebug.print((int)data[i]);
+    serDebug.print(F(" "));
+  }
+  serDebug.println(F(" "));
+}
+
 
 class clsAurora {
 private:
   int MaxAttempt = 1;
-  int Plugin_111_RS485 = 16; //GPIO D0
+  int Plugin_111_RS485 = RS485; 
   byte Address = 0;
   void clearData(byte *data, byte len) {
     for (int i = 0; i < len; i++) {
@@ -113,21 +127,23 @@ private:
     log += SendData[8]; log +=',';
     log += SendData[9]; log +=' - ';
     log += Plugin_111_RS485;
-    addLog(LOG_LEVEL_INFO, log);   
+    serDebug(log);
+    //addLog(LOG_LEVEL_INFO, log);   
    //=================================================
     for (int i = 0; i < MaxAttempt; i++)
     {
       digitalWrite(Plugin_111_RS485, RS485Transmit);
       delay(50);
-      if (Serial1.write(SendData, sizeof(SendData)) != 0) {
-        Serial1.flush();
+      if (Serial.write(SendData, sizeof(SendData)) != 0) {
+        Serial.flush();
         SendStatus = true;
         digitalWrite(Plugin_111_RS485, RS485Receive);
-        if (Serial1.readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
+        if (Serial.readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
           //====================================
           String log1 = "AURORA - Receive: ";
           log1 += sizeof(ReceiveData); log +='-';
-          addLog(LOG_LEVEL_INFO, log1);
+           serDebug(log); 
+          //addLog(LOG_LEVEL_INFO, log1);
           //====================================
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
@@ -135,7 +151,11 @@ private:
           }
         }
       }
-      else { addLog(LOG_LEVEL_INFO,"Error while sending data"); digitalWrite(Plugin_111_RS485, RS485Receive); return(false); }
+      else { 
+            //addLog(LOG_LEVEL_INFO,"Error while sending data"); 
+            serDebug(log);
+            digitalWrite(Plugin_111_RS485, RS485Receive); return(false); 
+           }
     }
     return ReceiveStatus;
   }
@@ -1078,20 +1098,24 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if (Inverter) delete Inverter;
            Inverter = new clsAurora( PCONFIG(0), PCONFIG(1) );
+           Serial.setTimeout(500);
+           Serial.begin(19200);  // initialize serial connection to the inverter
            
            //==============================================
            String log = F("PVI Address: ");
            log += PCONFIG(0); log +=',';
            log += F("RE/DE RS485 Pinout: ");
            log += PCONFIG(1);
-           addLog(LOG_LEVEL_INFO, log);           
+           serDebug(log);
+           //addLog(LOG_LEVEL_INFO, log);           
            //============================================
            
            if ( PCONFIG(1) )
            {
-               addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");              
-               Serial1.setTimeout(500);
-               Serial1.begin(19200);  // initialize serial connection to the inverter
+               //addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");              
+               serDebug("INIT: Aurora Inverter created!");
+               Serial.setTimeout(500);
+               Serial.begin(19200);  // initialize serial connection to the inverter
                pinMode( PCONFIG(1), OUTPUT);              
                // pinMode(rxPin, INPUT);  // set pin modes
                // pinMode(txPin, OUTPUT);
@@ -1101,7 +1125,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if (!(PCONFIG(1)))
            {
-               addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter removed!");
+               //addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter removed!");
+               serDebug("INIT: Aurora Inverter removed!");
                pinMode(CONFIG_PIN1, INPUT);
            }
            //after the plugin has been initialised successfuly, set success and break
@@ -1134,7 +1159,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            log += UserVar[event->BaseVarIndex + 6]; log +=',';
            log += UserVar[event->BaseVarIndex + 7]; log +=',';
            log += UserVar[event->BaseVarIndex + 8];
-           addLog(LOG_LEVEL_INFO,log);
+           serDebug(log);
+           //addLog(LOG_LEVEL_INFO,log);
 
            success = true;
            break;
@@ -1155,8 +1181,12 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
              String taskName = parseString(string, 2);
              //int8_t taskIndex = getTaskIndexByName(taskName);
              if ( GetArgv(string.c_str(), TmpStr1, 2) ) rfType = TmpStr1.c_str();
-             addLog(LOG_LEVEL_INFO, "HTTP command: aurora ");
-             addLog(LOG_LEVEL_INFO, rfType); 
+              
+             String log = F("HTTP command: aurora, ");
+             log += rfType; 
+             //addLog(LOG_LEVEL_INFO, log); 
+             serDebug(log); 
+              
              if ( rfType.equalsIgnoreCase("ask") ) {
                 read_RS485();
                 success = true;  //set to true only if plugin has executed a command successfully
@@ -1165,9 +1195,13 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if (success){
                  //String url = String(Settings.Name) + "/control?aurora=" + string;
-                 String url = String(WiFi.localIP().toString()) + "/control?cmd=aurora,ask";
-                 addLog(LOG_LEVEL_INFO, "To send this command again, ");
-                 addLog(LOG_LEVEL_INFO, "use this: <a href=\"http://" + url + "\">URL</a>");
+                 String url = String(WiFi.localIP().toString()) + "/control?cmd=aurora,ask";              
+                 String log = F("To send this command again, ");              
+                 log += "use this: <a href=\"http://" + url + "\">URL</a>";
+                 log += rfType; 
+                 //addLog(LOG_LEVEL_INFO, log); 
+                 serDebug(log); 
+
                  if (printToWeb)
                     {
                       printWebString += F("Invert command Aurora Sent!");
@@ -1202,7 +1236,8 @@ void read_RS485(){
   log += Inverter->ReadVersion(); log +=',';
   log += Inverter->ReadState(); log +=',';
   log += Inverter->ReadDSP(50,1); log +=',';
-  addLog(LOG_LEVEL_INFO,log);
+  serDebug(log); 
+  //addLog(LOG_LEVEL_INFO,log);
 
 
 /*
@@ -1254,9 +1289,8 @@ void read_RS485(){
   log += Inverter.AlarmState(Inverter.State.AlarmState); log +=',';
 
   log += Inverter.ReadDSP.ReadState;
-
-  addLog(LOG_LEVEL_INFO,log);
-  Serial.println(log);
+  serDebug(log); 
+  //addLog(LOG_LEVEL_INFO,log);
 */
   delay(50);
 }
