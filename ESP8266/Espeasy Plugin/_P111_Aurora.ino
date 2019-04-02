@@ -56,7 +56,7 @@
 class clsAurora {
 private:
   int MaxAttempt = 1;
-  int Plugin_111_RS485 = 5;
+  int Plugin_111_RS485 = 16; //GPIO D0
   byte Address = 0;
   void clearData(byte *data, byte len) {
     for (int i = 0; i < len; i++) {
