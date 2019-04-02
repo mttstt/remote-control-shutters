@@ -14,9 +14,6 @@ NUM_ATTEMPTS = 3
 
 
 def transmit_code(code):
-
-      print repr(code)
-
       f1=[]
       # ------ Preamble ----------------------------------------
       f1.append(pigpio.pulse(NONE, NONE, 3000)) # added 3 millis
@@ -66,9 +63,9 @@ if not pi.connected:
 
 pi.set_mode(GPIO, pigpio.OUTPUT)
 if __name__ == '__main__':
-        print sys.argv[1:] 
-        exec('transmit_code(' + str(sys.argv[1:]) + ')')
-
+        print sys.argv[1:]
+        transmit_code( str(sys.argv[1:]) )
+      
 pi.wave_tx_stop()
 pi.stop()
 
