@@ -52,6 +52,7 @@
 #define RS485Receive LOW
 #define TX D1
 #define RX D2
+#define baudrate 9600 //baudrate RS485
 #define RS485 D3 //GPIO-0 (D3)
 
 ESPeasySerial *easySerial;
@@ -1087,7 +1088,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            Inverter = new clsAurora( PCONFIG(0), PCONFIG(1) );
 
            easySerial = new ESPeasySerial(RX, TX);
-           easySerial->begin(9600);
+           easySerial->begin(baudrate);
            easySerial->setTimeout(500);  // initialize serial connection to the inverter
 
            //==============================================
