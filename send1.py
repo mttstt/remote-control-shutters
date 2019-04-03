@@ -52,7 +52,7 @@ def transmit_code(code):
       pi.wave_add_generic(f1)
       f = pi.wave_create() # create and save id
       for t in range(NUM_ATTEMPTS):
-         print("sending {}".format(t))
+       #  print("sending {}".format(t))
          pi.wave_send_repeat(f)
          time.sleep(0.2)
 
@@ -63,7 +63,7 @@ if not pi.connected:
 
 pi.set_mode(GPIO, pigpio.OUTPUT)
 if __name__ == '__main__':
-        print sys.argv[1:]
+       # print sys.argv[1:]
         transmit_code( str(sys.argv[1:]) )
       
 pi.wave_tx_stop()
