@@ -27,7 +27,6 @@
  */
 
 //uncomment one of the following as needed
-//#include <Arduino.h>
 #include <ESPeasySerial.h>
 //#include <TimeLib.h>
 
