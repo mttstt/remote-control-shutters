@@ -48,8 +48,8 @@
 //RS485 control
 #define RS485Transmit HIGH
 #define RS485Receive LOW
-#define txPin D1
-#define rxPin D2
+#define TX 12 // GPIO-12 (D5)
+#define RX 14 // GPIO-14 (D6)
 #define baudrate 9600 //baudrate RS485
 #define RS485 D3 //GPIO-0 (D3)
 
@@ -613,23 +613,23 @@ public:
     }
     Version.TransmissionState = ReceiveData[0];
     Version.GlobalState = ReceiveData[1];
-     
-         if ((char)ReceiveData[2]) == 'i'  { Version.Par1 = F("Aurora 2 kW indoor"); }
-    else if ((char)ReceiveData[2]) == 'o'  { Version.Par1 = F("Aurora 2 kW outdoor"); }
-    else if ((char)ReceiveData[2]) == 'I'  { Version.Par1 = F("Aurora 3.6 kW indoor"); }
-    else if ((char)ReceiveData[2]) == 'O'  { Version.Par1 = F("Aurora 3.0 - 3.6 kW outdoor"); }
-    else if ((char)ReceiveData[2]) == '5'  { Version.Par1 = F("Aurora 5.0 kW outdoor"); }
-    else if ((char)ReceiveData[2]) == '6'  { Version.Par1 = F("Aurora 6 kW outdoor"); }
-    else if ((char)ReceiveData[2]) == 'P'  { Version.Par1 = F("3 - phase interface (3G74)"); }
-    else if ((char)ReceiveData[2]) == 'C'  { Version.Par1 = F("Aurora 50kW module"); }
-    else if ((char)ReceiveData[2]) == '4'  { Version.Par1 = F("Aurora 4.2kW new"); }
-    else if ((char)ReceiveData[2]) == '3'  { Version.Par1 = F("Aurora 3.6kW new"); }
-    else if ((char)ReceiveData[2]) == '2'  { Version.Par1 = F("Aurora 3.3kW new"); }
-    else if ((char)ReceiveData[2]) == '1'  { Version.Par1 = F("Aurora 3.0kW new"); }
-    else if ((char)ReceiveData[2]) == 'D'  { Version.Par1 = F("Aurora 12.0kW"); }
-    else if ((char)ReceiveData[2]) == 'X'  { Version.Par1 = F("Aurora 10.0kW"); }
-                                      else { Version.Par1 = F("Sconosciuto"); }
-    /*
+
+         if (((char)ReceiveData[2]) == 'i')  { Version.Par1 = "Aurora 2 kW indoor"; }
+    else if (((char)ReceiveData[2]) == 'o')  { Version.Par1 = "Aurora 2 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == 'I')  { Version.Par1 = "Aurora 3.6 kW indoor"; }
+    else if (((char)ReceiveData[2]) == 'O')  { Version.Par1 = "Aurora 3.0 - 3.6 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == '5')  { Version.Par1 = "Aurora 5.0 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == '6')  { Version.Par1 = "Aurora 6 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == 'P')  { Version.Par1 = "3 - phase interface (3G74)"; }
+    else if (((char)ReceiveData[2]) == 'C')  { Version.Par1 = "Aurora 50kW module"; }
+    else if (((char)ReceiveData[2]) == '4')  { Version.Par1 = "Aurora 4.2kW new"; }
+    else if (((char)ReceiveData[2]) == '3')  { Version.Par1 = "Aurora 3.6kW new"; }
+    else if (((char)ReceiveData[2]) == '2')  { Version.Par1 = "Aurora 3.3kW new"; }
+    else if (((char)ReceiveData[2]) == '1')  { Version.Par1 = "Aurora 3.0kW new"; }
+    else if (((char)ReceiveData[2]) == 'D')  { Version.Par1 = "Aurora 12.0kW"; }
+    else if (((char)ReceiveData[2]) == 'X')  { Version.Par1 = "Aurora 10.0kW"; }
+                                        else { Version.Par1 = "Sconosciuto"; };
+  /*
     switch ((char)ReceiveData[2])
     {
     case 'i':
@@ -664,16 +664,16 @@ public:
       Version.Par1 = F("Sconosciuto"); break;
     }
     */
-    
-         if ((char)ReceiveData[3]) == 'A'  { Version.Par2 = F("UL1741"); }
-    else if ((char)ReceiveData[3]) == 'E'  { Version.Par2 = F("VDE0126"); break; }
-    else if ((char)ReceiveData[3]) == 'S'  { Version.Par2 = F("DR 1663 / 2000"); break; }
-    else if ((char)ReceiveData[3]) == 'I'  { Version.Par2 = F("ENEL DK 5950"); break; }
-    else if ((char)ReceiveData[3]) == 'U'  { Version.Par2 = F("UK G83"); break; }
-    else if ((char)ReceiveData[3]) == 'K'  { Version.Par2 = F("AS 4777"); break; }
-                                      else { Version.Par2 = F("Sconosciuto"); }
-     
-    /* 
+
+         if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = "UL1741"; }
+    else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = "VDE0126"; }
+    else if (((char)ReceiveData[3]) == 'S')  { Version.Par2 = "DR 1663 / 2000"; }
+    else if (((char)ReceiveData[3]) == 'I')  { Version.Par2 = "ENEL DK 5950"; }
+    else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = "UK G83"; }
+    else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = "AS 4777"; }
+                                       else  { Version.Par2 = "Sconosciuto"; };
+
+    /*
     switch ((char)ReceiveData[3])
     {
     case 'A':
@@ -692,11 +692,11 @@ public:
       Version.Par2 = F("Sconosciuto"); break;
     }
     */
-    
-         if ((char)ReceiveData[4]) == 'N'  { Version.Par3 = F("Transformerless Version"); }
-    else if ((char)ReceiveData[4]) == 'K'  { Version.Par3 = F("Transformer Version"); }
-                                      else { Version.Par3 = F("Sconosciuto"); }
-     
+
+         if (((char)ReceiveData[4]) == 'N')  { Version.Par3 = "Transformerless Version"; }
+    else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = "Transformer Version"; }
+                                        else { Version.Par3 = "Sconosciuto"; };
+
     /*
     switch ((char)ReceiveData[4])
     {
@@ -708,9 +708,10 @@ public:
       Version.Par3 = F("Sconosciuto"); break;
     }
     */
-         if ((char)ReceiveData[5]) == 'N'  { Version.Par4 =  F("Wind version"); }
-    else if ((char)ReceiveData[5]) == 'K'  { Version.Par4 = F("PV version"); }
-                                      else { Version.Par4 = F("Sconosciuto"); }
+
+         if (((char)ReceiveData[5]) == 'N')  { Version.Par4 = "Wind version"; }
+    else if (((char)ReceiveData[5]) == 'K')  { Version.Par4 = "PV version"; }
+                                        else { Version.Par4 = "Sconosciuto"; };
     /*
     switch ((char)ReceiveData[5])
     {
@@ -1122,11 +1123,10 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if (Inverter) delete Inverter;
            Inverter = new clsAurora( PCONFIG(0), PCONFIG(1) );
-     
-           easySerial = new ESPeasySerial(rxPin, txPin);
+
+           easySerial = new ESPeasySerial(RX, TX);
            if (easySerial != nullptr) {
               easySerial->begin(baudrate);
-              asySerial->setTimeout(500);  // initialize serial connection to the inverter
               easySerial->flush();
            }
 
