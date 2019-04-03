@@ -37,11 +37,11 @@ function go () {
          if  (!(noti.indexOf(id) > -1))
           {
             var tentativo = preambolo + direction + zero + id + fine;
-            var command = '~/remote-control-shutters/send1.py '+ tentativo;
+            var command = '/home/pi/remote-control-shutters/send1.py '+ tentativo;
             var out = i + ' - ' + tentativo + ' - ' + getDateTime();
             require('child_process').execSync(command, {stdio: 'inherit'} );
             try{
-                fs.appendFileSync('log.txt', out + "\n" );
+                 fs.appendFileSync('/home/pi/remote-control-shutters/log.txt', out + "\n" );
             }catch (e){
                 console.log("Cannot write file ", e);
             }
