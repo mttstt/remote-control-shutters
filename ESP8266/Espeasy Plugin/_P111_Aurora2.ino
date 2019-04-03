@@ -20,7 +20,6 @@
    References:
    https://github.com/H4ndl3/pvimon/blob/master/pvimon.ino
    http://www.drhack.it/images/PDF/AuroraCommunicationProtocol_4_2.pdf
-
    http://www.gianlucaghettini.net/lettura-fotovoltaico-da-remoto-con-nodemcu/
    https://github.com/jrbenito/ABBAurora
    https://forum.arduino.cc/index.php?topic=154407.0
@@ -614,6 +613,22 @@ public:
     }
     Version.TransmissionState = ReceiveData[0];
     Version.GlobalState = ReceiveData[1];
+     
+         if ((char)ReceiveData[2]) == 'i'  { Version.Par1 = F("Aurora 2 kW indoor"); }
+    else if ((char)ReceiveData[2]) == 'o'  { Version.Par1 = F("Aurora 2 kW outdoor"); }
+    else if ((char)ReceiveData[2]) == 'I'  { Version.Par1 = F("Aurora 3.6 kW indoor"); }
+    else if ((char)ReceiveData[2]) == 'O'  { Version.Par1 = F("Aurora 3.0 - 3.6 kW outdoor"); }
+    else if ((char)ReceiveData[2]) == '5'  { Version.Par1 = F("Aurora 5.0 kW outdoor"); }
+    else if ((char)ReceiveData[2]) == '6'  { Version.Par1 = F("Aurora 6 kW outdoor"); }
+    else if ((char)ReceiveData[2]) == 'P'  { Version.Par1 = F("3 - phase interface (3G74)"); }
+    else if ((char)ReceiveData[2]) == 'C'  { Version.Par1 = F("Aurora 50kW module"); }
+    else if ((char)ReceiveData[2]) == '4'  { Version.Par1 = F("Aurora 4.2kW new"); }
+    else if ((char)ReceiveData[2]) == '3'  { Version.Par1 = F("Aurora 3.6kW new"); }
+    else if ((char)ReceiveData[2]) == '2'  { Version.Par1 = F("Aurora 3.3kW new"); }
+    else if ((char)ReceiveData[2]) == '1'  { Version.Par1 = F("Aurora 3.0kW new"); }
+    else if ((char)ReceiveData[2]) == 'D'  { Version.Par1 = F("Aurora 12.0kW"); }
+    else if ((char)ReceiveData[2]) == 'X'  { Version.Par1 = F("Aurora 10.0kW"); }
+                                      else { Version.Par1 = F("Sconosciuto"); }
     /*
     switch ((char)ReceiveData[2])
     {
@@ -648,7 +663,17 @@ public:
     default:
       Version.Par1 = F("Sconosciuto"); break;
     }
-
+    */
+    
+         if ((char)ReceiveData[3]) == 'A'  { Version.Par2 = F("UL1741"); }
+    else if ((char)ReceiveData[3]) == 'E'  { Version.Par2 = F("VDE0126"); break; }
+    else if ((char)ReceiveData[3]) == 'S'  { Version.Par2 = F("DR 1663 / 2000"); break; }
+    else if ((char)ReceiveData[3]) == 'I'  { Version.Par2 = F("ENEL DK 5950"); break; }
+    else if ((char)ReceiveData[3]) == 'U'  { Version.Par2 = F("UK G83"); break; }
+    else if ((char)ReceiveData[3]) == 'K'  { Version.Par2 = F("AS 4777"); break; }
+                                      else { Version.Par2 = F("Sconosciuto"); }
+     
+    /* 
     switch ((char)ReceiveData[3])
     {
     case 'A':
@@ -666,6 +691,13 @@ public:
     default:
       Version.Par2 = F("Sconosciuto"); break;
     }
+    */
+    
+         if ((char)ReceiveData[4]) == 'N'  { Version.Par3 = F("Transformerless Version"); }
+    else if ((char)ReceiveData[4]) == 'K'  { Version.Par3 = F("Transformer Version"); }
+                                      else { Version.Par3 = F("Sconosciuto"); }
+     
+    /*
     switch ((char)ReceiveData[4])
     {
     case 'N':
@@ -675,6 +707,11 @@ public:
     default:
       Version.Par3 = F("Sconosciuto"); break;
     }
+    */
+         if ((char)ReceiveData[5]) == 'N'  { Version.Par4 =  F("Wind version"); }
+    else if ((char)ReceiveData[5]) == 'K'  { Version.Par4 = F("PV version"); }
+                                      else { Version.Par4 = F("Sconosciuto"); }
+    /*
     switch ((char)ReceiveData[5])
     {
     case 'W':
