@@ -48,8 +48,8 @@
 //RS485 control
 #define RS485Transmit HIGH
 #define RS485Receive LOW
-#define TX D1
-#define RX D2
+#define txPin D1
+#define rxPin D2
 #define baudrate 9600 //baudrate RS485
 #define RS485 D3 //GPIO-0 (D3)
 
@@ -1122,10 +1122,13 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if (Inverter) delete Inverter;
            Inverter = new clsAurora( PCONFIG(0), PCONFIG(1) );
-
-           easySerial = new ESPeasySerial(RX, TX);
-           easySerial->begin(baudrate);
-           easySerial->setTimeout(500);  // initialize serial connection to the inverter
+     
+           easySerial = new ESPeasySerial(rxPin, txPin);
+           if (easySerial != nullptr) {
+              easySerial->begin(baudrate);
+              asySerial->setTimeout(500);  // initialize serial connection to the inverter
+              easySerial->flush();
+           }
 
            //==============================================
            String log = F("PVI Address: ");
