@@ -1,12 +1,29 @@
 #!/usr/bin/env node
 'use strict';
-const fs = require('fs');
-//var exec = require('child_process').exec;
+const fs = require('fs')
 var command;
-
+var out;
 function dec2bin(dec){
      return (dec >>> 0).toString(2);
 }
+
+function getDateTime() {
+    var date = new Date();
+    var hour = date.getHours();
+    hour = (hour < 10 ? "0" : "") + hour;
+    var min  = date.getMinutes();
+    min = (min < 10 ? "0" : "") + min;
+    var sec  = date.getSeconds();
+    sec = (sec < 10 ? "0" : "") + sec;
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
+    var day  = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
+    return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
+}
+
+
 
 function go () {
         var i;
@@ -21,15 +38,11 @@ function go () {
          if  (!(noti.indexOf(id) > -1))
           { var tentativo = preambolo+direction+zero+id+fine;
             var command = '~/remote-control-shutters/send1.py '+ tentativo;
-           console.log(command);
-                    
-           require('child_process').execSync(command, {stdio: 'inherit'} );        
-                    
-           //exec(command, function callback(error, stdout, stderr){
-           //          console.log('stdout: ' + stdout + i + id);
-           //          console.log('stderr: ' + stderr);
-           //          console.log('exec error: ' + error);
-           //});                    
+            var out = i + ' - ' + tentativo + ' - ' + getDateTime();            
+            require('child_process').execSync(command, {stdio: 'inherit'} );                                      
+            var logStream = fs.createWriteStream('log.txt', {'flags': 'a'});
+            logStream.end(i+' - '+tentativo+'-'+getDateTime());
+            console.log(out);
          }
       }
 }
