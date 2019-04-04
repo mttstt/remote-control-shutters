@@ -15,8 +15,15 @@
    License URI: http://en.wikipedia.org/wiki/MIT_License
    Status : "Proof of concept"
 
-   PIN Wemos D1 mini successuful tested: GPIO-5(D1)
-                                         GPIO-16(D0)
+   PIN successuful tested: 
+   
+   RS485    Wemos D1 mini
+   Vcc      3v3 
+   Gnd      G 
+   RO       D6 (GPIO-14) 
+   RI       D5 (GPIO-12) 
+   RE/DE    D3 (GPIO-0)
+   
    References:
    https://github.com/H4ndl3/pvimon/blob/master/pvimon.ino
    http://www.drhack.it/images/PDF/AuroraCommunicationProtocol_4_2.pdf
@@ -1088,7 +1095,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         case PLUGIN_WEBFORM_LOAD:
         {
            addFormNumericBox(F("PVI Address"), F("plugin_111_pviaddr"), PCONFIG(0),1,255);
-           addFormNumericBox(F("RE/DE RS485 Pinout"), F("plugin_111_RS485"), PCONFIG(1),1,15);
+           addFormNumericBox(F("RE/DE_Pin (RS485)"), F("plugin_111_RS485"), PCONFIG(1),0,16);
 
            //after the form has been loaded, set success and break
            success = true;
@@ -1111,7 +1118,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WEBFORM_SHOW_CONFIG:
         {
-           string += String(ExtraTaskSettings.TaskDevicePluginConfigLong[0]);
+           //string += String(ExtraTaskSettings.TaskDevicePluginConfigLong[0]);
            success = true;
            break;
         }
@@ -1129,11 +1136,10 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
               easySerial->begin(baudrate);
               easySerial->flush();
            }
-
            //==============================================
            String log = F("PVI Address: ");
-           log += PCONFIG(0); log +=',';
-           log += F("RE/DE RS485 Pinout: ");
+           log += PCONFIG(0); log +=', ';
+           log += F("RE/DE_Pin_RS485: ");
            log += PCONFIG(1);
            addLog(LOG_LEVEL_INFO, log);
            //============================================
