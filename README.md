@@ -35,3 +35,9 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [ ] Interrogate Inverter Aurora with ESp8266
 
 
+RS485   Wemos
+Vcc     3v3
+Gnd     G
+RO      D6 (GPIO-14)
+RI      D5 (GPIO-12)
+RE/DE   D3 (GPIO0)
