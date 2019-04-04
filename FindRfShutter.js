@@ -40,6 +40,10 @@ function go () {
             var command = '/home/pi/remote-control-shutters/send1.py '+ tentativo;
             var out = i + ' - ' + tentativo + ' - ' + getDateTime();
             require('child_process').execSync(command, {stdio: 'inherit'} );
+                    
+            var waitTill = new Date(new Date().getTime() + seconds * 3000);
+            while(waitTill > new Date()){};
+                    
             try{
                  fs.appendFileSync('/home/pi/remote-control-shutters/log.txt', out + "\n" );
             }catch (e){
