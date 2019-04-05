@@ -58,7 +58,7 @@
 #define TX 12 // GPIO-12 (D5)
 #define RX 14 // GPIO-14 (D6)
 #define baudrate 9600 //baudrate RS485
-#define RS485 D3 //GPIO-0 (D3)
+#define SSerialTxControl 0 //GPIO-0 (D3)
 
 ESPeasySerial *easySerial;
 
@@ -66,7 +66,6 @@ ESPeasySerial *easySerial;
 class clsAurora {
 private:
   int MaxAttempt = 1;
-  int Plugin_111_RS485 = RS485;
   byte Address = 0;
   void clearData(byte *data, byte len) {
     for (int i = 0; i < len; i++) {
@@ -123,17 +122,17 @@ private:
     log += SendData[7]; log +=',';
     log += SendData[8]; log +=',';
     log += SendData[9]; log +=' - ';
-    log += Plugin_111_RS485;
+    log += SSerialTxControl;
     addLog(LOG_LEVEL_INFO, log);
    //=================================================
     for (int i = 0; i < MaxAttempt; i++)
     {
-      digitalWrite(Plugin_111_RS485, RS485Transmit);
+      digitalWrite(SSerialTxControl, RS485Transmit);
       delay(50);
       if (easySerial->write(SendData, sizeof(SendData)) != 0) {
         easySerial->flush();
         SendStatus = true;
-        digitalWrite(Plugin_111_RS485, RS485Receive);
+        digitalWrite(SSerialTxControl, RS485Receive);
         if (easySerial->readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
           //====================================
           String log1 = "AURORA - Receive: ";
@@ -148,7 +147,7 @@ private:
       }
       else {
             addLog(LOG_LEVEL_INFO,"Error while sending data");
-            digitalWrite(Plugin_111_RS485, RS485Receive); return(false);
+            digitalWrite(SSerialTxControl, RS485Receive); return(false);
            }
     }
     return ReceiveStatus;
@@ -169,8 +168,7 @@ public:
   bool ReceiveStatus = false;
   byte ReceiveData[8];
 
-  clsAurora(byte address, byte plugin_111_RS485 ) {
-    Plugin_111_RS485 = plugin_111_RS485;
+  clsAurora(byte address) {   
     Address = address;
     SendStatus = false;
     ReceiveStatus = false;
@@ -1095,7 +1093,6 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         case PLUGIN_WEBFORM_LOAD:
         {
            addFormNumericBox(F("PVI Address"), F("plugin_111_pviaddr"), PCONFIG(0),1,255);
-           addFormNumericBox(F("RE/DE_Pin (RS485)"), F("plugin_111_RS485"), PCONFIG(1),0,16);
 
            //after the form has been loaded, set success and break
            success = true;
@@ -1109,7 +1106,6 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //ping configuration should be read from CONFIG_PIN1 and stored
 
            PCONFIG(0) = getFormItemInt(F("plugin_111_pviaddr"));
-           PCONFIG(1) = getFormItemInt(F("plugin_111_RS485"));
 
            //after the form has been saved successfuly, set success and break
            success = true;
@@ -1129,7 +1125,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            // this case defines code to be executed when the plugin is initialised
 
            if (Inverter) delete Inverter;
-           Inverter = new clsAurora( PCONFIG(0), PCONFIG(1) );
+           Inverter = new clsAurora( PCONFIG(0) );
 
            easySerial = new ESPeasySerial(RX, TX);
            if (easySerial != nullptr) {
@@ -1148,10 +1144,6 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            {
                addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
                pinMode( PCONFIG(1), OUTPUT);
-               // pinMode(rxPin, INPUT);  // set pin modes
-               // pinMode(txPin, OUTPUT);
-               // pinMode(rtsPin, OUTPUT);
-               // digitalWrite( Plugin_111_RS485, RS485Receive);  // Init Transceiver
            }
 
            if (!(PCONFIG(1)))
