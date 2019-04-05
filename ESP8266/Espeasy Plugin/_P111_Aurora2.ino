@@ -1134,22 +1134,20 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            }
            //==============================================
            String log = F("PVI Address: ");
-           log += PCONFIG(0); log +=', ';
-           log += F("RE/DE_Pin_RS485: ");
-           log += PCONFIG(1);
+           log += PCONFIG(0);
            addLog(LOG_LEVEL_INFO, log);
            //============================================
 
-           if ( PCONFIG(1) )
+           if ( PCONFIG(0) )
            {
                addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
-               pinMode( PCONFIG(1), OUTPUT);
+               //pinMode( PCONFIG(0), OUTPUT);
            }
 
-           if (!(PCONFIG(1)))
+           if (!PCONFIG(0) )
            {
                addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter removed!");
-               pinMode(CONFIG_PIN1, INPUT);
+               //pinMode(PCONFIG(0), INPUT);
            }
            //after the plugin has been initialised successfuly, set success and break
            success = true;
