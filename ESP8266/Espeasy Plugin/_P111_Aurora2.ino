@@ -1132,11 +1132,16 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
               easySerial->begin(baudrate);
               easySerial->flush();
            }
-           //==============================================
+           //============================================
            String log = F("PVI Address: ");
            log += PCONFIG(0);
            addLog(LOG_LEVEL_INFO, log);
            //============================================
+           
+           
+             pinMode(SSerialTxControl, OUTPUT);
+             digitalWrite(SSerialTxControl, RS485Receive);  // Init Transceiver
+           
 
            if ( PCONFIG(0) )
            {
