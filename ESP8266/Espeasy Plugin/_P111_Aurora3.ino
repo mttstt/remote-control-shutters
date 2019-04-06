@@ -126,27 +126,52 @@ private:
     log += SendData[8]; log +=',';
     log += SendData[9]; log +='-';
     log += SSerialTxControl;
-    addLog(LOG_LEVEL_INFO, log);
    //=================================================
     for (int i = 0; i < MaxAttempt; i++)
     {
       digitalWrite(SSerialTxControl, RS485Transmit);
       delay(50);
+
       if (easySerial->write(SendData, sizeof(SendData)) != 0) {
+        addLog(LOG_LEVEL_INFO, log);
         easySerial->flush();
         SendStatus = true;
         digitalWrite(SSerialTxControl, RS485Receive);
-        if (easySerial->readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
-          //====================================
-          String log1 = "AURORA - Receive: ";
-          log1 += sizeof(ReceiveData); log1 +='-';
-          addLog(LOG_LEVEL_INFO, log1);
-          //====================================
+
+        // get response
+        byte ReceiveData[8];
+        //memset(ReceiveData, 0, sizeof(ReceiveData));
+
+        int counter = 0;
+        if (easySerial->available() > 0) {
+          byte value = easySerial->read();
+          if ((counter == 0 && value == 0xFF) || counter > 0) {
+              ReceiveData[counter++] = value;
+          }
+        } else {
+          delay(10);
+        }
+        String log =   "AURORA - Receive data:";
+        log += ReceiveData[0] ; log +=',';
+        log += ReceiveData[1] ; log +=',';
+        log += ReceiveData[2] ; log +=',';
+        log += ReceiveData[3] ; log +=',';
+        log += ReceiveData[4] ; log +=',';
+        log += ReceiveData[5] ; log +=',';
+        log += ReceiveData[6] ; log +=',';
+        log += ReceiveData[7] ; log +='-';
+        log += counter ; addLog(LOG_LEVEL_INFO, log);
+
+//        if (easySerial->readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
+//          String log = "AURORA - Receive: "; log += sizeof(ReceiveData); log +='-'; addLog(LOG_LEVEL_INFO, log);
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
             break;
           }
-        }
+  //      }
+
+  //      else
+  //        { String log = "AURORA - No data: "; log += ReceiveData; log +='-'; log += sizeof(ReceiveData); addLog(LOG_LEVEL_INFO, log); }
       }
       else {
             addLog(LOG_LEVEL_INFO,"Error while sending data");
@@ -1040,7 +1065,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if (Inverter) { delete Inverter; Inverter = nullptr; }; Inverter = new clsAurora( PCONFIG(0) );
            if (easySerial) { delete easySerial; easySerial = nullptr; }; easySerial = new ESPeasySerial(RX, TX);
-           easySerial->begin(19200);
+           easySerial->begin(9600);
            easySerial->flush();
 
            //=============================================================================================
