@@ -635,41 +635,7 @@ public:
     else if (((char)ReceiveData[2]) == 'D')  { Version.Par1 = "Aurora 12.0kW"; }
     else if (((char)ReceiveData[2]) == 'X')  { Version.Par1 = "Aurora 10.0kW"; }
                                         else { Version.Par1 = "Sconosciuto"; };
-  /*
-    switch ((char)ReceiveData[2])
-    {
-    case 'i':
-      Version.Par1 = F("Aurora 2 kW indoor"); break;
-    case 'o':
-      Version.Par1 = F("Aurora 2 kW outdoor"); break;
-    case 'I':
-      Version.Par1 = F("Aurora 3.6 kW indoor"); break;
-    case 'O':
-      Version.Par1 = F("Aurora 3.0 - 3.6 kW outdoor"); break;
-    case '5':
-      Version.Par1 = F("Aurora 5.0 kW outdoor"); break;
-    case '6':
-      Version.Par1 = F("Aurora 6 kW outdoor"); break;
-    case 'P':
-      Version.Par1 = F("3 - phase interface (3G74)"); break;
-    case 'C':
-      Version.Par1 = F("Aurora 50kW module"); break;
-    case '4':
-      Version.Par1 = F("Aurora 4.2kW new"); break;
-    case '3':
-      Version.Par1 = F("Aurora 3.6kW new"); break;
-    case '2':
-      Version.Par1 = F("Aurora 3.3kW new"); break;
-    case '1':
-      Version.Par1 = F("Aurora 3.0kW new"); break;
-    case 'D':
-      Version.Par1 = F("Aurora 12.0kW"); break;
-    case 'X':
-      Version.Par1 = F("Aurora 10.0kW"); break;
-    default:
-      Version.Par1 = F("Sconosciuto"); break;
-    }
-    */
+  
 
          if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = "UL1741"; }
     else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = "VDE0126"; }
@@ -678,57 +644,15 @@ public:
     else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = "UK G83"; }
     else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = "AS 4777"; }
                                        else  { Version.Par2 = "Sconosciuto"; };
-
-    /*
-    switch ((char)ReceiveData[3])
-    {
-    case 'A':
-      Version.Par2 = F("UL1741"); break;
-    case 'E':
-      Version.Par2 = F("VDE0126"); break;
-    case 'S':
-      Version.Par2 = F("DR 1663 / 2000"); break;
-    case 'I':
-      Version.Par2 = F("ENEL DK 5950"); break;
-    case 'U':
-      Version.Par2 = F("UK G83"); break;
-    case 'K':
-      Version.Par2 = F("AS 4777"); break;
-    default:
-      Version.Par2 = F("Sconosciuto"); break;
-    }
-    */
-
+   
          if (((char)ReceiveData[4]) == 'N')  { Version.Par3 = "Transformerless Version"; }
     else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = "Transformer Version"; }
                                         else { Version.Par3 = "Sconosciuto"; };
 
-    /*
-    switch ((char)ReceiveData[4])
-    {
-    case 'N':
-      Version.Par3 = F("Transformerless Version"); break;
-    case 'T':
-      Version.Par3 = F("Transformer Version"); break;
-    default:
-      Version.Par3 = F("Sconosciuto"); break;
-    }
-    */
-
          if (((char)ReceiveData[5]) == 'N')  { Version.Par4 = "Wind version"; }
     else if (((char)ReceiveData[5]) == 'K')  { Version.Par4 = "PV version"; }
                                         else { Version.Par4 = "Sconosciuto"; };
-    /*
-    switch ((char)ReceiveData[5])
-    {
-    case 'W':
-      Version.Par4 = F("Wind version"); break;
-    case 'N':
-      Version.Par4 = F("PV version"); break;
-    default:
-      Version.Par4 = F("Sconosciuto"); break;
-    }
-    */
+
     return Version.ReadState;
   }
 
@@ -1019,36 +943,6 @@ public:
   bool ReadSystemSerialNumberCentral() { return Send(Address, (byte)107, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0); }
 };
 
-/*
-String stampaDataTime(unsigned long scn)
-{
-  String rtn;
-  if (scn > 0) {
-    setTime(0, 0, 0, 1, 1, 2000);
-    if (timeStatus() == timeSet) {
-    adjustTime(scn);
-      rtn = String(day());
-      rtn += String(F("/"));
-      rtn += String(month());
-      rtn += String(F("/"));
-      rtn += String(year());
-      rtn += String(F(" "));
-      rtn += String(hour());
-      rtn += String(F(":"));
-      rtn += String(minute());
-      rtn += String(F(":"));
-      rtn += String(second());
-    }
-  }
-  return rtn;
-}
-*/
-
-// ==============================================
-// ID inverter da cambiare a mano !!!
-clsAurora*  Inverter = NULL;
-
-// ==============================================
 
 boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 {
