@@ -62,7 +62,7 @@
 
 
 //=====================================
-ESPeasySerial* easySerial = NULL
+ESPeasySerial* easySerial = NULL;
 //=====================================
 
 
