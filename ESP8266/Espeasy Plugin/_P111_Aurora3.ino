@@ -60,9 +60,10 @@
 #define baudrate 9600 //baudrate RS485
 #define SSerialTxControl 16 //GPIO-16 (D0)
 
-ESPeasySerial* easySerial = NULL;
-clsAurora*  Inverter = NULL;
 
+//=====================================
+ESPeasySerial* easySerial = NULL
+//=====================================
 
 
 class clsAurora {
@@ -636,7 +637,7 @@ public:
     else if (((char)ReceiveData[2]) == 'D')  { Version.Par1 = "Aurora 12.0kW"; }
     else if (((char)ReceiveData[2]) == 'X')  { Version.Par1 = "Aurora 10.0kW"; }
                                         else { Version.Par1 = "Sconosciuto"; };
-  
+
 
          if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = "UL1741"; }
     else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = "VDE0126"; }
@@ -645,7 +646,7 @@ public:
     else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = "UK G83"; }
     else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = "AS 4777"; }
                                        else  { Version.Par2 = "Sconosciuto"; };
-   
+
          if (((char)ReceiveData[4]) == 'N')  { Version.Par3 = "Transformerless Version"; }
     else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = "Transformer Version"; }
                                         else { Version.Par3 = "Sconosciuto"; };
@@ -945,8 +946,9 @@ public:
 };
 
 
+
+
 //=====================================
-ESPeasySerial* easySerial = NULL;
 clsAurora*  Inverter = NULL;
 //=====================================
 
