@@ -945,6 +945,11 @@ public:
 };
 
 
+//=====================================
+ESPeasySerial* easySerial = NULL;
+clsAurora*  Inverter = NULL;
+//=====================================
+
 boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 {
         boolean success = false;
