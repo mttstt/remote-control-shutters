@@ -61,6 +61,7 @@
 #define SSerialTxControl 16 //GPIO-16 (D0)
 
 ESPeasySerial* easySerial = NULL;
+clsAurora*  Inverter = NULL;
 
 
 
