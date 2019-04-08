@@ -15,21 +15,26 @@
    License URI: http://en.wikipedia.org/wiki/MIT_License
    Status : "Proof of concept"
 
-   PIN Wemos D1 mini successuful tested: GPIO-5(D1)
-                                         GPIO-16(D0)                                         
+   PIN successuful tested:
+
+   RS485    Wemos D1 mini
+   Vcc      3v3
+   Gnd      G
+   RO       D5 (GPIO-14)
+   RI       D6 (GPIO-12)
+   RE/DE    D3 (GPIO-0)
+
    References:
    https://github.com/H4ndl3/pvimon/blob/master/pvimon.ino
    http://www.drhack.it/images/PDF/AuroraCommunicationProtocol_4_2.pdf
-
    http://www.gianlucaghettini.net/lettura-fotovoltaico-da-remoto-con-nodemcu/
    https://github.com/jrbenito/ABBAurora
    https://forum.arduino.cc/index.php?topic=154407.0
  */
 
 //uncomment one of the following as needed
-//#include <Arduino.h>
-#include <ESPeasySerial.h>
 //#include <TimeLib.h>
+#include <ESPeasySerial.h>
 
 #define PLUGIN_111
 #define PLUGIN_ID_111         111
@@ -50,33 +55,22 @@
 //RS485 control
 #define RS485Transmit HIGH
 #define RS485Receive LOW
-#define TX D1
-#define RX D2
-#define RS485 D3 //GPIO-0 (D3)
-
-ESPeasySerial serDebug(RX, TX); // RX, TX
-serDebug.begin(9600);
-
-void serDebugPrintData(byte *data) {
-  for (int i = 0; i < 8; i++) {
-    serDebug.print((int)data[i]);
-    serDebug.print(F(" "));
-  }
-  serDebug.println(F(" "));
-}
+#define TX 1 // GPIO-1 (TX)
+#define RX 3 // GPIO-3 (RX)
+#define baudrate 19200 //baudrate RS485
+#define SSerialTxControl D0 //GPIO-16 (D0)
 
 
 class clsAurora {
 private:
   int MaxAttempt = 1;
-  int Plugin_111_RS485 = RS485; 
   byte Address = 0;
   void clearData(byte *data, byte len) {
     for (int i = 0; i < len; i++) {
       data[i] = 0;
     }
   }
-   
+
   int Crc16(byte *data, int offset, int count)
   {
     byte BccLo = 0xFF;
@@ -115,7 +109,7 @@ private:
     SendData[9] = highByte(crc);
     clearReceiveData();
     //=================================================
-    String log = "AURORA - Send:";
+    String log = "AURORA - Send data:";
     log += SendData[0]; log +=',';
     log += SendData[1]; log +=',';
     log += SendData[2]; log +=',';
@@ -125,38 +119,45 @@ private:
     log += SendData[6]; log +=',';
     log += SendData[7]; log +=',';
     log += SendData[8]; log +=',';
-    log += SendData[9]; log +=' - ';
-    log += Plugin_111_RS485;
-    serDebug(log);
-    //addLog(LOG_LEVEL_INFO, log);   
+    log += SendData[9]; log +='-';
+    //log += SSerialTxControl;
+    addLog(LOG_LEVEL_INFO,log);
    //=================================================
     for (int i = 0; i < MaxAttempt; i++)
     {
-      digitalWrite(Plugin_111_RS485, RS485Transmit);
+      digitalWrite(SSerialTxControl, RS485Transmit);
       delay(50);
       if (Serial.write(SendData, sizeof(SendData)) != 0) {
         Serial.flush();
         SendStatus = true;
-        digitalWrite(Plugin_111_RS485, RS485Receive);
-        if (Serial.readBytes(ReceiveData, sizeof(ReceiveData)) != 0) {
-          //====================================
-          String log1 = "AURORA - Receive: ";
-          log1 += sizeof(ReceiveData); log +='-';
-           serDebug(log); 
-          //addLog(LOG_LEVEL_INFO, log1);
-          //====================================
+        digitalWrite(SSerialTxControl, RS485Receive);
+        int rec = Serial.readBytes(ReceiveData, sizeof(ReceiveData));
+        String log = "AURORA - Received data: ";
+        log += ReceiveData[0]; log +=',';
+        log += ReceiveData[1]; log +=',';
+        log += ReceiveData[2]; log +=',';
+        log += ReceiveData[3]; log +=',';
+        log += ReceiveData[4]; log +=',';
+        log += ReceiveData[5]; log +=',';
+        log += ReceiveData[6]; log +=',';
+        log += ReceiveData[7]; log +='-';
+        log += rec;
+        addLog(LOG_LEVEL_INFO,log);
+        if (rec != 0) {
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
             break;
           }
         }
       }
-      else { 
-            //addLog(LOG_LEVEL_INFO,"Error while sending data"); 
-            serDebug(log);
-            digitalWrite(Plugin_111_RS485, RS485Receive); return(false); 
+      else {
+            addLog(LOG_LEVEL_INFO,"Error while sending data");
+            digitalWrite(SSerialTxControl, RS485Receive); return(false);
            }
     }
+    String log1 = "ReceiveStatus:"; log1 +=',';
+    log1 += ReceiveStatus;
+    addLog(LOG_LEVEL_INFO,log1);
     return ReceiveStatus;
   }
 
@@ -174,8 +175,8 @@ public:
   bool SendStatus = false;
   bool ReceiveStatus = false;
   byte ReceiveData[8];
-  clsAurora(byte address, byte plugin_111_RS485 ) {
-    Plugin_111_RS485 = plugin_111_RS485;
+
+  clsAurora(byte address) {
     Address = address;
     SendStatus = false;
     ReceiveStatus = false;
@@ -625,79 +626,41 @@ public:
     }
     Version.TransmissionState = ReceiveData[0];
     Version.GlobalState = ReceiveData[1];
-    /*
-    switch ((char)ReceiveData[2])
-    {
-    case 'i':
-      Version.Par1 = F("Aurora 2 kW indoor"); break;
-    case 'o':
-      Version.Par1 = F("Aurora 2 kW outdoor"); break;
-    case 'I':
-      Version.Par1 = F("Aurora 3.6 kW indoor"); break;
-    case 'O':
-      Version.Par1 = F("Aurora 3.0 - 3.6 kW outdoor"); break;
-    case '5':
-      Version.Par1 = F("Aurora 5.0 kW outdoor"); break;
-    case '6':
-      Version.Par1 = F("Aurora 6 kW outdoor"); break;
-    case 'P':
-      Version.Par1 = F("3 - phase interface (3G74)"); break;
-    case 'C':
-      Version.Par1 = F("Aurora 50kW module"); break;
-    case '4':
-      Version.Par1 = F("Aurora 4.2kW new"); break;
-    case '3':
-      Version.Par1 = F("Aurora 3.6kW new"); break;
-    case '2':
-      Version.Par1 = F("Aurora 3.3kW new"); break;
-    case '1':
-      Version.Par1 = F("Aurora 3.0kW new"); break;
-    case 'D':
-      Version.Par1 = F("Aurora 12.0kW"); break;
-    case 'X':
-      Version.Par1 = F("Aurora 10.0kW"); break;
-    default:
-      Version.Par1 = F("Sconosciuto"); break;
-    }
 
-    switch ((char)ReceiveData[3])
-    {
-    case 'A':
-      Version.Par2 = F("UL1741"); break;
-    case 'E':
-      Version.Par2 = F("VDE0126"); break;
-    case 'S':
-      Version.Par2 = F("DR 1663 / 2000"); break;
-    case 'I':
-      Version.Par2 = F("ENEL DK 5950"); break;
-    case 'U':
-      Version.Par2 = F("UK G83"); break;
-    case 'K':
-      Version.Par2 = F("AS 4777"); break;
-    default:
-      Version.Par2 = F("Sconosciuto"); break;
-    }
-    switch ((char)ReceiveData[4])
-    {
-    case 'N':
-      Version.Par3 = F("Transformerless Version"); break;
-    case 'T':
-      Version.Par3 = F("Transformer Version"); break;
-    default:
-      Version.Par3 = F("Sconosciuto"); break;
-    }
-    switch ((char)ReceiveData[5])
-    {
-    case 'W':
-      Version.Par4 = F("Wind version"); break;
-    case 'N':
-      Version.Par4 = F("PV version"); break;
-    default:
-      Version.Par4 = F("Sconosciuto"); break;
-    }
-    */
+         if (((char)ReceiveData[2]) == 'i')  { Version.Par1 = "Aurora 2 kW indoor"; }
+    else if (((char)ReceiveData[2]) == 'o')  { Version.Par1 = "Aurora 2 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == 'I')  { Version.Par1 = "Aurora 3.6 kW indoor"; }
+    else if (((char)ReceiveData[2]) == 'O')  { Version.Par1 = "Aurora 3.0 - 3.6 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == '5')  { Version.Par1 = "Aurora 5.0 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == '6')  { Version.Par1 = "Aurora 6 kW outdoor"; }
+    else if (((char)ReceiveData[2]) == 'P')  { Version.Par1 = "3 - phase interface (3G74)"; }
+    else if (((char)ReceiveData[2]) == 'C')  { Version.Par1 = "Aurora 50kW module"; }
+    else if (((char)ReceiveData[2]) == '4')  { Version.Par1 = "Aurora 4.2kW new"; }
+    else if (((char)ReceiveData[2]) == '3')  { Version.Par1 = "Aurora 3.6kW new"; }
+    else if (((char)ReceiveData[2]) == '2')  { Version.Par1 = "Aurora 3.3kW new"; }
+    else if (((char)ReceiveData[2]) == '1')  { Version.Par1 = "Aurora 3.0kW new"; }
+    else if (((char)ReceiveData[2]) == 'D')  { Version.Par1 = "Aurora 12.0kW"; }
+    else if (((char)ReceiveData[2]) == 'X')  { Version.Par1 = "Aurora 10.0kW"; }
+                                        else { Version.Par1 = "Sconosciuto"; };
+
+         if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = "UL1741"; }
+    else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = "VDE0126"; }
+    else if (((char)ReceiveData[3]) == 'S')  { Version.Par2 = "DR 1663 / 2000"; }
+    else if (((char)ReceiveData[3]) == 'I')  { Version.Par2 = "ENEL DK 5950"; }
+    else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = "UK G83"; }
+    else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = "AS 4777"; }
+                                       else  { Version.Par2 = "Sconosciuto"; };
+
+         if (((char)ReceiveData[4]) == 'N')  { Version.Par3 = "Transformerless Version"; }
+    else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = "Transformer Version"; }
+                                        else { Version.Par3 = "Sconosciuto"; };
+
+         if (((char)ReceiveData[5]) == 'N')  { Version.Par4 = "Wind version"; }
+    else if (((char)ReceiveData[5]) == 'K')  { Version.Par4 = "PV version"; }
+                                        else { Version.Par4 = "Sconosciuto"; };
     return Version.ReadState;
   }
+
 
   typedef struct {
     byte TransmissionState;
@@ -986,38 +949,12 @@ public:
   bool ReadSystemSerialNumberCentral() { return Send(Address, (byte)107, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0); }
 };
 
-/*
-String stampaDataTime(unsigned long scn)
-{
-  String rtn;
-  if (scn > 0) {
-    setTime(0, 0, 0, 1, 1, 2000);
-    if (timeStatus() == timeSet) {
-    adjustTime(scn);
-      rtn = String(day());
-      rtn += String(F("/"));
-      rtn += String(month());
-      rtn += String(F("/"));
-      rtn += String(year());
-      rtn += String(F(" "));
-      rtn += String(hour());
-      rtn += String(F(":"));
-      rtn += String(minute());
-      rtn += String(F(":"));
-      rtn += String(second());
-    }
-  }
-  return rtn;
-}
-*/
 
-// ==============================================
-// ID inverter da cambiare a mano !!!
- //clsAurora Inverter = clsAurora(1); //
 
- clsAurora*  Inverter = NULL;
 
-// ==============================================
+//=====================================
+clsAurora*  Inverter = NULL;
+//=====================================
 
 boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 {
@@ -1060,10 +997,17 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            break;
         }
 
+        case PLUGIN_GET_DEVICEGPIONAMES:
+        {
+            serialHelper_getGpioNames(event);
+            break;
+        }
+
         case PLUGIN_WEBFORM_LOAD:
         {
            addFormNumericBox(F("PVI Address"), F("plugin_111_pviaddr"), PCONFIG(0),1,255);
-           addFormNumericBox(F("RE/DE RS485 Pinout"), F("plugin_111_RS485"), PCONFIG(1),1,15);
+
+           serialHelper_webformLoad(event);
 
            //after the form has been loaded, set success and break
            success = true;
@@ -1076,8 +1020,9 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //the plugin settings should be saved to PCONFIG(x)
            //ping configuration should be read from CONFIG_PIN1 and stored
 
+           serialHelper_webformSave(event);
+
            PCONFIG(0) = getFormItemInt(F("plugin_111_pviaddr"));
-           PCONFIG(1) = getFormItemInt(F("plugin_111_RS485"));
 
            //after the form has been saved successfuly, set success and break
            success = true;
@@ -1086,7 +1031,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WEBFORM_SHOW_CONFIG:
         {
-           string += String(ExtraTaskSettings.TaskDevicePluginConfigLong[0]);
+           //string += String(ExtraTaskSettings.TaskDevicePluginConfigLong[0]);
            success = true;
            break;
         }
@@ -1096,40 +1041,18 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         {
            // this case defines code to be executed when the plugin is initialised
 
-           if (Inverter) delete Inverter;
-           Inverter = new clsAurora( PCONFIG(0), PCONFIG(1) );
-           Serial.setTimeout(500);
-           Serial.begin(19200);  // initialize serial connection to the inverter
-           
-           //==============================================
-           String log = F("PVI Address: ");
-           log += PCONFIG(0); log +=',';
-           log += F("RE/DE RS485 Pinout: ");
-           log += PCONFIG(1);
-           serDebug(log);
-           //addLog(LOG_LEVEL_INFO, log);           
-           //============================================
-           
-           if ( PCONFIG(1) )
-           {
-               //addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");              
-               serDebug("INIT: Aurora Inverter created!");
-               Serial.setTimeout(500);
-               Serial.begin(19200);  // initialize serial connection to the inverter
-               pinMode( PCONFIG(1), OUTPUT);              
-               // pinMode(rxPin, INPUT);  // set pin modes
-               // pinMode(txPin, OUTPUT);
-               // pinMode(rtsPin, OUTPUT);
-               // digitalWrite( Plugin_111_RS485, RS485Receive);  // Init Transceiver
-           }
 
-           if (!(PCONFIG(1)))
-           {
-               //addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter removed!");
-               serDebug("INIT: Aurora Inverter removed!");
-               pinMode(CONFIG_PIN1, INPUT);
-           }
-           //after the plugin has been initialised successfuly, set success and break
+           if (Inverter) { delete Inverter; Inverter = nullptr; }; Inverter = new clsAurora( PCONFIG(0) );
+           pinMode(SSerialTxControl, OUTPUT);
+           Serial.setTimeout(500);
+           Serial.begin(baudrate);
+           Serial.flush();
+
+           //=============================================================================================
+           String log = F("INIT: PVI Address "); log += PCONFIG(0);
+           if ( Inverter != nullptr ) { addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!"); addLog(LOG_LEVEL_INFO, log); }
+           else { addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter ERROR!");}
+
            success = true;
            break;
         }
@@ -1141,29 +1064,17 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //after the plugin has read data successfuly, set success and break
 
            UserVar[event->BaseVarIndex + 0] = Inverter->ReadCumulatedEnergy(0);
-           UserVar[event->BaseVarIndex + 1] = Inverter->ReadTimeDate();
-           UserVar[event->BaseVarIndex + 3] = Inverter->ReadSystemPN();
-           UserVar[event->BaseVarIndex + 4] = Inverter->ReadSystemSerialNumber();
-           UserVar[event->BaseVarIndex + 5] = Inverter->ReadManufacturingWeekYear();
-           UserVar[event->BaseVarIndex + 6] = Inverter->ReadFirmwareRelease();
-           UserVar[event->BaseVarIndex + 7] = Inverter->ReadVersion();
-           UserVar[event->BaseVarIndex + 8] = Inverter->ReadState();
-
-           String log = F("READ LOGGER: ");
-           log += UserVar[event->BaseVarIndex + 0]; log +=',';
-           log += UserVar[event->BaseVarIndex + 1]; log +=',';
-           log += UserVar[event->BaseVarIndex + 2]; log +=',';
-           log += UserVar[event->BaseVarIndex + 3]; log +=',';
-           log += UserVar[event->BaseVarIndex + 4]; log +=',';
-           log += UserVar[event->BaseVarIndex + 5]; log +=',';
-           log += UserVar[event->BaseVarIndex + 6]; log +=',';
-           log += UserVar[event->BaseVarIndex + 7]; log +=',';
-           log += UserVar[event->BaseVarIndex + 8];
-           serDebug(log);
-           //addLog(LOG_LEVEL_INFO,log);
+           UserVar[event->BaseVarIndex + 1] = Inverter->ReadSystemSerialNumber();
+           UserVar[event->BaseVarIndex + 2] = Inverter->ReadFirmwareRelease();
+           UserVar[event->BaseVarIndex + 3] = Inverter->ReadState();
 
            success = true;
            break;
+        }
+
+        case PLUGIN_EXIT:
+        {
+
         }
 
         case PLUGIN_WRITE:
@@ -1181,12 +1092,11 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
              String taskName = parseString(string, 2);
              //int8_t taskIndex = getTaskIndexByName(taskName);
              if ( GetArgv(string.c_str(), TmpStr1, 2) ) rfType = TmpStr1.c_str();
-              
+
              String log = F("HTTP command: aurora, ");
-             log += rfType; 
-             //addLog(LOG_LEVEL_INFO, log); 
-             serDebug(log); 
-              
+             log += rfType;
+             addLog(LOG_LEVEL_INFO, log);
+
              if ( rfType.equalsIgnoreCase("ask") ) {
                 read_RS485();
                 success = true;  //set to true only if plugin has executed a command successfully
@@ -1195,15 +1105,12 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
            if (success){
                  //String url = String(Settings.Name) + "/control?aurora=" + string;
-                 String url = String(WiFi.localIP().toString()) + "/control?cmd=aurora,ask";              
-                 String log = F("To send this command again, ");              
-                 log += "use this: <a href=\"http://" + url + "\">URL</a>";
-                 log += rfType; 
-                 //addLog(LOG_LEVEL_INFO, log); 
-                 serDebug(log); 
+                 String url = String(WiFi.localIP().toString()) + "/control?cmd=aurora,ask";
+                 String log = F("To send this command again, ");
+                 log += "use this: <a href=\"http://" + url + "\">URL</a>"; log += rfType; addLog(LOG_LEVEL_INFO, log);
 
                  if (printToWeb)
-                    {
+                    { printWebString += F("<BR><BR>");
                       printWebString += F("Invert command Aurora Sent!");
                       printWebString += F("<BR>PVI Address: ");
                       printWebString += String( PCONFIG(0) );
@@ -1221,77 +1128,34 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
      return success;
 }
 //==========================================================================
-//==========================================================================
-//==========================================================================
 
 void read_RS485(){
 
-  String log = F("INVERTER LOGGER: ");
-  log += Inverter->ReadCumulatedEnergy(0); log +=',';
-  log += Inverter->ReadTimeDate(); log +=',';
-  log += Inverter->ReadLastFourAlarms(); log +=',';
-  log += Inverter->ReadSystemPN(); log +=',';
-  log += Inverter->ReadSystemSerialNumber(); log +=',';
-  log += Inverter->ReadManufacturingWeekYear(); log +=',';
-  log += Inverter->ReadVersion(); log +=',';
-  log += Inverter->ReadState(); log +=',';
-  log += Inverter->ReadDSP(50,1); log +=',';
-  serDebug(log); 
-  //addLog(LOG_LEVEL_INFO,log);
-
-
-/*
-  String log = F("INVERTER LOGGER: ");
-  log += Inverter.CumulatedEnergy.ReadState; log +=',';
-  log += Inverter.TransmissionState(Inverter.CumulatedEnergy.TransmissionState); log +=',';
-  log += Inverter.GlobalState(Inverter.CumulatedEnergy.GlobalState); log +=',';
-  log += Inverter.CumulatedEnergy.Energia; log +=',';
-
-  log += Inverter.ReadTimeDate.ReadState; log +=',';
-  log += Inverter.TransmissionState(Inverter.TimeDate.TransmissionState); log +=',';
-  log += Inverter.GlobalState(Inverter.TimeDate.GlobalState); log +=',';
-  log += Inverter.TimeDate.Secondi; log +=',';
-  log += stampaDataTime(Inverter.TimeDate.Secondi);log +=',';
-
-  log += Inverter.LastFourAlarms.ReadState; log +=',';
-  log += Inverter.TransmissionState(Inverter.LastFourAlarms.TransmissionState); log +=',';
-  log += Inverter.GlobalState(Inverter.LastFourAlarms.GlobalState); log +=',';
-  log += Inverter.AlarmState(Inverter.LastFourAlarms.Alarms1); log +=',';
-  log += Inverter.AlarmState(Inverter.LastFourAlarms.Alarms2); log +=',';
-  log += Inverter.AlarmState(Inverter.LastFourAlarms.Alarms3); log +=',';
-  log += Inverter.AlarmState(Inverter.LastFourAlarms.Alarms4); log +=',';
-
-  log += Inverter.ReadSystemPN.ReadState; log +=',';
-  log += Inverter.ReadSystemPN.PN; log +=',';
-  log += Inverter.ReadSystemSerialNumber.ReadState; log +=',';
-  log += Inverter.ReadSystemSerialNumber.SerialNumber; log +=',';
-
-  log += Inverter.ReadManufacturingWeekYear.ReadState; log +=',';
-  log += Inverter.ReadManufacturingWeekYear.Week; log +=',';
-  log += Inverter.ReadManufacturingWeekYear.Year; log +=',';
-
-  log += Inverter.ReadFirmwareRelease.ReadState; log +=',';
-  log += Inverter.TransmissionState(Inverter.FirmwareRelease.TransmissionState); log +=',';
-  log += Inverter.GlobalState(Inverter.FirmwareRelease.GlobalState); log +=',';
-  log += Inverter.ReadFirmwareRelease.Release +=',';
-
-  log += Inverter.Version.ReadState; log +=',';
-  log += Inverter.TransmissionState(Inverter.Version.TransmissionState); log +=',';
-  log += Inverter.GlobalState(Inverter.Version.GlobalState); log +=',';
-  log += Inverter.Version.Par1; log +=',';
-
-  log += Inverter.State.ReadState; log +=',';
-  log += Inverter.TransmissionState(Inverter.State.TransmissionState); log +=',';
-  log += Inverter.GlobalState(Inverter.State.GlobalState); log +=',';
-  log += Inverter.InverterState(Inverter.State.InverterState); log +=',';
-  log += Inverter.DcDcState(Inverter.State.Channel1State); log +=',';
-  log += Inverter.DcDcState(Inverter.State.Channel2State); log +=',';
-  log += Inverter.AlarmState(Inverter.State.AlarmState); log +=',';
-
-  log += Inverter.ReadDSP.ReadState;
-  serDebug(log); 
-  //addLog(LOG_LEVEL_INFO,log);
-*/
+  String log = F("read_RS485: "); log +=F("<BR><BR>");
+  log += F("ReadCumulatedEnergy: "); log += Inverter->ReadCumulatedEnergy(0); log +=F("<BR>");
+  delay(500);
+  log += F("ReadTimeDate: "); log += Inverter->ReadTimeDate(); log +=F("<BR>");
+  delay(500);
+  log += F("ReadLastFourAlarms: "); log += Inverter->ReadLastFourAlarms(); log +=F("<BR>");
+  delay(500);
+  log += F("ReadSystemPN: "); log += Inverter->ReadSystemPN(); log +=F("<BR>");
+  delay(500);
+  log += F("ReadSystemSerialNumber: "); log += Inverter->ReadSystemSerialNumber(); log +=F("<BR>");
+  delay(500);
+  log += F("ReadManufacturingWeekYear: "); log += Inverter->ReadManufacturingWeekYear(); log +=F("<BR>");
+  delay(500);
+  Inverter->ReadVersion();
+  log += F("ReadVersion: ");
+  log += Inverter->Version.Par1; log +=F(",");
+  log += Inverter->Version.Par2; log +=F(",");
+  log += Inverter->Version.Par3; log +=F(",");
+  log += Inverter->Version.Par4; log +=F("<BR>");
+  delay(500);
+  log += F("ReadState: "); log += Inverter->ReadState(); log +=F("<BR>");
+  delay(500);
+  log += F("ReadDSP: "); log += Inverter->ReadDSP(50,1); log +=F("<BR>");
+  addLog(LOG_LEVEL_INFO,log);
+  printWebString += log;
   delay(50);
 }
 
