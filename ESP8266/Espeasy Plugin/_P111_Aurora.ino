@@ -863,6 +863,7 @@ public:
     ManufacturingWeekYear.Year = String(String((char)ReceiveData[4]) + String((char)ReceiveData[5]));
     return ManufacturingWeekYear.ReadState;
   }
+
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -1132,28 +1133,58 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 void read_RS485(){
 
   String log = F("read_RS485: "); log +=F("<BR><BR>");
-  log += F("ReadCumulatedEnergy: "); log += Inverter->ReadCumulatedEnergy(0); log +=F("<BR>");
+
+  Inverter->ReadCumulatedEnergy(0);
+  log += F("ReadCumulatedEnergy: ");
+  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
   delay(500);
-  log += F("ReadTimeDate: "); log += Inverter->ReadTimeDate(); log +=F("<BR>");
+
+  Inverter->ReadLastFourAlarms(); log=F("");
+  log += F("ReadLastFourAlarms: ");
+  log += Inverter->LastFourAlarms.Alarms1; log +=F(",");
+  log += Inverter->LastFourAlarms.Alarms2; log +=F(",");
+  log += Inverter->LastFourAlarms.Alarms3; log +=F(",");
+  log += Inverter->LastFourAlarms.Alarms4; log +=F("<BR>");
   delay(500);
-  log += F("ReadLastFourAlarms: "); log += Inverter->ReadLastFourAlarms(); log +=F("<BR>");
+
+  Inverter->ReadSystemPN(); log=F("");
+  log += F("ReadSystemPN: ");
+  log += Inverter->SystemPN.ReadState; log +=F("<BR>");
   delay(500);
-  log += F("ReadSystemPN: "); log += Inverter->ReadSystemPN(); log +=F("<BR>");
+
+  Inverter->ReadSystemSerialNumber(); log=F("");
+  log += F("ReadSystemSerialNumber: ");
+  log += Inverter->SystemSerialNumber.ReadState; log +=F("<BR>");
   delay(500);
-  log += F("ReadSystemSerialNumber: "); log += Inverter->ReadSystemSerialNumber(); log +=F("<BR>");
+
+  Inverter->ReadManufacturingWeekYear(); log=F("");
+  log += F("ReadManufacturingWeekYear: ");
+  log += Inverter->ManufacturingWeekYear.Week; log +=F(",");
+  log += Inverter->ManufacturingWeekYear.Year; log +=F("<BR>");
   delay(500);
-  log += F("ReadManufacturingWeekYear: "); log += Inverter->ReadManufacturingWeekYear(); log +=F("<BR>");
-  delay(500);
-  Inverter->ReadVersion();
+
+  Inverter->ReadVersion(); log=F("");
   log += F("ReadVersion: ");
   log += Inverter->Version.Par1; log +=F(",");
   log += Inverter->Version.Par2; log +=F(",");
   log += Inverter->Version.Par3; log +=F(",");
   log += Inverter->Version.Par4; log +=F("<BR>");
   delay(500);
-  log += F("ReadState: "); log += Inverter->ReadState(); log +=F("<BR>");
+
+  Inverter->ReadState(); log=F("");
+  log += F("ReadState: ");
+  log += Inverter->State.TransmissionState ; log +=F(",");
+  log += Inverter->State.GlobalState ; log +=F(",");
+  log += Inverter->State.InverterState ; log +=F(",");
+  log += Inverter->State.Channel1State ; log +=F(",");
+  log += Inverter->State.Channel2State ; log +=F(",");
+  log += Inverter->State.AlarmState ; log +=F("<BR>");
   delay(500);
-  log += F("ReadDSP: "); log += Inverter->ReadDSP(50,1); log +=F("<BR>");
+
+  Inverter->ReadDSP(50,1); log=F("");
+  log += F("ReadDSP: ");
+  log += Inverter->DSP.Valore; log +=F("<BR>");
+
   addLog(LOG_LEVEL_INFO,log);
   printWebString += log;
   delay(50);
