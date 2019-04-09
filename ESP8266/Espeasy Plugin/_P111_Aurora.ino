@@ -39,10 +39,10 @@
 #define PLUGIN_111
 #define PLUGIN_ID_111         111
 #define PLUGIN_NAME_111       "Inverter logger (Aurora)"
-#define PLUGIN_VALUENAME1_111 "ReadCumulatedEnergy"     //variable output of the plugin. The label is in quotation marks
-#define PLUGIN_VALUENAME2_111 "ReadLastFourAlarms"
-#define PLUGIN_VALUENAME3_111 "ReadFirmwareRelease"
-#define PLUGIN_VALUENAME4_111 "ReadState"
+#define PLUGIN_VALUENAME1_111 "Daily energy"     //variable output of the plugin. The label is in quotation marks
+#define PLUGIN_VALUENAME2_111 "Month energy"
+#define PLUGIN_VALUENAME3_111 "Year energy"
+#define PLUGIN_VALUENAME4_111 "State"
 #define PLUGIN_111_DEBUG  false             //set to true for extra log info in the debug
 
 // PIN/port configuration is stored in the following:
@@ -1062,11 +1062,14 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //code to be executed to read data
            //It is executed according to the delay configured on the device configuration page, only once
            //after the plugin has read data successfuly, set success and break
-
-           UserVar[event->BaseVarIndex + 0] = Inverter->ReadCumulatedEnergy(0);
-           UserVar[event->BaseVarIndex + 1] = Inverter->ReadSystemSerialNumber();
-           UserVar[event->BaseVarIndex + 2] = Inverter->ReadFirmwareRelease();
-           UserVar[event->BaseVarIndex + 3] = Inverter->ReadState();
+           Inverter->ReadCumulatedEnergy(0);
+           UserVar[event->BaseVarIndex + 0] = Inverter->CumulatedEnergy.Energia;
+           Inverter->ReadCumulatedEnergy(3);
+           UserVar[event->BaseVarIndex + 1] = Inverter->CumulatedEnergy.Energia;
+           Inverter->ReadCumulatedEnergy(4);
+           UserVar[event->BaseVarIndex + 2] = Inverter->CumulatedEnergy.Energia;
+           Inverter->ReadState();
+           UserVar[event->BaseVarIndex + 3] = Inverter->State.TransmissionState;
 
            success = true;
            break;
@@ -1135,73 +1138,72 @@ void read_RS485(){
 
   Inverter->ReadCumulatedEnergy(0); log=F("");
   log += F("Daily Energy: ");
-  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
-  delay(500);
-  
+  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
+  printWebString += log; delay(50);
+
   Inverter->ReadCumulatedEnergy(1); log=F("");
   log += F("Weekly Energy: ");
-  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
-  delay(500);
-   
+  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
+  printWebString += log; delay(50);
+
   Inverter->ReadCumulatedEnergy(3); log=F("");
   log += F("Month Energy: ");
-  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
-  delay(500);
-  
+  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
+  printWebString += log; delay(50);
+
   Inverter->ReadCumulatedEnergy(4); log=F("");
   log += F("Year Energy: ");
-  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
-  delay(500);
+  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
+  printWebString += log; delay(50);
 
   Inverter->ReadLastFourAlarms(); log=F("");
-  log += F("ReadLastFourAlarms: ");
+  log += F("LastFourAlarms: ");
   log += Inverter->LastFourAlarms.Alarms1; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms2; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms3; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms4; log +=F("<BR>");
-  delay(500);
+  printWebString += log; delay(50);
 
   Inverter->ReadSystemPN(); log=F("");
-  log += F("ReadSystemPN: ");
-  log += Inverter->SystemPN.ReadState; log +=F("<BR>");
-  delay(500);
+  log += F("SystemPN: ");
+  log += Inverter->SystemPN.PN; log +=F("<BR>");
+  printWebString += log; delay(50);
 
   Inverter->ReadSystemSerialNumber(); log=F("");
-  log += F("ReadSystemSerialNumber: ");
-  log += Inverter->SystemSerialNumber.ReadState; log +=F("<BR>");
-  delay(500);
+  log += F("SystemSerialNumber: ");
+  log += Inverter->SystemSerialNumber.SerialNumber; log +=F("<BR>");
+  printWebString += log; delay(50);
 
   Inverter->ReadManufacturingWeekYear(); log=F("");
-  log += F("ReadManufacturingWeekYear: ");
+  log += F("ManufacturingWeekYear: ");
   log += Inverter->ManufacturingWeekYear.Week; log +=F(",");
   log += Inverter->ManufacturingWeekYear.Year; log +=F("<BR>");
-  delay(500);
+  printWebString += log; delay(50);
 
   Inverter->ReadVersion(); log=F("");
-  log += F("ReadVersion: ");
+  log += F("Version: ");
   log += Inverter->Version.Par1; log +=F(",");
   log += Inverter->Version.Par2; log +=F(",");
   log += Inverter->Version.Par3; log +=F(",");
   log += Inverter->Version.Par4; log +=F("<BR>");
-  delay(500);
+  printWebString += log; delay(50);
 
   Inverter->ReadState(); log=F("");
-  log += F("ReadState: ");
+  log += F("State: ");
   log += Inverter->State.TransmissionState ; log +=F(",");
   log += Inverter->State.GlobalState ; log +=F(",");
   log += Inverter->State.InverterState ; log +=F(",");
   log += Inverter->State.Channel1State ; log +=F(",");
   log += Inverter->State.Channel2State ; log +=F(",");
   log += Inverter->State.AlarmState ; log +=F("<BR>");
-  delay(500);
+  printWebString += log; delay(50);
 
   Inverter->ReadDSP(50,1); log=F("");
-  log += F("ReadDSP: ");
+  log += F("DSP: ");
   log += Inverter->DSP.Valore; log +=F("<BR>");
+  printWebString += log; delay(50);
 
   addLog(LOG_LEVEL_INFO,log);
-  printWebString += log;
-  delay(50);
 }
 
 #endif
