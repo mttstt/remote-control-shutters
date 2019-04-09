@@ -120,7 +120,6 @@ private:
     log += SendData[7]; log +=',';
     log += SendData[8]; log +=',';
     log += SendData[9]; log +='-';
-    //log += SSerialTxControl;
     addLog(LOG_LEVEL_INFO,log);
    //=================================================
     for (int i = 0; i < MaxAttempt; i++)
@@ -1134,8 +1133,23 @@ void read_RS485(){
 
   String log = F("read_RS485: "); log +=F("<BR><BR>");
 
-  Inverter->ReadCumulatedEnergy(0);
-  log += F("ReadCumulatedEnergy: ");
+  Inverter->ReadCumulatedEnergy(0); log=F("");
+  log += F("Daily Energy: ");
+  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
+  delay(500);
+  
+  Inverter->ReadCumulatedEnergy(1); log=F("");
+  log += F("Weekly Energy: ");
+  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
+  delay(500);
+   
+  Inverter->ReadCumulatedEnergy(3); log=F("");
+  log += F("Month Energy: ");
+  log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
+  delay(500);
+  
+  Inverter->ReadCumulatedEnergy(4); log=F("");
+  log += F("Year Energy: ");
   log += Inverter->CumulatedEnergy.ReadState; log +=F("<BR>");
   delay(500);
 
