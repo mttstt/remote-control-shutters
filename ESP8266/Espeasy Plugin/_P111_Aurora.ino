@@ -42,7 +42,6 @@
 #define PLUGIN_VALUENAME1_111 "DailyEnergy"     //variable output of the plugin. The label is in quotation marks
 #define PLUGIN_VALUENAME2_111 "MonthEnergy"
 #define PLUGIN_VALUENAME3_111 "YearEnergy"
-#define PLUGIN_VALUENAME4_111 "State"
 #define PLUGIN_111_DEBUG  false             //set to true for extra log info in the debug
 
 // PIN/port configuration is stored in the following:
@@ -120,7 +119,7 @@ private:
     log += SendData[7]; log +=',';
     log += SendData[8]; log +=',';
     log += SendData[9]; log +='-';
-    addLog(LOG_LEVEL_INFO,log);
+    //addLog(LOG_LEVEL_INFO,log);
    //=================================================
     for (int i = 0; i < MaxAttempt; i++)
     {
@@ -141,7 +140,7 @@ private:
         log += ReceiveData[6]; log +=',';
         log += ReceiveData[7]; log +='-';
         log += rec;
-        addLog(LOG_LEVEL_INFO,log);
+        //addLog(LOG_LEVEL_INFO,log);
         if (rec != 0) {
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
@@ -150,13 +149,13 @@ private:
         }
       }
       else {
-            addLog(LOG_LEVEL_INFO,"Error while sending data");
+            // addLog(LOG_LEVEL_INFO,"Error while sending data");
             digitalWrite(SSerialTxControl, RS485Receive); return(false);
            }
     }
     String log1 = "ReceiveStatus:"; log1 +=',';
     log1 += ReceiveStatus;
-    addLog(LOG_LEVEL_INFO,log1);
+    //addLog(LOG_LEVEL_INFO,log1);
     return ReceiveStatus;
   }
 
@@ -960,18 +959,18 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         case PLUGIN_DEVICE_ADD:
         {
           Device[++deviceCount].Number = PLUGIN_ID_111;
-          Device[deviceCount].Type = DEVICE_TYPE_SINGLE; //how the device is connected
-          Device[deviceCount].SendDataOption = false;
+        //  Device[deviceCount].Type = DEVICE_TYPE_SINGLE; //how the device is connected
+          Device[deviceCount].SendDataOption = true;
           Device[deviceCount].Ports = 0;
-          Device[deviceCount].VType = SENSOR_TYPE_SWITCH; //type of value the plugin will return, used only for Domoticz
+        //  Device[deviceCount].VType = SENSOR_TYPE_SWITCH; //type of value the plugin will return, used only for Domoticz
           Device[deviceCount].PullUpOption = false;
           Device[deviceCount].InverseLogicOption = false;
           Device[deviceCount].FormulaOption = false;
-          Device[deviceCount].ValueCount = 4;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
-          Device[deviceCount].TimerOption = false;
+          Device[deviceCount].ValueCount = 3;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
+          Device[deviceCount].TimerOption = true;
           Device[deviceCount].TimerOptional = false;
           Device[deviceCount].GlobalSyncOption = true;
-          Device[deviceCount].DecimalsOnly = true;
+          Device[deviceCount].DecimalsOnly = false;
           break;
         }
 
@@ -988,22 +987,19 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[0], PSTR(PLUGIN_VALUENAME1_111));
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
-
            break;
         }
 
         case PLUGIN_GET_DEVICEGPIONAMES:
         {
-            serialHelper_getGpioNames(event);
+          //  serialHelper_getGpioNames(event);
             break;
         }
 
         case PLUGIN_WEBFORM_LOAD:
         {
            addFormNumericBox(F("PVI Address"), F("plugin_111_pviaddr"), PCONFIG(0),1,255);
-
-           serialHelper_webformLoad(event);
-
+          // serialHelper_webformLoad(event);
            //after the form has been loaded, set success and break
            success = true;
            break;
@@ -1015,7 +1011,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //the plugin settings should be saved to PCONFIG(x)
            //ping configuration should be read from CONFIG_PIN1 and stored
 
-           serialHelper_webformSave(event);
+           //serialHelper_webformSave(event);
 
            PCONFIG(0) = getFormItemInt(F("plugin_111_pviaddr"));
 
@@ -1042,9 +1038,13 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            Serial.flush();
            //=============================================================================================
            String log = F("INIT: PVI Address "); log += PCONFIG(0);
-           if ( Inverter != nullptr ) { addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!"); addLog(LOG_LEVEL_INFO, log); }
-           else { addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter ERROR!");}
-
+           if ( Inverter != nullptr ) {
+           addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
+           addLog(LOG_LEVEL_INFO, log);
+           }
+           else {
+             addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter ERROR!");
+           }
            success = true;
            break;
         }
@@ -1067,7 +1067,6 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_EXIT:
         {
-
         }
 
         case PLUGIN_WRITE:
@@ -1088,7 +1087,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
              String log = F("HTTP command: aurora, ");
              log += rfType;
-             addLog(LOG_LEVEL_INFO, log);
+             // addLog(LOG_LEVEL_INFO, log);
 
              if ( rfType.equalsIgnoreCase("ask") ) {
                 read_RS485();
@@ -1100,7 +1099,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
                  //String url = String(Settings.Name) + "/control?aurora=" + string;
                  String url = String(WiFi.localIP().toString()) + "/control?cmd=aurora,ask";
                  String log = F("To send this command again, ");
-                 log += "use this: <a href=\"http://" + url + "\">URL</a>"; log += rfType; addLog(LOG_LEVEL_INFO, log);
+                 log += "use this: <a href=\"http://" + url + "\">URL</a>"; log += rfType;
+                 // addLog(LOG_LEVEL_INFO, log);
 
                  if (printToWeb)
                     { printWebString += F("<BR>PVI Address: ");
@@ -1127,22 +1127,22 @@ void read_RS485(){
   Inverter->ReadCumulatedEnergy(0); log=F("");
   log += F("Daily Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadCumulatedEnergy(1); log=F("");
   log += F("Weekly Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadCumulatedEnergy(3); log=F("");
   log += F("Month Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadCumulatedEnergy(4); log=F("");
   log += F("Year Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadLastFourAlarms(); log=F("");
   log += F("LastFourAlarms: ");
@@ -1150,23 +1150,23 @@ void read_RS485(){
   log += Inverter->LastFourAlarms.Alarms2; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms3; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms4; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadSystemPN(); log=F("");
   log += F("SystemPN: ");
   log += Inverter->SystemPN.PN; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadSystemSerialNumber(); log=F("");
   log += F("SystemSerialNumber: ");
   log += Inverter->SystemSerialNumber.SerialNumber; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadManufacturingWeekYear(); log=F("");
   log += F("ManufacturingWeekYear: ");
   log += Inverter->ManufacturingWeekYear.Week; log +=F(",");
   log += Inverter->ManufacturingWeekYear.Year; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadVersion();
   log = F("Version: ");
@@ -1174,52 +1174,27 @@ void read_RS485(){
   log += Inverter->Version.Par2; log +=F(",");
   log += Inverter->Version.Par3; log +=F(",");
   log += Inverter->Version.Par4; log +=F("<BR>");
-  printWebString += log; delay(50);
+  printWebString += log; delay(10);
 
   Inverter->ReadState();
-  log = F("TransmissionState: ");log += Inverter->State.TransmissionState ; log +=F("<BR>");
-  log = F("GlobalState: ");log += Inverter->State.GlobalState ; log +=F("<BR>");
-  log = F("InverterState: ");log += Inverter->State.InverterState ; log +=F("<BR>");
-  log = F("Channel1State: ");log += Inverter->State.Channel1State ; log +=F("<BR>");
-  log = F("Channel2State: ");log += Inverter->State.Channel2State ; log +=F("<BR>");
-  log = F("AlarmState: ");log += Inverter->State.AlarmState ; log +=F("<BR>");
+  log = F("TransmissionState: ");log += Inverter->State.TransmissionState ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("GlobalState: ");log += Inverter->State.GlobalState ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("InverterState: ");log += Inverter->State.InverterState ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("Channel1State: ");log += Inverter->State.Channel1State ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("Channel2State: ");log += Inverter->State.Channel2State ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("AlarmState: ");log += Inverter->State.AlarmState ; log +=F("<BR>");printWebString += log; delay(10);
 
-  Inverter->ReadDSP(21,0);
-  log = F("Inverter Temperature (dsp): ");
-  log += Inverter->DSP.Valore; log +=F("<BR>");
-  printWebString += log; delay(50);
+  Inverter->ReadDSP(21,0);log = F("Inverter Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(22,0); log = F("Booster Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(23,1); log = F("Input 1 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(25,1); log = F("Input 1 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(26,1); log = F("Input 2 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(27,1); log = F("Input 2 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(30,0); log = F("Riso : "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(34,0);log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(35,0); log = F("Power Peak Today (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
 
-  Inverter->ReadDSP(22,0);
-  log = F("Booster Temperature (dsp): ");
-  log += Inverter->DSP.Valore; log +=F("<BR>");
-  printWebString += log; delay(50);
-
-  Inverter->ReadDSP(23,1);
-  log = F("Input 1 Voltage (dsp): ");
-  log += Inverter->DSP.Valore; log +=F("<BR>");
-  printWebString += log; delay(50);
-
-  Inverter->ReadDSP(25,1);
-  log = F("Input 1 Current (dsp): ");
-  log += Inverter->DSP.Valore; log +=F("<BR>");
-  printWebString += log; delay(50);
-
-  Inverter->ReadDSP(26,1);
-  log = F("Input 2 Voltage (dsp): ");
-  log += Inverter->DSP.Valore; log +=F("<BR>");
-  printWebString += log; delay(50);
-
-  Inverter->ReadDSP(27,1);
-  log = F("Input 2 Current (dsp): ");
-  log += Inverter->DSP.Valore; log +=F("<BR>");
-  printWebString += log; delay(50)
-
-  Inverter->ReadDSP(30,0);
-  log = F("Riso (dsp): ");
-  log += Inverter->DSP.Valore; log +=F("<BR>");
-  printWebString += log; delay(50);
-
-  addLog(LOG_LEVEL_INFO,log);
+//  addLog(LOG_LEVEL_INFO,log);
 }
 
 #endif
