@@ -5,7 +5,7 @@ Tested on Wemos d1 mini
 ### how to
 For a more stable version:
 
-1. Clone github letscontrolit/ESPEasy
+1. Clone last version if github letscontrolit/ESPEasy
 2. modify file define_plugin_sets.h in /src folder in this way:
 
    a. Add in STABLE section the two lines
