@@ -3,7 +3,7 @@ Plugin for EspEasy compatible with Espeasy mega-20190202 version.
 Tested on Wemos d1 mini
 
 ### how to
-For a more stable version:
+For a more stable version is better use a STABLE version (no Dev or Test)
 
 1. Clone last version if github letscontrolit/ESPEasy
 2. modify file define_plugin_sets.h in /src folder in this way:
