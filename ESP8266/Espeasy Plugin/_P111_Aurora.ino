@@ -60,6 +60,32 @@
 #define SSerialTxControl D0 //GPIO-16 (D0)
 
 
+
+String stampaDataTime(unsigned long scn)
+{
+  String rtn;
+  if (scn > 0) {
+    setTime(0, 0, 0, 1, 1, 2000);
+    if (timeStatus() == timeSet) {
+    adjustTime(scn);
+      rtn = String(day());
+      rtn += String(F("/"));
+      rtn += String(month());
+      rtn += String(F("/"));
+      rtn += String(year());
+      rtn += String(F(" "));
+      rtn += String(hour());
+      rtn += String(F(":"));
+      rtn += String(minute());
+      rtn += String(F(":"));
+      rtn += String(second());
+    }
+  }
+  return rtn;
+}
+
+
+
 class clsAurora {
 private:
   int MaxAttempt = 1;
