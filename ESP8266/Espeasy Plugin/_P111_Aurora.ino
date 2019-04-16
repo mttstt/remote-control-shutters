@@ -927,18 +927,13 @@ public:
       5) Total Energy (total lifetime)
       6) Partial Energy (cumulated since reset)
       
-      1               /* Daily Energy */
-      2               /* Weekly Energy */
-      3               /* Monthly Energy */
-      4               /* Yearly Energy */
-      5               /* nDays Energy */
-      6               /* Total Energy (total lifetime) */
-      7               /* Partial Energy (cumulated since reset) */
-
-      
-      
-      
-      
+      1     /* Daily Energy */
+      2     /* Weekly Energy */
+      3     /* Monthly Energy */
+      4     /* Yearly Energy */
+      5      /* nDays Energy */
+      6      /* Total Energy (total lifetime) */
+      7      /* Partial Energy (cumulated since reset) */
   */
   bool ReadCumulatedEnergy(byte par) {
     if ((int)par >= 0 && (int)par <= 6) {
@@ -1007,7 +1002,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
           Device[deviceCount].PullUpOption = false;
           Device[deviceCount].InverseLogicOption = false;
           Device[deviceCount].FormulaOption = false;
-          Device[deviceCount].ValueCount = 3;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
+          Device[deviceCount].ValueCount = 1;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
           Device[deviceCount].TimerOption = true;
           Device[deviceCount].TimerOptional = false;
           Device[deviceCount].GlobalSyncOption = true;
@@ -1026,8 +1021,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //called when the user opens the module configuration page
            //it allows to add a new row for each output variable of the plugin
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[0], PSTR(PLUGIN_VALUENAME1_111));
-           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
-           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
+           //strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
+           //strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
            break;
         }
 
@@ -1097,10 +1092,10 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //after the plugin has read data successfuly, set success and break
            Inverter->ReadCumulatedEnergy(0);
            UserVar[event->BaseVarIndex + 0] = Inverter->CumulatedEnergy.Energia;
-           Inverter->ReadCumulatedEnergy(3);
-           UserVar[event->BaseVarIndex + 1] = Inverter->CumulatedEnergy.Energia;
-           Inverter->ReadCumulatedEnergy(4);
-           UserVar[event->BaseVarIndex + 2] = Inverter->CumulatedEnergy.Energia;
+           //Inverter->ReadCumulatedEnergy(3);
+           //UserVar[event->BaseVarIndex + 1] = Inverter->CumulatedEnergy.Energia;
+           //Inverter->ReadCumulatedEnergy(4);
+           //UserVar[event->BaseVarIndex + 2] = Inverter->CumulatedEnergy.Energia;
 
            success = true;
            break;
@@ -1167,7 +1162,9 @@ void read_RS485(){
      
   Inverter->ReadTimeDate(); log=F("");
   log += F("Seconds: ");
+  log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR>");
   log += Inverter->TimeDate.Secondi; log +=F("<BR>");
+   
   printWebString += log; delay(10);
    
   Inverter->ReadCumulatedEnergy(0); log=F("");
@@ -1224,20 +1221,20 @@ void read_RS485(){
 
   Inverter->ReadState();
   log = F("TransmissionState: ");log += Inverter->State.TransmissionState ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("GlobalState: ");log += Inverter->State.GlobalState ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("GlobalState: ");  log += Inverter->State.GlobalState ; log +=F("<BR>");printWebString += log; delay(10);
   log = F("InverterState: ");log += Inverter->State.InverterState ; log +=F("<BR>");printWebString += log; delay(10);
   log = F("Channel1State: ");log += Inverter->State.Channel1State ; log +=F("<BR>");printWebString += log; delay(10);
   log = F("Channel2State: ");log += Inverter->State.Channel2State ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("AlarmState: ");log += Inverter->State.AlarmState ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("AlarmState: "); log += Inverter->State.AlarmState ; log +=F("<BR>");printWebString += log; delay(10);
 
-  Inverter->ReadDSP(21,0);log = F("Inverter Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(21,0); log = F("Inverter Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
   Inverter->ReadDSP(22,0); log = F("Booster Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
   Inverter->ReadDSP(23,1); log = F("Input 1 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
   Inverter->ReadDSP(25,1); log = F("Input 1 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
   Inverter->ReadDSP(26,1); log = F("Input 2 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
   Inverter->ReadDSP(27,1); log = F("Input 2 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
   Inverter->ReadDSP(30,0); log = F("Riso : "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(34,0);log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(34,0); log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
   Inverter->ReadDSP(35,0); log = F("Power Peak Today (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
 
 //  addLog(LOG_LEVEL_INFO,log);
