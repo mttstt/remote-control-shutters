@@ -898,6 +898,19 @@ public:
       4) Year Energy (Energy from the first day of current calendar year)
       5) Total Energy (total lifetime)
       6) Partial Energy (cumulated since reset)
+      
+      1               /* Daily Energy */
+      2               /* Weekly Energy */
+      3               /* Monthly Energy */
+      4               /* Yearly Energy */
+      5               /* nDays Energy */
+      6               /* Total Energy (total lifetime) */
+      7               /* Partial Energy (cumulated since reset) */
+
+      
+      
+      
+      
   */
   bool ReadCumulatedEnergy(byte par) {
     if ((int)par >= 0 && (int)par <= 6) {
