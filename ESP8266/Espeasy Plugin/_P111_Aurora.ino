@@ -1135,8 +1135,13 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
 void read_RS485(){
 
-  String log = F("read_RS485: "); log +=F("<BR><BR>");
-
+  String log = F("Aurora Inverter data: "); log +=F("<BR><BR>");
+     
+  Inverter->ReadTimeDate(); log=F("");
+  log += F("Seconds: ");
+  log += Inverter->TimeDate.Secondi; log +=F("<BR>");
+  printWebString += log; delay(10);
+   
   Inverter->ReadCumulatedEnergy(0); log=F("");
   log += F("Daily Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
