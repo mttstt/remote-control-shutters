@@ -62,14 +62,13 @@
 #define SSerialTxControl D0 //GPIO-16 (D0)
 
 
-
 String stampaDataTime(unsigned long scn)
 {
   String rtn;
-  if (scn > 0) {
-    setTime(0, 0, 0, 1, 1, 2000);
-    if (timeStatus() == timeSet) {
-    adjustTime(scn);
+//  if (scn > 0) {
+//    setTime(0, 0, 0, 1, 1, 2000);
+//    if (timeStatus() == timeSet) {
+//    adjustTime(scn);
       rtn = String(day());
       rtn += String(F("/"));
       rtn += String(month());
@@ -81,11 +80,10 @@ String stampaDataTime(unsigned long scn)
       rtn += String(minute());
       rtn += String(F(":"));
       rtn += String(second());
-    }
-  }
+//    }
+//  }
   return rtn;
-}
-
+};
 
 
 class clsAurora {
@@ -926,14 +924,14 @@ public:
       4) Year Energy (Energy from the first day of current calendar year)
       5) Total Energy (total lifetime)
       6) Partial Energy (cumulated since reset)
-      
-      1     /* Daily Energy */
-      2     /* Weekly Energy */
-      3     /* Monthly Energy */
-      4     /* Yearly Energy */
-      5      /* nDays Energy */
-      6      /* Total Energy (total lifetime) */
-      7      /* Partial Energy (cumulated since reset) */
+
+      1      Daily Energy
+      2      Weekly Energy
+      3      Monthly Energy
+      4      Yearly Energy
+      5       nDays Energy
+      6       Total Energy (total lifetime)
+      7       Partial Energy (cumulated since reset)
   */
   bool ReadCumulatedEnergy(byte par) {
     if ((int)par >= 0 && (int)par <= 6) {
@@ -1159,14 +1157,16 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 void read_RS485(){
 
   String log = F("Aurora Inverter data: "); log +=F("<BR><BR>");
-     
+  printWebString += log;
+
+
   Inverter->ReadTimeDate(); log=F("");
   log += F("Seconds: ");
   log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR>");
   log += Inverter->TimeDate.Secondi; log +=F("<BR>");
-   
   printWebString += log; delay(10);
-   
+
+
   Inverter->ReadCumulatedEnergy(0); log=F("");
   log += F("Daily Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
