@@ -32,10 +32,6 @@
    https://forum.arduino.cc/index.php?topic=154407.0
  */
 
-//uncomment one of the following as needed
-//#include <TimeLib.h>
-// TimeESPeasy.ino
-
 #include <ESPeasySerial.h>
 
 #define PLUGIN_111
@@ -65,10 +61,6 @@
 String stampaDataTime(unsigned long scn)
 {
   String rtn;
-//  if (scn > 0) {
-//    setTime(0, 0, 0, 1, 1, 2000);
-//    if (timeStatus() == timeSet) {
-//    adjustTime(scn);
       rtn = String(day());
       rtn += String(F("/"));
       rtn += String(month());
@@ -80,8 +72,6 @@ String stampaDataTime(unsigned long scn)
       rtn += String(minute());
       rtn += String(F(":"));
       rtn += String(second());
-//    }
-//  }
   return rtn;
 };
 
@@ -1161,9 +1151,8 @@ void read_RS485(){
 
 
   Inverter->ReadTimeDate(); log=F("");
-  log += F("Seconds: ");
+  log += F("Data time: ");
   log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR>");
-  log += Inverter->TimeDate.Secondi; log +=F("<BR>");
   printWebString += log; delay(10);
 
 
