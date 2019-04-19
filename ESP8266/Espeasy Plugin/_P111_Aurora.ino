@@ -77,14 +77,12 @@ String stampaDataTime(unsigned long scn)
 
 
 class clsAurora {
+
 private:
   int MaxAttempt = 1;
   byte Address = 0;
-  void clearData(byte *data, byte len) {
-    for (int i = 0; i < len; i++) {
-      data[i] = 0;
-    }
-  }
+  
+  void clearData(byte *data, byte len) { for (int i = 0; i < len; i++) { data[i] = 0; } }
 
   int Crc16(byte *data, int offset, int count)
   {
@@ -1155,27 +1153,27 @@ void read_RS485(){
   Inverter->ReadTimeDate();
   log = F("Data time: ");
   log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR><BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadCumulatedEnergy(0);
   log = F("Daily Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadCumulatedEnergy(1);
   log = F("Weekly Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadCumulatedEnergy(3);
   log = F("Month Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadCumulatedEnergy(4);
   log = F("Year Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadLastFourAlarms();
   log = F("LastFourAlarms: ");
@@ -1183,23 +1181,23 @@ void read_RS485(){
   log += Inverter->LastFourAlarms.Alarms2; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms3; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms4; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadSystemPN();
   log = F("SystemPN: ");
   log += Inverter->SystemPN.PN; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadSystemSerialNumber();
   log = F("SystemSerialNumber: ");
   log += Inverter->SystemSerialNumber.SerialNumber; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadManufacturingWeekYear();
   log = F("ManufacturingWeekYear: ");
   log += Inverter->ManufacturingWeekYear.Week; log +=F(",");
   log += Inverter->ManufacturingWeekYear.Year; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadVersion();
   log = F("Version: ");
@@ -1207,34 +1205,34 @@ void read_RS485(){
   log += Inverter->Version.Par2; log +=F(",");
   log += Inverter->Version.Par3; log +=F(",");
   log += Inverter->Version.Par4; log +=F("<BR>");
-  printWebString += log; delay(10);
+  printWebString += log;
 
   Inverter->ReadState();
-  log = F("TransmissionState: ");log += Inverter->State.TransmissionState ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("GlobalState: ");  log += Inverter->State.GlobalState ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("InverterState: "); log += Inverter->State.InverterState ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("Channel1State: "); log += Inverter->State.Channel1State ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("Channel2State: "); log += Inverter->State.Channel2State ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("AlarmState: "); log += Inverter->State.AlarmState ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("TransmissionState: ");log += Inverter->State.TransmissionState ; log +=F("<BR>");printWebString += log;
+  log = F("GlobalState: ");  log += Inverter->State.GlobalState ; log +=F("<BR>");printWebString += log;
+  log = F("InverterState: "); log += Inverter->State.InverterState ; log +=F("<BR>");printWebString += log;
+  log = F("Channel1State: "); log += Inverter->State.Channel1State ; log +=F("<BR>");printWebString += log;
+  log = F("Channel2State: "); log += Inverter->State.Channel2State ; log +=F("<BR>");printWebString += log;
+  log = F("AlarmState: "); log += Inverter->State.AlarmState ; log +=F("<BR>");printWebString += log;
 
   Inverter->ReadDSP(21,0); 
-  log = F("Inverter Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Inverter Temperature (C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(22,0); 
-  log = F("Booster Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Booster Temperature (C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(23,1); 
-  log = F("Input 1 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Input 1 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(25,1); 
-  log = F("Input 1 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Input 1 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(26,1); 
-  log = F("Input 2 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Input 2 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(27,1); 
-  log = F("Input 2 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Input 2 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(30,0); 
-  log = F("Riso : "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Riso : "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(34,0); 
-  log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
   Inverter->ReadDSP(35,0); 
-  log = F("Power Peak Today (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  log = F("Power Peak Today (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
 //  addLog(LOG_LEVEL_INFO,log);
 }
 
