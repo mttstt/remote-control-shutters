@@ -123,7 +123,8 @@ private:
     SendData[8] = lowByte(crc);
     SendData[9] = highByte(crc);
     clearReceiveData();
-    //=================================================
+    /* 
+    =================================================
     String log = "AURORA - Send data:";
     log += SendData[0]; log +=',';
     log += SendData[1]; log +=',';
@@ -135,8 +136,9 @@ private:
     log += SendData[7]; log +=',';
     log += SendData[8]; log +=',';
     log += SendData[9]; log +='-';
-    //addLog(LOG_LEVEL_INFO,log);
-   //=================================================
+    addLog(LOG_LEVEL_INFO,log);
+   =================================================
+   */
     for (int i = 0; i < MaxAttempt; i++)
     {
       digitalWrite(SSerialTxControl, RS485Transmit);
@@ -146,6 +148,8 @@ private:
         SendStatus = true;
         digitalWrite(SSerialTxControl, RS485Receive);
         int rec = Serial.readBytes(ReceiveData, sizeof(ReceiveData));
+        /*
+        =================================================
         String log = "AURORA - Received data: ";
         log += ReceiveData[0]; log +=',';
         log += ReceiveData[1]; log +=',';
@@ -156,7 +160,9 @@ private:
         log += ReceiveData[6]; log +=',';
         log += ReceiveData[7]; log +='-';
         log += rec;
-        //addLog(LOG_LEVEL_INFO,log);
+        addLog(LOG_LEVEL_INFO,log);
+        =================================================
+        */
         if (rec != 0) {
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
@@ -261,6 +267,7 @@ public:
     bool ReadState;
   } DataState;
 
+   
   DataState State;
 
   bool ReadState() {
@@ -305,93 +312,93 @@ public:
       }
 
 
-        switch (ReceiveData[1])
-        {
-        case 0:
-          State.GlobalState = "Sending Parameters"; break;
-        case 1:
-          State.GlobalState = "Wait Sun / Grid"; break;
-        case 2:
-          State.GlobalState = "Checking Grid"; break;
-        case 3:
-          State.GlobalState = "Measuring Riso"; break;
-        case 4:
-          State.GlobalState = "DcDc Start"; break;
-        case 5:
-          State.GlobalState = "Inverter Start"; break;
-        case 6:
-          State.GlobalState = "Run"; break;
-        case 7:
-          State.GlobalState = "Recovery"; break;
-        case 8:
-          State.GlobalState = "Pausev"; break;
-        case 9:
-          State.GlobalState = "Ground Fault"; break;
-        case 10:
-          State.GlobalState = "OTH Fault"; break;
-        case 11:
-          State.GlobalState = "Address Setting"; break;
-        case 12:
-          State.GlobalState = "Self Test"; break;
-        case 13:
-          State.GlobalState = "Self Test Fail"; break;
-        case 14:
-          State.GlobalState = "Sensor Test + Meas.Riso"; break;
-        case 15:
-          State.GlobalState = "Leak Fault"; break;
-        case 16:
-          State.GlobalState = "Waiting for manual reset"; break;
-        case 17:
-          State.GlobalState = "Internal Error E026"; break;
-        case 18:
-          State.GlobalState = "Internal Error E027"; break;
-        case 19:
-          State.GlobalState = "Internal Error E028"; break;
-        case 20:
-          State.GlobalState = "Internal Error E029"; break;
-        case 21:
-          State.GlobalState = "Internal Error E030"; break;
-        case 22:
-          State.GlobalState = "Sending Wind Table"; break;
-        case 23:
-          State.GlobalState = "Failed Sending table"; break;
-        case 24:
-          State.GlobalState = "UTH Fault"; break;
-        case 25:
-          State.GlobalState = "Remote OFF"; break;
-        case 26:
-          State.GlobalState = "Interlock Fail"; break;
-        case 27:
-          State.GlobalState = "Executing Autotest"; break;
-        case 30:
-          State.GlobalState = "Waiting Sun"; break;
-        case 31:
-          State.GlobalState = "Temperature Fault"; break;
-        case 32:
-          State.GlobalState = "Fan Staucked"; break;
-        case 33:
-          State.GlobalState = "Int.Com.Fault"; break;
-        case 34:
-          State.GlobalState = "Slave Insertion"; break;
-        case 35:
-          State.GlobalState = "DC Switch Open"; break;
-        case 36:
-          State.GlobalState = "TRAS Switch Open"; break;
-        case 37:
-          State.GlobalState = "MASTER Exclusion"; break;
-        case 38:
-          State.GlobalState = "Auto Exclusion"; break;
-        case 98:
-          State.GlobalState = "Erasing Internal EEprom"; break;
-        case 99:
-          State.GlobalState = "Erasing External EEprom"; break;
-        case 100:
-          State.GlobalState = "Counting EEprom"; break;
-        case 101:
-          State.GlobalState = "Freeze"; break;
-        default:
-          State.GlobalState = "Sconosciuto"; break;
-        }
+      switch (ReceiveData[1])
+      {
+      case 0:
+        State.GlobalState = "Sending Parameters"; break;
+      case 1:
+        State.GlobalState = "Wait Sun / Grid"; break;
+      case 2:
+        State.GlobalState = "Checking Grid"; break;
+      case 3:
+        State.GlobalState = "Measuring Riso"; break;
+      case 4:
+        State.GlobalState = "DcDc Start"; break;
+      case 5:
+        State.GlobalState = "Inverter Start"; break;
+      case 6:
+        State.GlobalState = "Run"; break;
+      case 7:
+        State.GlobalState = "Recovery"; break;
+      case 8:
+        State.GlobalState = "Pausev"; break;
+      case 9:
+        State.GlobalState = "Ground Fault"; break;
+      case 10:
+        State.GlobalState = "OTH Fault"; break;
+      case 11:
+        State.GlobalState = "Address Setting"; break;
+      case 12:
+        State.GlobalState = "Self Test"; break;
+      case 13:
+        State.GlobalState = "Self Test Fail"; break;
+      case 14:
+        State.GlobalState = "Sensor Test + Meas.Riso"; break;
+      case 15:
+        State.GlobalState = "Leak Fault"; break;
+      case 16:
+        State.GlobalState = "Waiting for manual reset"; break;
+      case 17:
+        State.GlobalState = "Internal Error E026"; break;
+      case 18:
+        State.GlobalState = "Internal Error E027"; break;
+      case 19:
+        State.GlobalState = "Internal Error E028"; break;
+      case 20:
+        State.GlobalState = "Internal Error E029"; break;
+      case 21:
+        State.GlobalState = "Internal Error E030"; break;
+      case 22:
+        State.GlobalState = "Sending Wind Table"; break;
+      case 23:
+        State.GlobalState = "Failed Sending table"; break;
+      case 24:
+        State.GlobalState = "UTH Fault"; break;
+      case 25:
+        State.GlobalState = "Remote OFF"; break;
+      case 26:
+        State.GlobalState = "Interlock Fail"; break;
+      case 27:
+        State.GlobalState = "Executing Autotest"; break;
+      case 30:
+        State.GlobalState = "Waiting Sun"; break;
+      case 31:
+        State.GlobalState = "Temperature Fault"; break;
+      case 32:
+        State.GlobalState = "Fan Staucked"; break;
+      case 33:
+        State.GlobalState = "Int.Com.Fault"; break;
+      case 34:
+        State.GlobalState = "Slave Insertion"; break;
+      case 35:
+        State.GlobalState = "DC Switch Open"; break;
+      case 36:
+        State.GlobalState = "TRAS Switch Open"; break;
+      case 37:
+        State.GlobalState = "MASTER Exclusion"; break;
+      case 38:
+        State.GlobalState = "Auto Exclusion"; break;
+      case 98:
+        State.GlobalState = "Erasing Internal EEprom"; break;
+      case 99:
+        State.GlobalState = "Erasing External EEprom"; break;
+      case 100:
+        State.GlobalState = "Counting EEprom"; break;
+      case 101:
+        State.GlobalState = "Freeze"; break;
+      default:
+        State.GlobalState = "Sconosciuto"; break;
+      }
 
         switch (ReceiveData[2])
           {
@@ -627,7 +634,6 @@ public:
     String Par4;
     bool ReadState;
   } DataVersion;
-
   DataVersion Version;
 
   bool ReadVersion() {
@@ -673,14 +679,12 @@ public:
     return Version.ReadState;
   }
 
-
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
     float Valore;
     bool ReadState;
   } DataDSP;
-
   DataDSP DSP;
 
    /* type =
@@ -748,7 +752,7 @@ public:
       if (DSP.ReadState == false) {
         ReceiveData[0] = 255;
         ReceiveData[1] = 255;
-      }
+     }
     }
     else {
       DSP.ReadState = false;
@@ -772,7 +776,6 @@ public:
     unsigned long Secondi;
     bool ReadState;
   } DataTimeDate;
-
   DataTimeDate TimeDate;
 
   bool ReadTimeDate() {
@@ -1146,56 +1149,54 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
 void read_RS485(){
 
-  String log = F("Aurora Inverter data: "); log +=F("<BR><BR>");
+  String log = F("Aurora Inverter data: "); log +=F("<BR>");
   printWebString += log;
 
-
-  Inverter->ReadTimeDate(); log=F("");
-  log += F("Data time: ");
-  log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR>");
+  Inverter->ReadTimeDate();
+  log = F("Data time: ");
+  log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR><BR>");
   printWebString += log; delay(10);
 
-
-  Inverter->ReadCumulatedEnergy(0); log=F("");
-  log += F("Daily Energy: ");
+  Inverter->ReadCumulatedEnergy(0);
+  log = F("Daily Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
   printWebString += log; delay(10);
 
-  Inverter->ReadCumulatedEnergy(1); log=F("");
-  log += F("Weekly Energy: ");
+  Inverter->ReadCumulatedEnergy(1);
+  log = F("Weekly Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
   printWebString += log; delay(10);
 
-  Inverter->ReadCumulatedEnergy(3); log=F("");
-  log += F("Month Energy: ");
+  Inverter->ReadCumulatedEnergy(3);
+  log = F("Month Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
   printWebString += log; delay(10);
 
-  Inverter->ReadCumulatedEnergy(4); log=F("");
-  log += F("Year Energy: ");
+  Inverter->ReadCumulatedEnergy(4);
+  log = F("Year Energy: ");
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
   printWebString += log; delay(10);
 
-  Inverter->ReadLastFourAlarms(); log=F("");
-  log += F("LastFourAlarms: ");
+  Inverter->ReadLastFourAlarms();
+  log = F("LastFourAlarms: ");
   log += Inverter->LastFourAlarms.Alarms1; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms2; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms3; log +=F(",");
   log += Inverter->LastFourAlarms.Alarms4; log +=F("<BR>");
   printWebString += log; delay(10);
 
-  Inverter->ReadSystemPN(); log=F("");
-  log += F("SystemPN: ");
+  Inverter->ReadSystemPN();
+  log = F("SystemPN: ");
   log += Inverter->SystemPN.PN; log +=F("<BR>");
   printWebString += log; delay(10);
 
-  Inverter->ReadSystemSerialNumber(); log=F("");
-  log += F("SystemSerialNumber: ");
+  Inverter->ReadSystemSerialNumber();
+  log = F("SystemSerialNumber: ");
   log += Inverter->SystemSerialNumber.SerialNumber; log +=F("<BR>");
   printWebString += log; delay(10);
 
-  Inverter->ReadManufacturingWeekYear(); log=F("");
-  log += F("ManufacturingWeekYear: ");
+  Inverter->ReadManufacturingWeekYear();
+  log = F("ManufacturingWeekYear: ");
   log += Inverter->ManufacturingWeekYear.Week; log +=F(",");
   log += Inverter->ManufacturingWeekYear.Year; log +=F("<BR>");
   printWebString += log; delay(10);
@@ -1211,21 +1212,29 @@ void read_RS485(){
   Inverter->ReadState();
   log = F("TransmissionState: ");log += Inverter->State.TransmissionState ; log +=F("<BR>");printWebString += log; delay(10);
   log = F("GlobalState: ");  log += Inverter->State.GlobalState ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("InverterState: ");log += Inverter->State.InverterState ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("Channel1State: ");log += Inverter->State.Channel1State ; log +=F("<BR>");printWebString += log; delay(10);
-  log = F("Channel2State: ");log += Inverter->State.Channel2State ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("InverterState: "); log += Inverter->State.InverterState ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("Channel1State: "); log += Inverter->State.Channel1State ; log +=F("<BR>");printWebString += log; delay(10);
+  log = F("Channel2State: "); log += Inverter->State.Channel2State ; log +=F("<BR>");printWebString += log; delay(10);
   log = F("AlarmState: "); log += Inverter->State.AlarmState ; log +=F("<BR>");printWebString += log; delay(10);
 
-  Inverter->ReadDSP(21,0); log = F("Inverter Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(22,0); log = F("Booster Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(23,1); log = F("Input 1 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(25,1); log = F("Input 1 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(26,1); log = F("Input 2 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(27,1); log = F("Input 2 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(30,0); log = F("Riso : "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(34,0); log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-  Inverter->ReadDSP(35,0); log = F("Power Peak Today (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
-
+  Inverter->ReadDSP(21,0); 
+  log = F("Inverter Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(22,0); 
+  log = F("Booster Temperature (°C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(23,1); 
+  log = F("Input 1 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(25,1); 
+  log = F("Input 1 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(26,1); 
+  log = F("Input 2 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(27,1); 
+  log = F("Input 2 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(30,0); 
+  log = F("Riso : "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(34,0); 
+  log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
+  Inverter->ReadDSP(35,0); 
+  log = F("Power Peak Today (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log; delay(10);
 //  addLog(LOG_LEVEL_INFO,log);
 }
 
