@@ -684,6 +684,14 @@ public:
     bool ReadState;
   } DataDSP;
   DataDSP DSP;
+   
+     
+   szSerBuffer[cCEDailyAddH] = HIBYTE(addC);
+   szSerBuffer[cCEDailyAddL] = LOBYTE(addC);
+   szSerBuffer[cCEDailyEnd] = '\0';
+    
+   
+   
 
    /* type =
       1 Grid Voltage* For three-phases systems is the mean
@@ -768,6 +776,7 @@ public:
     return DSP.ReadState;
   }
 
+   
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -883,7 +892,6 @@ public:
     String Release;
     bool ReadState;
   } DataFirmwareRelease;
-
   DataFirmwareRelease FirmwareRelease;
 
   bool ReadFirmwareRelease() {
@@ -904,9 +912,7 @@ public:
     unsigned long Energia;
     bool ReadState;
   } DataCumulatedEnergy;
-
   DataCumulatedEnergy CumulatedEnergy;
-
   /*  par=
       0) Daily Energy
       1) Weekly Energy
@@ -915,7 +921,6 @@ public:
       4) Year Energy (Energy from the first day of current calendar year)
       5) Total Energy (total lifetime)
       6) Partial Energy (cumulated since reset)
-
       1      Daily Energy
       2      Weekly Energy
       3      Monthly Energy
@@ -950,6 +955,45 @@ public:
     return CumulatedEnergy.ReadState;
   }
 
+   
+ /* # 79 Daily Cumulated Energy ** Experimental ** */
+  typedef struct {
+    byte TransmissionState;
+    byte GlobalState;
+    String kwh;
+    String day;     
+    bool ReadState;
+  } DailyDataCumulatedEnergy;   
+  DailyDataCumulatedEnergy DailyCumulatedEnergy;
+
+
+   
+  bool DailyReadCumulatedEnergy(byte par) {
+    if ((int)par >= 1 && (int)par <= 366) {
+      CumulatedEnergy.ReadState = Send(Address, (byte)79, par, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+      if (CumulatedEnergy.ReadState == false) {
+        ReceiveData[0] = 255;
+        ReceiveData[1] = 255;
+      }
+    }
+    else {
+      DailyCumulatedEnergy.ReadState = false;
+      clearReceiveData();
+      ReceiveData[0] = 255;
+      ReceiveData[1] = 255;
+    }
+    DailyCumulatedEnergy.TransmissionState = ReceiveData[0];
+    DailyCumulatedEnergy.GlobalState = ReceiveData[1];
+     
+    DailyCumulatedEnergy.kwh = String( String((char)ReceiveData[2]) + "." + String( (char)ReceiveData[3] ) );
+    DailyCumulatedEnergy.day = String( String((char)ReceiveData[4]) + "." + String( (char)ReceiveData[5])) );    
+    
+    return DailyCumulatedEnergy.ReadState;
+  }
+   
+   
+   
+   
   bool WriteBaudRateSetting(byte baudcode) {
     if ((int)baudcode >= 0 && (int)baudcode <= 3) {
       return Send(Address, (byte)85, baudcode, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
@@ -1098,26 +1142,22 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
         {
            //this case defines code to be executed when the plugin executes an action (command).
            //Commands can be accessed via rules or via http.
-           //As an example, http://192.168.1.12//control?cmd=dothis
+           //As an example, http://192.168.1.12//control?cmd=(ask/day)
            //implies that there exists the command "dothis"
-
            //parse string to extract the command
-           String TmpStr1;
-           String rfType;
-           String command = parseString(string, 1);
-           if (command == F("aurora")) {
-             String taskName = parseString(string, 2);
-             //int8_t taskIndex = getTaskIndexByName(taskName);
-             if ( GetArgv(string.c_str(), TmpStr1, 2) ) rfType = TmpStr1.c_str();
+           
+           String TmpStr;          
+           if ( GetArgv(string.c_str(), TmpStr, 1) == F("aurora") ) {
 
-             String log = F("HTTP command: aurora, ");
-             log += rfType;
-             // addLog(LOG_LEVEL_INFO, log);
+                String rfType; 
+                if ( GetArgv(string.c_str(), TmpStr, 2) )  { rfType = TmpStr.c_str(); } 
+              
+                if ( rfType.equalsIgnoreCase("ask") ) { read_RS485(); success = true;}
 
-             if ( rfType.equalsIgnoreCase("ask") ) {
-                read_RS485();
-                success = true;  //set to true only if plugin has executed a command successfully
-             }
+                if ( rfType.equalsIgnoreCase("day") ) {
+                   if ( GetArgv(string.c_str(), TmpStr, 3) ) { read_day( TmpStr.c_str() );  success = true; }                                      
+                } 
+
            }
 
            if (success){
@@ -1145,8 +1185,24 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 }
 //==========================================================================
 
-void read_RS485(){
+void read_day( int day ){
+  String log = F("Aurora Inverter data: "); log +=F("<BR>");  
+  printWebString += log;  
+   
+  Inverter->ReadTimeDate();
+  log = F("Data time: ");
+  log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR><BR>");   
+  printWebString += log;
+  
+  Inverter->DailyReadCumulatedEnergy(day); 
+  log = F("Day: "); log += Inverter->DailyReadCumulatedEnergy.day;       
+  log = F("Kwh: "); log += Inverter->DailyReadCumulatedEnergy.kwh;    
+  log +=F("<BR>"); printWebString += log;
+   
+}
 
+
+void read_RS485(){
   String log = F("Aurora Inverter data: "); log +=F("<BR>");
   printWebString += log;
 
