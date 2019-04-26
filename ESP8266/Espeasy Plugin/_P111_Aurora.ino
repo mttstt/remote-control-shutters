@@ -641,20 +641,23 @@ public:
     else if (((char)ReceiveData[2]) == 'X')  { Version.Par1 = F("Aurora 10.0kW"); }
                                         else { Version.Par1 = F("Sconosciuto"); };
 
-         if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = F("UL1741"); }
-    else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = F("VDE0126"); }
-    else if (((char)ReceiveData[3]) == 'S')  { Version.Par2 = F("DR 1663 / 2000"); }
-    else if (((char)ReceiveData[3]) == 'I')  { Version.Par2 = F("ENEL DK 5950"; }
-    else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = F("UK G83"); }
-    else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = F("AS 4777"); }
+         if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = F("USA - UL1741"); }
+    else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = F("Germany - VDE0126"); }
+    else if (((char)ReceiveData[3]) == 'S')  { Version.Par2 = F("Spain - DR 1663 / 2000"); }
+    else if (((char)ReceiveData[3]) == 'I')  { Version.Par2 = F("Italy - ENEL DK 5950"; }
+    else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = F("UK - UK G83"); }
+    else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = F("Australia - AS 4777"); }
                                        else  { Version.Par2 = F("Sconosciuto"); };
 
          if (((char)ReceiveData[4]) == 'N')  { Version.Par3 = F("Transformerless Version"); }
-    else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = F("Transformer Version"); }
+    else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = F("Transformer Version"); }                                                                
+    else if (((char)ReceiveData[4]) == 't')  { Version.Par3 = F("Transformer HF version"); }                                                           
+    else if (((char)ReceiveData[4]) == 'X')  { Version.Par3 = F("Dummy transformer type"); }
                                         else { Version.Par3 = F("Sconosciuto"); };
 
          if (((char)ReceiveData[5]) == 'N')  { Version.Par4 = F("Wind version"); }
     else if (((char)ReceiveData[5]) == 'K')  { Version.Par4 = F("PV version"); }
+    else if (((char)ReceiveData[5]) == 'X')  { Version.Par4 = F("Dummy inverter type"); }                                                                                                                          
                                         else { Version.Par4 = F("Sconosciuto"); };
     return Version.ReadState;
   }
@@ -668,7 +671,8 @@ public:
   DataDSP DSP;
 
 
-   /* type =
+   /* # 59 Measure request to the DSP - Type of Measure:
+   
       1 Grid Voltage* For three-phases systems is the mean
       2 Grid Current* For three-phases systems is the mean
       3 Grid Power* For three-phases systems is the mean
@@ -1006,7 +1010,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
           Device[deviceCount].PullUpOption = false;
           Device[deviceCount].InverseLogicOption = false;
           Device[deviceCount].FormulaOption = false;
-          Device[deviceCount].ValueCount = 1;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
+          Device[deviceCount].ValueCount = 3;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
           Device[deviceCount].TimerOption = true;
           Device[deviceCount].TimerOptional = false;
           Device[deviceCount].GlobalSyncOption = true;
@@ -1025,8 +1029,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //called when the user opens the module configuration page
            //it allows to add a new row for each output variable of the plugin
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[0], PSTR(PLUGIN_VALUENAME1_111));
-           //strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
-           //strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
+           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
+           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
            break;
         }
 
@@ -1079,11 +1083,11 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //=============================================================================================
            String log = F("INIT: PVI Address ") + PCONFIG(0);
            if ( Inverter != nullptr ) {
-           addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
-           addLog(LOG_LEVEL_INFO, log);
+              addLog(LOG_LEVEL_INFO, F("INIT: Aurora Inverter created!"));
+              addLog(LOG_LEVEL_INFO, log);
            }
            else {
-             addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter ERROR!");
+             addLog(LOG_LEVEL_INFO, F("INIT: Aurora Inverter ERROR!"));
            }
            success = true;
            break;
@@ -1133,23 +1137,15 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
                 }
            }
 
-           if (success){
-                 //String url = String(Settings.Name) + "/control?aurora=" + string;
-                 String url = String(WiFi.localIP().toString()) + "/control?cmd=aurora,ask";
-                 String log = F("To send this command again, ");
-                 log += "use this: <a href=\"http://" + url + "\">URL</a>"; log += rfType;
-                 // addLog(LOG_LEVEL_INFO, log);
-
-                 if (printToWeb)
-                    { printWebString += F("<BR>PVI Address: ");
-                      printWebString += String( PCONFIG(0) );
-                      printWebString += F("<BR>");
-                      printWebString += F("<BR>Use URL: <a href=\"http://");
-                      printWebString += url;
-                      printWebString += F("\">http://");
-                      printWebString += url;
-                      printWebString += F("</a>");
-                    }
+           if (success){           
+             if (printToWeb)
+               { printWebString += F("<BR>PVI Address: ");
+                    printWebString += String( PCONFIG(0) )+ F("<BR>");
+                    printWebString += F("<BR>Use URL: <a href=\"http://");
+                    printWebString += String(WiFi.localIP().toString()) +F("/control?cmd=aurora,ask");
+                    printWebString += F("\">http://")+ String(WiFi.localIP().toString()) +F("/control?cmd=aurora,ask")
+                    printWebString += F("</a>");
+                }
            }
            break;
         }
@@ -1159,84 +1155,75 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 //==========================================================================
 
 void read_day( int day ){
-  String log = F("Aurora Inverter data: "); log +=F("<BR>");
-  printWebString += log;
-
+  printWebString += F("Aurora Inverter data: ") + F("<BR>");
+  
   Inverter->ReadTimeDate();
-  log = F("Data time: ");
-  log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR><BR>");
-  printWebString += log;
-
+  printWebString += F("Data time: ") + stampaDataTime(Inverter->TimeDate.Secondi) + F("<BR><BR>");
+  
   Inverter->ReadDailyCumulatedEnergy(day);
-  log = F("Day: "); log += Inverter->DailyCumulatedEnergy.day;
-  log = F("Kwh: "); log += Inverter->DailyCumulatedEnergy.kwh;
-  log +=F("<BR>"); printWebString += log;
+  printWebString += F("Day: ") + Inverter->DailyCumulatedEnergy.day + F("<BR>") + F("Kwh: ") + Inverter->DailyCumulatedEnergy.kwh + F("<BR>");
 }
 
 
 void read_RS485(){
-  String log = F("Aurora Inverter data: "); log +=F("<BR>");
-  printWebString += log;
-
+  printWebString += F("Aurora Inverter data: ") + F("<BR>");
+  
   Inverter->ReadTimeDate();
-  log = F("Data time: ");
-  log += stampaDataTime(Inverter->TimeDate.Secondi); log +=F("<BR><BR>");
-  printWebString += log;
-
+  printWebString += F("Data time: ") + stampaDataTime(Inverter->TimeDate.Secondi) + F("<BR><BR>");
+  
   Inverter->ReadCumulatedEnergy(0);
-  log = F("Daily Energy: ")
-  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString += F("Daily Energy: ") + Inverter->CumulatedEnergy.Energia + F("<BR>");
+  
   Inverter->ReadCumulatedEnergy(1);
-  printWebString = F("Weekly Energy: ")+ Inverter->CumulatedEnergy.Energia + F("<BR>");
+  printWebString += F("Weekly Energy: ")+ Inverter->CumulatedEnergy.Energia + F("<BR>");
   
   Inverter->ReadCumulatedEnergy(3);
-  printWebString = F("Month Energy: ") + Inverter->CumulatedEnergy.Energia + F("<BR>");
+  printWebString += F("Month Energy: ") + Inverter->CumulatedEnergy.Energia + F("<BR>");
   
   Inverter->ReadCumulatedEnergy(4);
-  printWebString = F("Year Energy: ")+ Inverter->CumulatedEnergy.Energia+ F("<BR>");
+  printWebString += F("Year Energy: ")+ Inverter->CumulatedEnergy.Energia+ F("<BR>");
    
   Inverter->ReadLastFourAlarms();
-  printWebString = F("LastFourAlarms: ") + Inverter->LastFourAlarms.Alarms1+F(",")+Inverter->LastFourAlarms.Alarms2+F(",")+Inverter->LastFourAlarms.Alarms3+F(",")+ Inverter->LastFourAlarms.Alarms4+F("<BR>");
+  printWebString += F("LastFourAlarms: ") + Inverter->LastFourAlarms.Alarms1+F(",")+Inverter->LastFourAlarms.Alarms2+F(",")+Inverter->LastFourAlarms.Alarms3+F(",")+ Inverter->LastFourAlarms.Alarms4+F("<BR>");
   
   Inverter->ReadSystemPN();
-  printWebString = F("SystemPN: ")+ Inverter->SystemPN.PN + F("<BR>");
+  printWebString += F("SystemPN: ")+ Inverter->SystemPN.PN + F("<BR>");
   
   Inverter->ReadSystemSerialNumber();
-  printWebString = F("SystemSerialNumber: ") + Inverter->SystemSerialNumber.SerialNumber + F("<BR>");
+  printWebString += F("SystemSerialNumber: ") + Inverter->SystemSerialNumber.SerialNumber + F("<BR>");
   
   Inverter->ReadManufacturingWeekYear();
-  printWebString = F("ManufacturingWeekYear: ") + Inverter->ManufacturingWeekYear.Week + F(",") + Inverter->ManufacturingWeekYear.Year + =F("<BR>");
+  printWebString += F("ManufacturingWeekYear: ") + Inverter->ManufacturingWeekYear.Week + F(",") + Inverter->ManufacturingWeekYear.Year + =F("<BR>");
   
   Inverter->ReadVersion();
-  printWebString = F("Version: ") + Inverter->Version.Par1 + F(",") + Inverter->Version.Par2 + F(",") + Inverter->Version.Par3 + F(",") + Inverter->Version.Par4 + F("<BR>");
+  printWebString += F("Version: ") + Inverter->Version.Par1 + F(",") + Inverter->Version.Par2 + F(",") + Inverter->Version.Par3 + F(",") + Inverter->Version.Par4 + F("<BR>");
  
   Inverter->ReadState();
-  printWebString = F("TransmissionState: ") + Inverter->State.TransmissionState + F("<BR>");
-  printWebString = F("GlobalState: ") + Inverter->State.GlobalState + F("<BR>");
-  printWebString = F("InverterState: ") + Inverter->State.InverterState + F("<BR>");
-  printWebString = F("Channel2State: ") + Inverter->State.Channel2State + F("<BR>");
-  printWebString = F("AlarmState: ") + Inverter->State.AlarmState + F("<BR>");
+  printWebString += F("TransmissionState: ") + Inverter->State.TransmissionState + F("<BR>");
+  printWebString += F("GlobalState: ") + Inverter->State.GlobalState + F("<BR>");
+  printWebString += F("InverterState: ") + Inverter->State.InverterState + F("<BR>");
+  printWebString += F("Channel1State: ") + Inverter->State.Channel1State + F("<BR>");
+  printWebString += F("Channel2State: ") + Inverter->State.Channel2State + F("<BR>");
+  printWebString += F("AlarmState: ") + Inverter->State.AlarmState + F("<BR>");
 
   Inverter->ReadDSP(21,0);
-  printWebString = F("Inverter Temperature (C): ") + Inverter->DSP.Valore + F("<BR>");
+  printWebString += F("Inverter Temperature (C): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(22,0);
-  printWebString = F("Booster Temperature (C): ") + Inverter->DSP.Valore + F("<BR>");
+  printWebString += F("Booster Temperature (C): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(23,1);
-  printWebString = F("Input 1 Voltage (Volt): ") + Inverter->DSP.Valore + F("<BR>");
+  printWebString += F("Input 1 Voltage (Volt): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(25,1);
-  printWebString = F("Input 1 Current (Ampere): ") + Inverter->DSP.Valore + F("<BR>");
+  printWebString += F("Input 1 Current (Ampere): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(26,1);
-  printWebString = F("Input 2 Voltage (Volt): ") + Inverter->DSP.Valore + F("<BR>"); 
+  printWebString += F("Input 2 Voltage (Volt): ") + Inverter->DSP.Valore + F("<BR>"); 
   Inverter->ReadDSP(27,1);
-  printWebString = F("Input 2 Current (Ampere): ") + Inverter->DSP.Valore + F("<BR>");
+  printWebString += F("Input 2 Current (Ampere): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(30,0);
-  printWebString = F("Riso : ") + Inverter->DSP.Valore + F("<BR>"); 
+  printWebString += F("Riso : ") + Inverter->DSP.Valore + F("<BR>"); 
   Inverter->ReadDSP(34,0);
-  printWebString = F("Power Peak (Watt): ") + Inverter->DSP.Valore + F("<BR>");
+  printWebString += F("Power Peak (Watt): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(35,0);
-  printWebString = F("Power Peak Today (Watt): ") + Inverter->DSP.Valore + F("<BR>");
+  printWebString += F("Power Peak Today (Watt): ") + Inverter->DSP.Valore + F("<BR>");
 //  addLog(LOG_LEVEL_INFO,log);
 }
 
