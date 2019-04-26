@@ -7,7 +7,13 @@
    Version: 2.0
    Description: Arduino based Power Monitor for Power-One / ABB Phototovoltaic Inverters
    Example of usage:
+   
+      REALTIME DATA
       http://<ESP IP address>/control?cmd=aurora,ask
+      
+      HISTORY DATA
+      http://<ESP IP address>/control?cmd=aurora,day,(1-366) 
+      
    Needs: EspEasy
    Author: mtt
    Copyright: (c) 2019-2020 mttstt
@@ -15,7 +21,7 @@
    License URI: http://en.wikipedia.org/wiki/MIT_License
    Status : "Proof of concept"
 
-   PIN successuful tested:
+   PIN successuful tested (hardware serial):
 
          RS485    Wemos D1 mini
          Vcc      3v3
@@ -42,36 +48,17 @@
 #define PLUGIN_VALUENAME3_111 "YearEnergy"
 #define PLUGIN_111_DEBUG  false             //set to true for extra log info in the debug
 
-// PIN/port configuration is stored in the following:
-// CONFIG_PIN1 - The first GPIO pin selected within the task
-// CONFIG_PIN2 - The second GPIO pin selected within the task
-// CONFIG_PIN3 - The third GPIO pin selected within the task
-// CONFIG_PORT - The port in case the device has multiple in/out pins
-
-
 //RS485 control
 #define RS485Transmit HIGH
 #define RS485Receive LOW
-#define TX 1 // GPIO-1 (TX)
-#define RX 3 // GPIO-3 (RX)
-#define baudrate 19200 //baudrate RS485
+#define TX 1                // GPIO-1 (TX)
+#define RX 3                // GPIO-3 (RX)
+#define baudrate 19200      //baudrate RS485
 #define SSerialTxControl D0 //GPIO-16 (D0)
-
 
 String stampaDataTime(unsigned long scn)
 {
-  String rtn;
-      rtn = String(day());
-      rtn += String(F("/"));
-      rtn += String(month());
-      rtn += String(F("/"));
-      rtn += String(year());
-      rtn += String(F(" "));
-      rtn += String(hour());
-      rtn += String(F(":"));
-      rtn += String(minute());
-      rtn += String(F(":"));
-      rtn += String(second());
+  String rtn=String(day())+String(F("/"))+String(month())+String(F("/"))+String(year())+String(F(" "))+String(hour())+String(F(":"))+String(minute())+String(F(":"))+String(second());
   return rtn;
 };
 
@@ -81,9 +68,7 @@ class clsAurora {
 private:
   int MaxAttempt = 1;
   byte Address = 0;
-
   void clearData(byte *data, byte len) { for (int i = 0; i < len; i++) { data[i] = 0; } }
-
   int Crc16(byte *data, int offset, int count)
   {
     byte BccLo = 0xFF;
@@ -173,8 +158,8 @@ private:
             digitalWrite(SSerialTxControl, RS485Receive); return(false);
            }
     }
-    String log1 = "ReceiveStatus:"; log1 +=',';
-    log1 += ReceiveStatus;
+    //String log = F("ReceiveStatus:");
+    //log += ReceiveStatus;
     //addLog(LOG_LEVEL_INFO,log1);
     return ReceiveStatus;
   }
@@ -204,7 +189,6 @@ public:
   void clearReceiveData() {
     clearData(ReceiveData, 8);
   }
-
 
   String DcDcState(byte id) {
     switch (id)
@@ -254,7 +238,6 @@ public:
     }
   }
 
-
   typedef struct {
     String TransmissionState;
     String GlobalState;
@@ -264,7 +247,6 @@ public:
     String AlarmState;
     bool ReadState;
   } DataState;
-
 
   DataState State;
 
@@ -288,336 +270,336 @@ public:
       switch (ReceiveData[0])
       {
       case 0:
-        State.TransmissionState = "Everything is OK."; break;
+        State.TransmissionState = F("Everything is OK."); break;
       case 51:
-        State.TransmissionState = "Command is not implemented"; break;
+        State.TransmissionState = F("Command is not implemented"); break;
       case 52:
-        State.TransmissionState = "Variable does not exist"; break;
+        State.TransmissionState = F("Variable does not exist"); break;
       case 53:
-        State.TransmissionState = "Variable value is out of range"; break;
+        State.TransmissionState = F("Variable value is out of range"); break;
       case 54:
-        State.TransmissionState = "EEprom not accessible"; break;
+        State.TransmissionState = F("EEprom not accessible"); break;
       case 55:
-        State.TransmissionState = "Not Toggled Service Mode"; break;
+        State.TransmissionState = F("Not Toggled Service Mode"); break;
       case 56:
-        State.TransmissionState = "Can not send the command to internal micro"; break;
+        State.TransmissionState = F("Can not send the command to internal micro"); break;
       case 57:
-        State.TransmissionState = "Command not Executed"; break;
+        State.TransmissionState = F("Command not Executed"); break;
       case 58:
-        State.TransmissionState = "The variable is not available, retry"; break;
+        State.TransmissionState = F("The variable is not available, retry"); break;
       default:
-        State.TransmissionState = "Sconosciuto"; break;
+        State.TransmissionState = F("Sconosciuto"); break;
       }
 
 
       switch (ReceiveData[1])
       {
       case 0:
-        State.GlobalState = "Sending Parameters"; break;
+        State.GlobalState = F("Sending Parameters"); break;
       case 1:
-        State.GlobalState = "Wait Sun / Grid"; break;
+        State.GlobalState = F("Wait Sun / Grid"); break;
       case 2:
-        State.GlobalState = "Checking Grid"; break;
+        State.GlobalState = F("Checking Grid"); break;
       case 3:
-        State.GlobalState = "Measuring Riso"; break;
+        State.GlobalState = F("Measuring Riso"); break;
       case 4:
-        State.GlobalState = "DcDc Start"; break;
+        State.GlobalState = F("DcDc Start"); break;
       case 5:
-        State.GlobalState = "Inverter Start"; break;
+        State.GlobalState = F("Inverter Start"); break;
       case 6:
-        State.GlobalState = "Run"; break;
+        State.GlobalState = F("Run"); break;
       case 7:
-        State.GlobalState = "Recovery"; break;
+        State.GlobalState = F("Recovery"); break;
       case 8:
-        State.GlobalState = "Pausev"; break;
+        State.GlobalState = F("Pausev"); break;
       case 9:
-        State.GlobalState = "Ground Fault"; break;
+        State.GlobalState = F("Ground Fault"); break;
       case 10:
-        State.GlobalState = "OTH Fault"; break;
+        State.GlobalState = F("OTH Fault"); break;
       case 11:
-        State.GlobalState = "Address Setting"; break;
+        State.GlobalState = F("Address Setting"; break;
       case 12:
-        State.GlobalState = "Self Test"; break;
+        State.GlobalState = F("Self Test"); break;
       case 13:
-        State.GlobalState = "Self Test Fail"; break;
+        State.GlobalState = F("Self Test Fail"); break;
       case 14:
-        State.GlobalState = "Sensor Test + Meas.Riso"; break;
+        State.GlobalState = F("Sensor Test + Meas.Riso"); break;
       case 15:
-        State.GlobalState = "Leak Fault"; break;
+        State.GlobalState = F("Leak Fault"); break;
       case 16:
-        State.GlobalState = "Waiting for manual reset"; break;
+        State.GlobalState = F("Waiting for manual reset"); break;
       case 17:
-        State.GlobalState = "Internal Error E026"; break;
+        State.GlobalState = F("Internal Error E026"); break;
       case 18:
-        State.GlobalState = "Internal Error E027"; break;
+        State.GlobalState = F("Internal Error E027"); break;
       case 19:
-        State.GlobalState = "Internal Error E028"; break;
+        State.GlobalState = F("Internal Error E028"); break;
       case 20:
-        State.GlobalState = "Internal Error E029"; break;
+        State.GlobalState = F("Internal Error E029"); break;
       case 21:
-        State.GlobalState = "Internal Error E030"; break;
+        State.GlobalState = F("Internal Error E030"); break;
       case 22:
-        State.GlobalState = "Sending Wind Table"; break;
+        State.GlobalState = F("Sending Wind Table"); break;
       case 23:
-        State.GlobalState = "Failed Sending table"; break;
+        State.GlobalState = F("Failed Sending table"); break;
       case 24:
-        State.GlobalState = "UTH Fault"; break;
+        State.GlobalState = F("UTH Fault"); break;
       case 25:
-        State.GlobalState = "Remote OFF"; break;
+        State.GlobalState = F("Remote OFF"); break;
       case 26:
-        State.GlobalState = "Interlock Fail"; break;
+        State.GlobalState = F("Interlock Fail"); break;
       case 27:
-        State.GlobalState = "Executing Autotest"; break;
+        State.GlobalState = F("Executing Autotest"); break;
       case 30:
-        State.GlobalState = "Waiting Sun"; break;
+        State.GlobalState = F("Waiting Sun"); break;
       case 31:
-        State.GlobalState = "Temperature Fault"; break;
+        State.GlobalState = F("Temperature Fault"); break;
       case 32:
-        State.GlobalState = "Fan Staucked"; break;
+        State.GlobalState = F("Fan Staucked"); break;
       case 33:
-        State.GlobalState = "Int.Com.Fault"; break;
+        State.GlobalState = F("Int.Com.Fault"); break;
       case 34:
-        State.GlobalState = "Slave Insertion"; break;
+        State.GlobalState = F("Slave Insertion"); break;
       case 35:
-        State.GlobalState = "DC Switch Open"; break;
+        State.GlobalState = F("DC Switch Open"); break;
       case 36:
-        State.GlobalState = "TRAS Switch Open"; break;
+        State.GlobalState = F("TRAS Switch Open"); break;
       case 37:
-        State.GlobalState = "MASTER Exclusion"; break;
+        State.GlobalState = F("MASTER Exclusion"); break;
       case 38:
-        State.GlobalState = "Auto Exclusion"; break;
+        State.GlobalState = F("Auto Exclusion"); break;
       case 98:
-        State.GlobalState = "Erasing Internal EEprom"; break;
+        State.GlobalState = F("Erasing Internal EEprom"); break;
       case 99:
-        State.GlobalState = "Erasing External EEprom"; break;
+        State.GlobalState = F("Erasing External EEprom"); break;
       case 100:
-        State.GlobalState = "Counting EEprom"; break;
+        State.GlobalState = F("Counting EEprom"); break;
       case 101:
-        State.GlobalState = "Freeze"; break;
+        State.GlobalState = F("Freeze"); break;
       default:
-        State.GlobalState = "Sconosciuto"; break;
+        State.GlobalState = F("Sconosciuto"); break;
       }
 
         switch (ReceiveData[2])
           {
           case 0:
-            State.InverterState = "Stand By"; break;
+            State.InverterState = F("Stand By"); break;
           case 1:
-            State.InverterState = "Checking Grid"; break;
+            State.InverterState = F("Checking Grid"); break;
           case 2:
-            State.InverterState = "Run"; break;
+            State.InverterState = F("Run"); break;
           case 3:
-            State.InverterState = "Bulk OV "; break;
+            State.InverterState = F("Bulk OV"); break;
           case 4:
-            State.InverterState = "Out OC"; break;
+            State.InverterState = F("Out OC"); break;
           case 5:
-            State.InverterState = "IGBT Sat"; break;
+            State.InverterState = F("IGBT Sat"); break;
           case 6:
-            State.InverterState = "Bulk UV"; break;
+            State.InverterState = F("Bulk UV"); break;
           case 7:
-            State.InverterState = "Degauss Error"; break;
+            State.InverterState = F("Degauss Error"); break;
           case 8:
-            State.InverterState = "No Parameters"; break;
+            State.InverterState = F("No Parameters"); break;
           case 9:
-            State.InverterState = "Bulk Low"; break;
+            State.InverterState = F("Bulk Low"); break;
           case 10:
-            State.InverterState = "Grid OV"; break;
+            State.InverterState = F("Grid OV"); break;
           case 11:
-            State.InverterState = "Communication Error"; break;
+            State.InverterState = F("Communication Error"); break;
           case 12:
-            State.InverterState = "Degaussing"; break;
+            State.InverterState = F("Degaussing"); break;
           case 13:
-            State.InverterState = "Starting"; break;
+            State.InverterState = F("Starting"); break;
           case 14:
-            State.InverterState = "Bulk Cap Fail"; break;
+            State.InverterState = F("Bulk Cap Fail"); break;
           case 15:
-            State.InverterState = "Leak Fail"; break;
+            State.InverterState = F("Leak Fail"); break;
           case 16:
-            State.InverterState = "DcDc Fail"; break;
+            State.InverterState = F("DcDc Fail"); break;
           case 17:
-            State.InverterState = "Ileak Sensor Fail"; break;
+            State.InverterState = F("Ileak Sensor Fail"); break;
           case 18:
-            State.InverterState = "SelfTest: relay inverter"; break;
+            State.InverterState = F("SelfTest: relay inverter"); break;
           case 19:
-            State.InverterState = "SelfTest : wait for sensor test"; break;
+            State.InverterState = F("SelfTest : wait for sensor test"); break;
           case 20:
-            State.InverterState = "SelfTest : test relay DcDc + sensor"; break;
+            State.InverterState = F("SelfTest : test relay DcDc + sensor"); break;
           case 21:
-            State.InverterState = "SelfTest : relay inverter fail"; break;
+            State.InverterState = F("SelfTest : relay inverter fail"); break;
           case 22:
-            State.InverterState = "SelfTest timeout fail"; break;
+            State.InverterState = F("SelfTest timeout fail"); break;
           case 23:
-            State.InverterState = "SelfTest : relay DcDc fail"; break;
+            State.InverterState = F("SelfTest : relay DcDc fail"); break;
           case 24:
-            State.InverterState = "Self Test 1"; break;
+            State.InverterState = F("Self Test 1"); break;
           case 25:
-            State.InverterState = "Waiting self test start"; break;
+            State.InverterState = F("Waiting self test start"); break;
           case 26:
-            State.InverterState = "Dc Injection"; break;
+            State.InverterState = F("Dc Injection"); break;
           case 27:
-            State.InverterState = "Self Test 2"; break;
+            State.InverterState = F("Self Test 2"); break;
           case 28:
-            State.InverterState = "Self Test 3"; break;
+            State.InverterState = F("Self Test 3"); break;
           case 29:
-            State.InverterState = "Self Test 4"; break;
+            State.InverterState = F("Self Test 4"); break;
           case 30:
-            State.InverterState = "Internal Error"; break;
+            State.InverterState = F("Internal Error"); break;
           case 31:
-            State.InverterState = "Internal Error"; break;
+            State.InverterState = F("Internal Error"); break;
           case 40:
-            State.InverterState = "Forbidden State"; break;
+            State.InverterState = F("Forbidden State"); break;
           case 41:
-            State.InverterState = "Input UC"; break;
+            State.InverterState = F("Input UC"); break;
           case 42:
-            State.InverterState = "Zero Power"; break;
+            State.InverterState = F("Zero Power"); break;
           case 43:
-            State.InverterState = "Grid Not Present"; break;
+            State.InverterState = F("Grid Not Present"); break;
           case 44:
-            State.InverterState = "Waiting Start"; break;
+            State.InverterState = F("Waiting Start"); break;
           case 45:
-            State.InverterState = "MPPT"; break;
+            State.InverterState = F("MPPT"); break;
           case 46:
-            State.InverterState = "Grid Fail"; break;
+            State.InverterState = F("Grid Fail"); break;
           case 47:
-            State.InverterState = "Input OC"; break;
+            State.InverterState = F("Input OC"); break;
           default:
-            State.InverterState = "Sconosciuto"; break;
+            State.InverterState = F("Sconosciuto"); break;
           }
 
           switch (ReceiveData[5])
             {
             case 0:
-              State.AlarmState = "No Alarm"; break;
+              State.AlarmState = F("No Alarm"); break;
             case 1:
-              State.AlarmState = "Sun Low"; break;
+              State.AlarmState = F("Sun Low"); break;
             case 2:
-              State.AlarmState = "Input OC"; break;
+              State.AlarmState = F("Input OC"); break;
             case 3:
-              State.AlarmState = "Input UV"; break;
+              State.AlarmState = F("Input UV"); break;
             case 4:
-              State.AlarmState = "Input OV"; break;
+              State.AlarmState = F("Input OV"); break;
             case 5:
-              State.AlarmState = "Sun Low"; break;
+              State.AlarmState = F("Sun Low"); break;
             case 6:
-              State.AlarmState = "No Parameters"; break;
+              State.AlarmState = F("No Parameters"); break;
             case 7:
-              State.AlarmState = "Bulk OV"; break;
+              State.AlarmState = F("Bulk OV"); break;
             case 8:
-              State.AlarmState = "Comm.Error"; break;
+              State.AlarmState = F("Comm.Error"); break;
             case 9:
-              State.AlarmState = "Output OC"; break;
+              State.AlarmState = F("Output OC"); break;
             case 10:
-              State.AlarmState = "IGBT Sat"; break;
+              State.AlarmState = F("IGBT Sat"); break;
             case 11:
-              State.AlarmState = "Bulk UV"; break;
+              State.AlarmState = F("Bulk UV"); break;
             case 12:
-              State.AlarmState = "Internal error"; break;
+              State.AlarmState = F("Internal error"); break;
             case 13:
-              State.AlarmState = "Grid Fail"; break;
+              State.AlarmState = F("Grid Fail"); break;
             case 14:
-              State.AlarmState = "Bulk Low"; break;
+              State.AlarmState = F("Bulk Low"); break;
             case 15:
-              State.AlarmState = "Ramp Fail"; break;
+              State.AlarmState = F("Ramp Fail"); break;
             case 16:
-              State.AlarmState = "Dc / Dc Fail"; break;
+              State.AlarmState = F("Dc / Dc Fail"); break;
             case 17:
-              State.AlarmState = "Wrong Mode"; break;
+              State.AlarmState = F("Wrong Mode"); break;
             case 18:
-              State.AlarmState = "Ground Fault"; break;
+              State.AlarmState = F("Ground Fault"; break;
             case 19:
-              State.AlarmState = "Over Temp."; break;
+              State.AlarmState = F("Over Temp."); break;
             case 20:
-              State.AlarmState = "Bulk Cap Fail"; break;
+              State.AlarmState = F("Bulk Cap Fail"); break;
             case 21:
-              State.AlarmState = "Inverter Fail"; break;
+              State.AlarmState = F("Inverter Fail"); break;
             case 22:
-              State.AlarmState = "Start Timeout"; break;
+              State.AlarmState = F("Start Timeout"); break;
             case 23:
-              State.AlarmState = "Ground Fault"; break;
+              State.AlarmState = F("Ground Fault"); break;
             case 24:
-              State.AlarmState = "Degauss error"; break;
+              State.AlarmState = F("Degauss error"; break;
             case 25:
-              State.AlarmState = "Ileak sens.fail"; break;
+              State.AlarmState = F("Ileak sens.fail"); break;
             case 26:
-              State.AlarmState = "DcDc Fail"; break;
+              State.AlarmState = F("DcDc Fail"); break;
             case 27:
-              State.AlarmState = "Self Test Error 1"; break;
+              State.AlarmState = F("Self Test Error 1"); break;
             case 28:
-              State.AlarmState = "Self Test Error 2"; break;
+              State.AlarmState = F("Self Test Error 2"); break;
             case 29:
-              State.AlarmState = "Self Test Error 3"; break;
+              State.AlarmState = F("Self Test Error 3"); break;
             case 30:
-              State.AlarmState = "Self Test Error 4"; break;
+              State.AlarmState = F("Self Test Error 4"); break;
             case 31:
-              State.AlarmState = "DC inj error"; break;
+              State.AlarmState = F("DC inj error"); break;
             case 32:
-              State.AlarmState = "Grid OV"; break;
+              State.AlarmState = F("Grid OV"); break;
             case 33:
-              State.AlarmState = "Grid UV"; break;
+              State.AlarmState = F("Grid UV"); break;
             case 34:
-              State.AlarmState = "Grid OF"; break;
+              State.AlarmState = F("Grid OF"); break;
             case 35:
-              State.AlarmState = "Grid UF"; break;
+              State.AlarmState = F("Grid UF"); break;
             case 36:
-              State.AlarmState = "Z grid Hi"; break;
+              State.AlarmState = F("Z grid Hi"); break;
             case 37:
-              State.AlarmState = "Internal error"; break;
+              State.AlarmState = F("Internal error"); break;
             case 38:
-              State.AlarmState = "Riso Low"; break;
+              State.AlarmState = F("Riso Low"); break;
             case 39:
-              State.AlarmState = "Vref Error"; break;
+              State.AlarmState = F("Vref Error"); break;
             case 40:
-              State.AlarmState = "Error Meas V"; break;
+              State.AlarmState = F("Error Meas V"); break;
             case 41:
-              State.AlarmState = "Error Meas F"; break;
+              State.AlarmState = F("Error Meas F"); break;
             case 42:
-              State.AlarmState = "Error Meas Z"; break;
+              State.AlarmState = F("Error Meas Z"); break;
             case 43:
-              State.AlarmState = "Error Meas Ileak"; break;
+              State.AlarmState = F("Error Meas Ileak"); break;
             case 44:
-              State.AlarmState = "Error Read V"; break;
+              State.AlarmState = F("Error Read V"); break;
             case 45:
-              State.AlarmState = "Error Read I"; break;
+              State.AlarmState = F("Error Read I"); break;
             case 46:
-              State.AlarmState = "Table fail"; break;
+              State.AlarmState = F("Table fail"); break;
             case 47:
-              State.AlarmState = "Fan Fail"; break;
+              State.AlarmState = F("Fan Fail"); break;
             case 48:
-              State.AlarmState = "UTH"; break;
+              State.AlarmState = F("UTH"); break;
             case 49:
-              State.AlarmState = "Interlock fail"; break;
+              State.AlarmState = F("Interlock fail"); break;
             case 50:
-              State.AlarmState = "Remote Off"; break;
+              State.AlarmState = F("Remote Off"); break;
             case 51:
-              State.AlarmState = "Vout Avg errror"; break;
+              State.AlarmState = F("Vout Avg errror") break;
             case 52:
-              State.AlarmState = "Battery low"; break;
+              State.AlarmState = F("Battery low"); break;
             case 53:
-              State.AlarmState = "Clk fail"; break;
+              State.AlarmState = F("Clk fail"); break;
             case 54:
-              State.AlarmState = "Input UC"; break;
+              State.AlarmState = F("Input UC"); break;
             case 55:
-              State.AlarmState = "Zero Power"; break;
+              State.AlarmState = F("Zero Power"); break;
             case 56:
-              State.AlarmState = "Fan Stucked"; break;
+              State.AlarmState = F("Fan Stucked"); break;
             case 57:
-              State.AlarmState = "DC Switch Open"; break;
+              State.AlarmState = F("DC Switch Open"); break;
             case 58:
-              State.AlarmState = "Tras Switch Open"; break;
+              State.AlarmState = F("Tras Switch Open"); break;
             case 59:
-              State.AlarmState = "AC Switch Open"; break;
+              State.AlarmState = F("AC Switch Open"); break;
             case 60:
-              State.AlarmState = "Bulk UV"; break;
+              State.AlarmState = F("Bulk UV"); break;
             case 61:
-              State.AlarmState = "Autoexclusion"; break;
+              State.AlarmState = F("Autoexclusion"); break;
             case 62:
-              State.AlarmState = "Grid df / dt"; break;
+              State.AlarmState = F("Grid df / dt"); break;
             case 63:
-              State.AlarmState = "Den switch Open"; break;
+              State.AlarmState = F("Den switch Open"); break;
             case 64:
-              State.AlarmState = "Jbox fail"; break;
+              State.AlarmState = F("Jbox fail"); break;
             default:
-              State.AlarmState = "Sconosciuto"; break;
+              State.AlarmState = F("Sconosciuto"); break;
             }
     return State.ReadState;
   }
@@ -643,37 +625,37 @@ public:
     Version.TransmissionState = ReceiveData[0];
     Version.GlobalState = ReceiveData[1];
 
-         if (((char)ReceiveData[2]) == 'i')  { Version.Par1 = "Aurora 2 kW indoor"; }
-    else if (((char)ReceiveData[2]) == 'o')  { Version.Par1 = "Aurora 2 kW outdoor"; }
-    else if (((char)ReceiveData[2]) == 'I')  { Version.Par1 = "Aurora 3.6 kW indoor"; }
-    else if (((char)ReceiveData[2]) == 'O')  { Version.Par1 = "Aurora 3.0 - 3.6 kW outdoor"; }
-    else if (((char)ReceiveData[2]) == '5')  { Version.Par1 = "Aurora 5.0 kW outdoor"; }
-    else if (((char)ReceiveData[2]) == '6')  { Version.Par1 = "Aurora 6 kW outdoor"; }
-    else if (((char)ReceiveData[2]) == 'P')  { Version.Par1 = "3 - phase interface (3G74)"; }
-    else if (((char)ReceiveData[2]) == 'C')  { Version.Par1 = "Aurora 50kW module"; }
-    else if (((char)ReceiveData[2]) == '4')  { Version.Par1 = "Aurora 4.2kW new"; }
-    else if (((char)ReceiveData[2]) == '3')  { Version.Par1 = "Aurora 3.6kW new"; }
-    else if (((char)ReceiveData[2]) == '2')  { Version.Par1 = "Aurora 3.3kW new"; }
-    else if (((char)ReceiveData[2]) == '1')  { Version.Par1 = "Aurora 3.0kW new"; }
-    else if (((char)ReceiveData[2]) == 'D')  { Version.Par1 = "Aurora 12.0kW"; }
-    else if (((char)ReceiveData[2]) == 'X')  { Version.Par1 = "Aurora 10.0kW"; }
-                                        else { Version.Par1 = "Sconosciuto"; };
+         if (((char)ReceiveData[2]) == 'i')  { Version.Par1 = F("Aurora 2 kW indoor"); }
+    else if (((char)ReceiveData[2]) == 'o')  { Version.Par1 = F("Aurora 2 kW outdoor"); }
+    else if (((char)ReceiveData[2]) == 'I')  { Version.Par1 = F("Aurora 3.6 kW indoor"); }
+    else if (((char)ReceiveData[2]) == 'O')  { Version.Par1 = F("Aurora 3.0 - 3.6 kW outdoor"); }
+    else if (((char)ReceiveData[2]) == '5')  { Version.Par1 = F("Aurora 5.0 kW outdoor"); }
+    else if (((char)ReceiveData[2]) == '6')  { Version.Par1 = F("Aurora 6 kW outdoor"); }
+    else if (((char)ReceiveData[2]) == 'P')  { Version.Par1 = F("3 - phase interface (3G74)"); }
+    else if (((char)ReceiveData[2]) == 'C')  { Version.Par1 = F("Aurora 50kW module"); }
+    else if (((char)ReceiveData[2]) == '4')  { Version.Par1 = F("Aurora 4.2kW new"); }
+    else if (((char)ReceiveData[2]) == '3')  { Version.Par1 = F("Aurora 3.6kW new"); }
+    else if (((char)ReceiveData[2]) == '2')  { Version.Par1 = F("Aurora 3.3kW new"); }
+    else if (((char)ReceiveData[2]) == '1')  { Version.Par1 = F("Aurora 3.0kW new"); }
+    else if (((char)ReceiveData[2]) == 'D')  { Version.Par1 = F("Aurora 12.0kW"); }
+    else if (((char)ReceiveData[2]) == 'X')  { Version.Par1 = F("Aurora 10.0kW"); }
+                                        else { Version.Par1 = F("Sconosciuto"); };
 
-         if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = "UL1741"; }
-    else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = "VDE0126"; }
-    else if (((char)ReceiveData[3]) == 'S')  { Version.Par2 = "DR 1663 / 2000"; }
-    else if (((char)ReceiveData[3]) == 'I')  { Version.Par2 = "ENEL DK 5950"; }
-    else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = "UK G83"; }
-    else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = "AS 4777"; }
-                                       else  { Version.Par2 = "Sconosciuto"; };
+         if (((char)ReceiveData[3]) == 'A')  { Version.Par2 = F("UL1741"); }
+    else if (((char)ReceiveData[3]) == 'E')  { Version.Par2 = F("VDE0126"); }
+    else if (((char)ReceiveData[3]) == 'S')  { Version.Par2 = F("DR 1663 / 2000"); }
+    else if (((char)ReceiveData[3]) == 'I')  { Version.Par2 = F("ENEL DK 5950"; }
+    else if (((char)ReceiveData[3]) == 'U')  { Version.Par2 = F("UK G83"); }
+    else if (((char)ReceiveData[3]) == 'K')  { Version.Par2 = F("AS 4777"); }
+                                       else  { Version.Par2 = F("Sconosciuto"); };
 
-         if (((char)ReceiveData[4]) == 'N')  { Version.Par3 = "Transformerless Version"; }
-    else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = "Transformer Version"; }
-                                        else { Version.Par3 = "Sconosciuto"; };
+         if (((char)ReceiveData[4]) == 'N')  { Version.Par3 = F("Transformerless Version"); }
+    else if (((char)ReceiveData[4]) == 'K')  { Version.Par3 = F("Transformer Version"); }
+                                        else { Version.Par3 = F("Sconosciuto"); };
 
-         if (((char)ReceiveData[5]) == 'N')  { Version.Par4 = "Wind version"; }
-    else if (((char)ReceiveData[5]) == 'K')  { Version.Par4 = "PV version"; }
-                                        else { Version.Par4 = "Sconosciuto"; };
+         if (((char)ReceiveData[5]) == 'N')  { Version.Par4 = F("Wind version"); }
+    else if (((char)ReceiveData[5]) == 'K')  { Version.Par4 = F("PV version"); }
+                                        else { Version.Par4 = F("Sconosciuto"); };
     return Version.ReadState;
   }
 
@@ -684,11 +666,6 @@ public:
     bool ReadState;
   } DataDSP;
   DataDSP DSP;
-
-
-
-
-
 
 
    /* type =
@@ -981,9 +958,8 @@ public:
     }
     DailyCumulatedEnergy.TransmissionState = ReceiveData[0];
     DailyCumulatedEnergy.GlobalState = ReceiveData[1];
-
-    DailyCumulatedEnergy.kwh = String( String((char)ReceiveData[2]) + "." + String( (char)ReceiveData[3]) );
-    DailyCumulatedEnergy.day = String( String((char)ReceiveData[4]) + "." + String( (char)ReceiveData[5]) );
+    DailyCumulatedEnergy.kwh = String( String((char)ReceiveData[2]) + String( (char)ReceiveData[3]) );
+    DailyCumulatedEnergy.day = String( String((char)ReceiveData[4]) + String( (char)ReceiveData[5]) );
 
     return DailyCumulatedEnergy.ReadState;
   }
@@ -1101,7 +1077,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            Serial.begin(baudrate);
            Serial.flush();
            //=============================================================================================
-           String log = F("INIT: PVI Address "); log += PCONFIG(0);
+           String log = F("INIT: PVI Address ") + PCONFIG(0);
            if ( Inverter != nullptr ) {
            addLog(LOG_LEVEL_INFO, "INIT: Aurora Inverter created!");
            addLog(LOG_LEVEL_INFO, log);
@@ -1120,10 +1096,10 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //after the plugin has read data successfuly, set success and break
            Inverter->ReadCumulatedEnergy(0);
            UserVar[event->BaseVarIndex + 0] = Inverter->CumulatedEnergy.Energia;
-           //Inverter->ReadCumulatedEnergy(3);
-           //UserVar[event->BaseVarIndex + 1] = Inverter->CumulatedEnergy.Energia;
-           //Inverter->ReadCumulatedEnergy(4);
-           //UserVar[event->BaseVarIndex + 2] = Inverter->CumulatedEnergy.Energia;
+           Inverter->ReadCumulatedEnergy(3);
+           UserVar[event->BaseVarIndex + 1] = Inverter->CumulatedEnergy.Energia;
+           Inverter->ReadCumulatedEnergy(4);
+           UserVar[event->BaseVarIndex + 2] = Inverter->CumulatedEnergy.Energia;
 
            success = true;
            break;
@@ -1208,83 +1184,59 @@ void read_RS485(){
   printWebString += log;
 
   Inverter->ReadCumulatedEnergy(0);
-  log = F("Daily Energy: ");
+  log = F("Daily Energy: ")
   log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
   printWebString += log;
 
   Inverter->ReadCumulatedEnergy(1);
-  log = F("Weekly Energy: ");
-  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("Weekly Energy: ")+ Inverter->CumulatedEnergy.Energia + F("<BR>");
+  
   Inverter->ReadCumulatedEnergy(3);
-  log = F("Month Energy: ");
-  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("Month Energy: ") + Inverter->CumulatedEnergy.Energia + F("<BR>");
+  
   Inverter->ReadCumulatedEnergy(4);
-  log = F("Year Energy: ");
-  log += Inverter->CumulatedEnergy.Energia; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("Year Energy: ")+ Inverter->CumulatedEnergy.Energia+ F("<BR>");
+   
   Inverter->ReadLastFourAlarms();
-  log = F("LastFourAlarms: ");
-  log += Inverter->LastFourAlarms.Alarms1; log +=F(",");
-  log += Inverter->LastFourAlarms.Alarms2; log +=F(",");
-  log += Inverter->LastFourAlarms.Alarms3; log +=F(",");
-  log += Inverter->LastFourAlarms.Alarms4; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("LastFourAlarms: ") + Inverter->LastFourAlarms.Alarms1+F(",")+Inverter->LastFourAlarms.Alarms2+F(",")+Inverter->LastFourAlarms.Alarms3+F(",")+ Inverter->LastFourAlarms.Alarms4+F("<BR>");
+  
   Inverter->ReadSystemPN();
-  log = F("SystemPN: ");
-  log += Inverter->SystemPN.PN; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("SystemPN: ")+ Inverter->SystemPN.PN + F("<BR>");
+  
   Inverter->ReadSystemSerialNumber();
-  log = F("SystemSerialNumber: ");
-  log += Inverter->SystemSerialNumber.SerialNumber; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("SystemSerialNumber: ") + Inverter->SystemSerialNumber.SerialNumber + F("<BR>");
+  
   Inverter->ReadManufacturingWeekYear();
-  log = F("ManufacturingWeekYear: ");
-  log += Inverter->ManufacturingWeekYear.Week; log +=F(",");
-  log += Inverter->ManufacturingWeekYear.Year; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("ManufacturingWeekYear: ") + Inverter->ManufacturingWeekYear.Week + F(",") + Inverter->ManufacturingWeekYear.Year + =F("<BR>");
+  
   Inverter->ReadVersion();
-  log = F("Version: ");
-  log += Inverter->Version.Par1; log +=F(",");
-  log += Inverter->Version.Par2; log +=F(",");
-  log += Inverter->Version.Par3; log +=F(",");
-  log += Inverter->Version.Par4; log +=F("<BR>");
-  printWebString += log;
-
+  printWebString = F("Version: ") + Inverter->Version.Par1 + F(",") + Inverter->Version.Par2 + F(",") + Inverter->Version.Par3 + F(",") + Inverter->Version.Par4 + F("<BR>");
+ 
   Inverter->ReadState();
-  log = F("TransmissionState: ");log += Inverter->State.TransmissionState ; log +=F("<BR>");printWebString += log;
-  log = F("GlobalState: ");  log += Inverter->State.GlobalState ; log +=F("<BR>");printWebString += log;
-  log = F("InverterState: "); log += Inverter->State.InverterState ; log +=F("<BR>");printWebString += log;
-  log = F("Channel1State: "); log += Inverter->State.Channel1State ; log +=F("<BR>");printWebString += log;
-  log = F("Channel2State: "); log += Inverter->State.Channel2State ; log +=F("<BR>");printWebString += log;
-  log = F("AlarmState: "); log += Inverter->State.AlarmState ; log +=F("<BR>");printWebString += log;
+  printWebString = F("TransmissionState: ") + Inverter->State.TransmissionState + F("<BR>");
+  printWebString = F("GlobalState: ") + Inverter->State.GlobalState + F("<BR>");
+  printWebString = F("InverterState: ") + Inverter->State.InverterState + F("<BR>");
+  printWebString = F("Channel2State: ") + Inverter->State.Channel2State + F("<BR>");
+  printWebString = F("AlarmState: ") + Inverter->State.AlarmState + F("<BR>");
 
   Inverter->ReadDSP(21,0);
-  log = F("Inverter Temperature (C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Inverter Temperature (C): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(22,0);
-  log = F("Booster Temperature (C): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Booster Temperature (C): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(23,1);
-  log = F("Input 1 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Input 1 Voltage (Volt): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(25,1);
-  log = F("Input 1 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Input 1 Current (Ampere): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(26,1);
-  log = F("Input 2 Voltage (Volt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Input 2 Voltage (Volt): ") + Inverter->DSP.Valore + F("<BR>"); 
   Inverter->ReadDSP(27,1);
-  log = F("Input 2 Current (Ampere): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Input 2 Current (Ampere): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(30,0);
-  log = F("Riso : "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Riso : ") + Inverter->DSP.Valore + F("<BR>"); 
   Inverter->ReadDSP(34,0);
-  log = F("Power Peak (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Power Peak (Watt): ") + Inverter->DSP.Valore + F("<BR>");
   Inverter->ReadDSP(35,0);
-  log = F("Power Peak Today (Watt): "); log += Inverter->DSP.Valore; log +=F("<BR>"); printWebString += log;
+  printWebString = F("Power Peak Today (Watt): ") + Inverter->DSP.Valore + F("<BR>");
 //  addLog(LOG_LEVEL_INFO,log);
 }
 
