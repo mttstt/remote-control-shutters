@@ -625,6 +625,7 @@ public:
     clearData(ReceiveData, 8);
   }
 
+/*
   typedef struct {
     String TransmissionState;
     String GlobalState;
@@ -636,10 +637,11 @@ public:
   } DataState;
 
   DataState State;
+*/
 
-  bool ReadState() {
-    State.ReadState = Send(Address, (byte)50, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    if (State.ReadState == false) {
+  String ReadState(byte id) {
+    bool b = Send(Address, (byte)50, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    if (b == false) {
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
       ReceiveData[2] = 255;
@@ -647,15 +649,26 @@ public:
       ReceiveData[4] = 255;
       ReceiveData[5] = 255;
     }
-    State.TransmissionState = TransmissionState(ReceiveData[0]);
-    State.GlobalState = GlobalState(ReceiveData[1]);
-    State.InverterState = InverterState(ReceiveData[2]);
-    State.Channel1State = ReceiveData[3];
-    State.Channel2State = ReceiveData[4];
-    return State.ReadState;
-  }
 
+    switch (id)
+      {
+      case 0:
+          return TransmissionState(ReceiveData[0]); break;
+      case 1:
+          return GlobalState(ReceiveData[1]); break;
+      case 2:
+          return InverterState(ReceiveData[2]); break;
+      case 3:
+          return String(ReceiveData[3]); break;
+      case 4:
+          return String(ReceiveData[4]); break;
+      case 5:
+          return String(ReceiveData[5]); break;
+    }
 
+}
+
+/*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -665,23 +678,32 @@ public:
     String Par4;
     bool ReadState;
   } DataVersion;
-  DataVersion Version;
+  DataVersion Version;*/
 
-  bool ReadVersion() {
-    Version.ReadState = Send(Address, (byte)58, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    if (Version.ReadState == false) {
-      ReceiveData[0] = 255;
-      ReceiveData[1] = 255;
+  String ReadVersion(byte id) {
+    bool b =  Send(Address, (byte)58, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    if (b == false) {
+        ReceiveData[0] = 255;
+        ReceiveData[1] = 255;
     }
-    Version.TransmissionState = ReceiveData[0];
-    Version.GlobalState = ReceiveData[1];
-    Version.Par1 = Version1(ReceiveData[2]);
-    Version.Par2 = Version2(ReceiveData[3]);
-    Version.Par3 = Version3(ReceiveData[4]);
-    Version.Par4 = Version4(ReceiveData[5]);
-    return Version.ReadState;
-  }
+    switch (id)
+      {
+      case 0:
+          return String(ReceiveData[0]); break;
+      case 1:
+          return String(ReceiveData[1]); break;
+      case 2:
+          return Version1(ReceiveData[2]); break;
+      case 3:
+          return Version2(ReceiveData[3]); break;
+      case 4:
+          return Version3(ReceiveData[4]); break;
+      case 5:
+          return Version4(ReceiveData[5]); break;
+    }
+ }
 
+/*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -689,7 +711,7 @@ public:
     bool ReadState;
   } DataDSP;
   DataDSP DSP;
-
+*/
 
    /* # 59 Measure request to the DSP - Type of Measure:
 
@@ -751,31 +773,31 @@ public:
       if 0 requires the Module Measurements (Master and Slave)
   */
 
-  bool ReadDSP(byte type, byte global) {
+  float ReadDSP(byte type, byte global) {
+    bool b;
     if ((((int)type >= 1 && (int)type <= 9) || ((int)type >= 21 && (int)type <= 63)) && ((int)global >= 0 && (int)global <= 1)) {
-      DSP.ReadState = Send(Address, (byte)59, type, global, (byte)0, (byte)0, (byte)0, (byte)0);
-      if (DSP.ReadState == false) {
+      b = Send(Address, (byte)59, type, global, (byte)0, (byte)0, (byte)0, (byte)0);
+      if (b == false) {
         ReceiveData[0] = 255;
         ReceiveData[1] = 255;
-     }
+      }
     }
     else {
-      DSP.ReadState = false;
+      b = false;
       clearReceiveData();
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
     }
-    DSP.TransmissionState = ReceiveData[0];
-    DSP.GlobalState = ReceiveData[1];
+    //DSP.TransmissionState = ReceiveData[0];
+    //DSP.GlobalState = ReceiveData[1];
     foo.asBytes[0] = ReceiveData[5];
     foo.asBytes[1] = ReceiveData[4];
     foo.asBytes[2] = ReceiveData[3];
     foo.asBytes[3] = ReceiveData[2];
-    DSP.Valore = foo.asFloat;
-    return DSP.ReadState;
+    return foo.asFloat;
   }
 
-
+/*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -783,19 +805,19 @@ public:
     bool ReadState;
   } DataTimeDate;
   DataTimeDate TimeDate;
-
-  bool ReadTimeDate() {
-    TimeDate.ReadState = Send(Address, (byte)70, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    if (TimeDate.ReadState == false) {
+*/
+  unsigned long ReadTimeDate() {
+    bool b = Send(Address, (byte)70, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    if (b == false) {
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
     }
-    TimeDate.TransmissionState = ReceiveData[0];
-    TimeDate.GlobalState = ReceiveData[1];
-    TimeDate.Secondi = ((unsigned long)ReceiveData[2] << 24) + ((unsigned long)ReceiveData[3] << 16) + ((unsigned long)ReceiveData[4] << 8) + (unsigned long)ReceiveData[5];
-    return TimeDate.ReadState;
+    //TimeDate.TransmissionState = ReceiveData[0];
+    //TimeDate.GlobalState = ReceiveData[1];
+    return ((unsigned long)ReceiveData[2] << 24) + ((unsigned long)ReceiveData[3] << 16) + ((unsigned long)ReceiveData[4] << 8) + (unsigned long)ReceiveData[5];
+    //return TimeDate.ReadState;
   }
-
+/*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -807,10 +829,11 @@ public:
   } DataLastFourAlarms;
 
   DataLastFourAlarms LastFourAlarms;
+*/
 
-  bool ReadLastFourAlarms() {
-    LastFourAlarms.ReadState = Send(Address, (byte)86, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    if (LastFourAlarms.ReadState == false) {
+  String ReadLastFourAlarms(byte id) {
+    bool b = Send(Address, (byte)86, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    if (b == false) {
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
       ReceiveData[2] = 255;
@@ -818,50 +841,60 @@ public:
       ReceiveData[4] = 255;
       ReceiveData[5] = 255;
     }
-    LastFourAlarms.TransmissionState = ReceiveData[0];
-    LastFourAlarms.GlobalState = ReceiveData[1];
-    LastFourAlarms.Alarms1 = ReceiveData[2];
-    LastFourAlarms.Alarms2 = ReceiveData[3];
-    LastFourAlarms.Alarms3 = ReceiveData[4];
-    LastFourAlarms.Alarms4 = ReceiveData[5];
-    return LastFourAlarms.ReadState;
-  }
+    switch (id)
+      {
+      case 0:
+          return String(ReceiveData[0]); break;
+      case 1:
+          return String(ReceiveData[1]); break;
+      case 2:
+          return String(ReceiveData[2]); break;
+      case 3:
+          return String(ReceiveData[3]); break;
+      case 4:
+          return String(ReceiveData[4]); break;
+      case 5:
+          return String(ReceiveData[5]); break;
+    }
+ }
 
-  bool ReadJunctionBoxState(byte nj) {
+
+
+bool ReadJunctionBoxState(byte nj) {
     return Send(Address, (byte)200, nj, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
   }
 
-  bool ReadJunctionBoxVal(byte nj, byte par) {
+bool ReadJunctionBoxVal(byte nj, byte par) {
     return Send(Address, (byte)201, nj, par, (byte)0, (byte)0, (byte)0, (byte)0);
   }
 
-  // Inverters
+  /* Inverters
   typedef struct {
     String PN;
     bool ReadState;
   } DataSystemPN;
-
   DataSystemPN SystemPN;
+*/
 
-  bool ReadSystemPN() {
-    SystemPN.ReadState = Send(Address, (byte)52, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    SystemPN.PN = String(String((char)ReceiveData[0]) + String((char)ReceiveData[1]) + String((char)ReceiveData[2]) + String((char)ReceiveData[3]) + String((char)ReceiveData[4]) + String((char)ReceiveData[5]));
-    return SystemPN.ReadState;
+  String ReadSystemPN() {
+    Send(Address, (byte)52, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    return String(String((char)ReceiveData[0]) + String((char)ReceiveData[1]) + String((char)ReceiveData[2]) + String((char)ReceiveData[3]) + String((char)ReceiveData[4]) + String((char)ReceiveData[5]));
   }
 
+/*
   typedef struct {
     String SerialNumber;
     bool ReadState;
   } DataSystemSerialNumber;
-
   DataSystemSerialNumber SystemSerialNumber;
+*/
 
-  bool ReadSystemSerialNumber() {
-    SystemSerialNumber.ReadState = Send(Address, (byte)63, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    SystemSerialNumber.SerialNumber = String(String((char)ReceiveData[0]) + String((char)ReceiveData[1]) + String((char)ReceiveData[2]) + String((char)ReceiveData[3]) + String((char)ReceiveData[4]) + String((char)ReceiveData[5]));
-    return SystemSerialNumber.ReadState;
+  String ReadSystemSerialNumber() {
+    Send(Address, (byte)63, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    return String(String((char)ReceiveData[0]) + String((char)ReceiveData[1]) + String((char)ReceiveData[2]) + String((char)ReceiveData[3]) + String((char)ReceiveData[4]) + String((char)ReceiveData[5]));
   }
 
+/*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -869,22 +902,29 @@ public:
     String Year;
     bool ReadState;
   } DataManufacturingWeekYear;
-
   DataManufacturingWeekYear ManufacturingWeekYear;
+*/
 
-  bool ReadManufacturingWeekYear() {
-    ManufacturingWeekYear.ReadState = Send(Address, (byte)65, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    if (ManufacturingWeekYear.ReadState == false) {
+  String ReadManufacturingWeekYear(byte id) {
+    bool b = Send(Address, (byte)65, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    if (b == false) {
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
     }
-    ManufacturingWeekYear.TransmissionState = ReceiveData[0];
-    ManufacturingWeekYear.GlobalState = ReceiveData[1];
-    ManufacturingWeekYear.Week = String(String((char)ReceiveData[2]) + String((char)ReceiveData[3]));
-    ManufacturingWeekYear.Year = String(String((char)ReceiveData[4]) + String((char)ReceiveData[5]));
-    return ManufacturingWeekYear.ReadState;
+    switch (id)
+      {
+      case 0:
+          return String(ReceiveData[0]); break;
+      case 1:
+          return String(ReceiveData[1]); break;
+      case 2:
+          return String(String((char)ReceiveData[2]) + String((char)ReceiveData[3])); break;
+      case 3:
+          return String(String((char)ReceiveData[4]) + String((char)ReceiveData[5])); break;
+      }
   }
 
+/*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -892,19 +932,21 @@ public:
     bool ReadState;
   } DataFirmwareRelease;
   DataFirmwareRelease FirmwareRelease;
+*/
 
-  bool ReadFirmwareRelease() {
-    FirmwareRelease.ReadState = Send(Address, (byte)72, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    if (FirmwareRelease.ReadState == false) {
+  String ReadFirmwareRelease() {
+    bool b = Send(Address, (byte)72, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+    if (b == false) {
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
     }
-    FirmwareRelease.TransmissionState = ReceiveData[0];
-    FirmwareRelease.GlobalState = ReceiveData[1];
-    FirmwareRelease.Release = String(String((char)ReceiveData[2]) + "." + String((char)ReceiveData[3]) + "." + String((char)ReceiveData[4]) + "." + String((char)ReceiveData[5]));
-    return FirmwareRelease.ReadState;
+    //FirmwareRelease.TransmissionState = ReceiveData[0];
+    //FirmwareRelease.GlobalState = ReceiveData[1];
+    return  String(String((char)ReceiveData[2]) + "." + String((char)ReceiveData[3]) + "." + String((char)ReceiveData[4]) + "." + String((char)ReceiveData[5]));
   }
 
+
+/*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -912,6 +954,7 @@ public:
     bool ReadState;
   } DataCumulatedEnergy;
   DataCumulatedEnergy CumulatedEnergy;
+*/
   /*  par=
       0) Daily Energy
       1) Weekly Energy
@@ -928,34 +971,37 @@ public:
       6       Total Energy (total lifetime)
       7       Partial Energy (cumulated since reset)
   */
-  bool ReadCumulatedEnergy(byte par) {
+   unsigned long ReadCumulatedEnergy(byte par) {
+    bool b;
     if ((int)par >= 0 && (int)par <= 6) {
-      CumulatedEnergy.ReadState = Send(Address, (byte)78, par, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-      if (CumulatedEnergy.ReadState == false) {
+      b = Send(Address, (byte)78, par, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+      if (b == false) {
         ReceiveData[0] = 255;
         ReceiveData[1] = 255;
       }
     }
     else {
-      CumulatedEnergy.ReadState = false;
+      b = false;
       clearReceiveData();
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
     }
-    CumulatedEnergy.TransmissionState = ReceiveData[0];
-    CumulatedEnergy.GlobalState = ReceiveData[1];
-    if (CumulatedEnergy.ReadState == true) {
-            ulo.asBytes[0] = ReceiveData[5];
-            ulo.asBytes[1] = ReceiveData[4];
-            ulo.asBytes[2] = ReceiveData[3];
-            ulo.asBytes[3] = ReceiveData[2];
-            CumulatedEnergy.Energia = ulo.asUlong;
+    //CumulatedEnergy.TransmissionState = ReceiveData[0];
+    //CumulatedEnergy.GlobalState = ReceiveData[1];
+
+    if (b == true) {
+        ulo.asBytes[0] = ReceiveData[5];
+        ulo.asBytes[1] = ReceiveData[4];
+        ulo.asBytes[2] = ReceiveData[3];
+        ulo.asBytes[3] = ReceiveData[2];
+        return ulo.asUlong;
     }
-    return CumulatedEnergy.ReadState;
-  }
+}
 
 
  /* # 79 Daily Cumulated Energy ** Experimental ** */
+
+ /*
   typedef struct {
     byte TransmissionState;
     byte GlobalState;
@@ -964,31 +1010,37 @@ public:
     bool ReadState;
   } DailyDataCumulatedEnergy;
   DailyDataCumulatedEnergy DailyCumulatedEnergy;
+*/
 
-
-  bool ReadDailyCumulatedEnergy(byte par) {
+  String ReadDailyCumulatedEnergy(byte id, byte par) {
+    bool b;
     if ((int)par >= 1 && (int)par <= 366) {
-      CumulatedEnergy.ReadState = Send(Address, (byte)79, par, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-      if (CumulatedEnergy.ReadState == false) {
+      b = Send(Address, (byte)79, par, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+      if (b == false) {
         ReceiveData[0] = 255;
         ReceiveData[1] = 255;
       }
     }
     else {
-      DailyCumulatedEnergy.ReadState = false;
+      b = false;
       clearReceiveData();
       ReceiveData[0] = 255;
       ReceiveData[1] = 255;
     }
-    DailyCumulatedEnergy.TransmissionState = ReceiveData[0];
-    DailyCumulatedEnergy.GlobalState = ReceiveData[1];
-    DailyCumulatedEnergy.kwh = String( String((char)ReceiveData[2]) + String( (char)ReceiveData[3]) );
-    DailyCumulatedEnergy.day = String( String((char)ReceiveData[4]) + String( (char)ReceiveData[5]) );
-
-    return DailyCumulatedEnergy.ReadState;
+    switch (id)
+      {
+      case 0:
+          return String(ReceiveData[0]); break;
+      case 1:
+          return String(ReceiveData[1]); break;
+      case 2:
+          return String( (int)word(~ReceiveData[2], ~ReceiveData[3]) ); break;
+      case 3:
+          return String( (int)word(~ReceiveData[4], ~ReceiveData[5]) ); break;
+      }
   }
 
-
+/*
   bool WriteBaudRateSetting(byte baudcode) {
     if ((int)baudcode >= 0 && (int)baudcode <= 3) {
       return Send(Address, (byte)85, baudcode, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
@@ -1008,6 +1060,7 @@ public:
   bool ReadJunctionBoxMonitoringCentral(byte cf, byte rn, byte njt, byte jal, byte jah) {return Send(Address, (byte)103, cf, rn, njt, jal, jah, (byte)0); }
   bool ReadSystemPNCentral() { return Send(Address, (byte)105, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0); }
   bool ReadSystemSerialNumberCentral() { return Send(Address, (byte)107, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0); }
+*/
 };
 
 
@@ -1118,12 +1171,9 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //code to be executed to read data
            //It is executed according to the delay configured on the device configuration page, only once
            //after the plugin has read data successfuly, set success and break
-           Inverter->ReadCumulatedEnergy(0);
-           UserVar[event->BaseVarIndex + 0] = Inverter->CumulatedEnergy.Energia;
-           Inverter->ReadCumulatedEnergy(3);
-           UserVar[event->BaseVarIndex + 1] = Inverter->CumulatedEnergy.Energia;
-           Inverter->ReadCumulatedEnergy(4);
-           UserVar[event->BaseVarIndex + 2] = Inverter->CumulatedEnergy.Energia;
+           UserVar[event->BaseVarIndex + 0] = Inverter->ReadCumulatedEnergy(0);
+           UserVar[event->BaseVarIndex + 1] = Inverter->ReadCumulatedEnergy(3);
+           UserVar[event->BaseVarIndex + 2] = Inverter->ReadCumulatedEnergy(4);
 
            success = true;
            break;
@@ -1150,126 +1200,83 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
                 if ( GetArgv(string.c_str(), TmpStr, 2) )  { rfType = TmpStr.c_str(); }
 
-                if ( rfType.equalsIgnoreCase("ask") ) { read_RS485(); success = true;}
+                if ( rfType.equalsIgnoreCase("ask") ) { read_RS485(PCONFIG(0)); success = true;}
 
                 if ( rfType.equalsIgnoreCase("day") ) {
-                   if ( GetArgv(string.c_str(), TmpStr, 3) ) { read_day( TmpStr.toInt() ); success = true; }
+                   if ( GetArgv(string.c_str(), TmpStr, 3) ) { read_day( TmpStr.toInt(), PCONFIG(0) ); success = true; }
                 }
            }
-
-           if (success){
-             if (printToWeb)
-               { printWebString += F("<BR>PVI Address: ");
-                    printWebString += String( PCONFIG(0)); printWebString += F("<BR>");
-                    printWebString += F("<BR>Use URL: <a href=\"http://");
-                    printWebString += String(WiFi.localIP().toString());
-                    printWebString += F("/control?cmd=aurora,ask"); printWebString += F("\">http://");
-                    printWebString += String(WiFi.localIP().toString());
-                    printWebString += F("/control?cmd=aurora,ask"); printWebString += F("</a>");
-                }
-           }
-           break;
+        break;
         }
      }
      return success;
 }
 //==========================================================================
 
-void read_day( int day ){
-  printWebString += F("Aurora Inverter data: "); printWebString += F("<BR>");
+void read_day( int day, int pconfig ){
+  printWebString += F("Aurora Inverter - PVI Address: "); printWebString += String(pconfig); printWebString += F("<BR>");
+  printWebString += F("<BR>Use URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask");
+  printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask"); printWebString += F("</a>");
 
-  Inverter->ReadTimeDate();
-  printWebString += F("Data time: "); printWebString += stampaDataTime(Inverter->TimeDate.Secondi); printWebString += F("<BR><BR>");
+  printWebString += F("Data time: "); printWebString += stampaDataTime(Inverter->ReadTimeDate()); printWebString += F("<BR><BR>");
 
-  Inverter->ReadDailyCumulatedEnergy(day);
-  printWebString += F("Day: "); printWebString += Inverter->DailyCumulatedEnergy.day;
-  printWebString +=F("<BR>"); printWebString += F("Kwh: ");
-  printWebString += Inverter->DailyCumulatedEnergy.kwh; printWebString += F("<BR>");
+  printWebString += F("Day: "); printWebString += Inverter->ReadDailyCumulatedEnergy(2, day); printWebString +=F("<BR>");
+  printWebString += F("Kwh: "); printWebString += Inverter->ReadDailyCumulatedEnergy(3, day); printWebString += F("<BR>");
 }
 
 
-void read_RS485(){
-  printWebString += F("Aurora Inverter data: "); printWebString += F("<BR>");
+void read_RS485(int pconfig){
+  printWebString += F("Aurora Inverter - PVI Address: "); printWebString += String(pconfig); printWebString += F("<BR>");
+  printWebString += F("<BR>Use URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask");
+  printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask"); printWebString += F("</a>");
 
-  Inverter->ReadTimeDate();
-  printWebString += F("Data time: ");
-  printWebString += stampaDataTime(Inverter->TimeDate.Secondi);
-  printWebString += F("<BR><BR>");
+  printWebString += F("Data time: ");printWebString += stampaDataTime(Inverter->ReadTimeDate()); printWebString += F("<BR><BR>");
 
-  Inverter->ReadCumulatedEnergy(0);
-  printWebString += F("Daily Energy: "); printWebString += Inverter->CumulatedEnergy.Energia; printWebString += F("<BR>");
+  printWebString += F("Daily Energy: "); printWebString += Inverter->ReadCumulatedEnergy(0); printWebString += F("<BR>");
+  printWebString += F("Weekly Energy: "); printWebString += Inverter->ReadCumulatedEnergy(1); printWebString += F("<BR>");
+  printWebString += F("Month Energy: "); printWebString += Inverter->ReadCumulatedEnergy(3); printWebString += F("<BR>");
+  printWebString += F("Year Energy: "); printWebString += Inverter->ReadCumulatedEnergy(4); printWebString += F("<BR>");
 
-  Inverter->ReadCumulatedEnergy(1);
-  printWebString += F("Weekly Energy: "); printWebString += Inverter->CumulatedEnergy.Energia; printWebString += F("<BR>");
-
-  Inverter->ReadCumulatedEnergy(3);
-  printWebString += F("Month Energy: "); printWebString += Inverter->CumulatedEnergy.Energia; printWebString += F("<BR>");
-
-  Inverter->ReadCumulatedEnergy(4);
-  printWebString += F("Year Energy: "); printWebString += Inverter->CumulatedEnergy.Energia; printWebString += F("<BR>");
-
-  Inverter->ReadLastFourAlarms();
   printWebString += F("LastFourAlarms: ");
-  printWebString += Inverter->LastFourAlarms.Alarms1; printWebString += F(",");
-  printWebString += Inverter->LastFourAlarms.Alarms2; printWebString += F(",");
-  printWebString += Inverter->LastFourAlarms.Alarms3; printWebString += F(",");
-  printWebString += Inverter->LastFourAlarms.Alarms4; printWebString += F("<BR>");
+  printWebString += Inverter->ReadLastFourAlarms(2); printWebString += F(",");
+  printWebString += Inverter->ReadLastFourAlarms(3); printWebString += F(",");
+  printWebString += Inverter->ReadLastFourAlarms(4); printWebString += F(",");
+  printWebString += Inverter->ReadLastFourAlarms(5); printWebString += F("<BR>");
 
-  Inverter->ReadSystemPN();
-  printWebString += F("SystemPN: ");
-  printWebString += Inverter->SystemPN.PN;
-  printWebString += F("<BR>");
+  printWebString += F("SystemPN: "); printWebString += Inverter->ReadSystemPN(); printWebString += F("<BR>");
 
-  Inverter->ReadSystemSerialNumber();
   printWebString += F("SystemSerialNumber: ");
-  printWebString += Inverter->SystemSerialNumber.SerialNumber;
-  printWebString += F("<BR>");
+  printWebString += Inverter->ReadSystemSerialNumber(); printWebString += F("<BR>");
 
-  Inverter->ReadManufacturingWeekYear();
+  printWebString += F("ReadFirmwareRelease: ");
+  printWebString += Inverter->ReadFirmwareRelease(); printWebString += F("<BR>");
+
   printWebString += F("ManufacturingWeekYear: ");
-  printWebString += Inverter->ManufacturingWeekYear.Week;
-  printWebString += F(",");
-  printWebString += Inverter->ManufacturingWeekYear.Year;
-  printWebString += F("<BR>");
+  printWebString += Inverter->ReadManufacturingWeekYear(2); printWebString += F(",");
+  printWebString += Inverter->ReadManufacturingWeekYear(3); printWebString += F("<BR>");
 
-  Inverter->ReadVersion();
   printWebString += F("Version: ");
-  printWebString += Inverter->Version.Par1; printWebString += F(",");
-  printWebString += Inverter->Version.Par2; printWebString += F(",");
-  printWebString += Inverter->Version.Par3; printWebString += F(",");
-  printWebString += Inverter->Version.Par4; printWebString += F("<BR>");
+  printWebString += Inverter->ReadVersion(2); printWebString += F(",");
+  printWebString += Inverter->ReadVersion(3); printWebString += F(",");
+  printWebString += Inverter->ReadVersion(4); printWebString += F(",");
+  printWebString += Inverter->ReadVersion(5); printWebString += F("<BR>");
 
-  Inverter->ReadState();
-  printWebString += F("TransmissionState: ");
-  printWebString += Inverter->State.TransmissionState;
-  printWebString += F("<BR>");
-  printWebString += F("GlobalState: ");
-  printWebString += Inverter->State.GlobalState;
-  printWebString += F("<BR>"); printWebString += F("InverterState: ");
-  printWebString += Inverter->State.InverterState; printWebString += F("<BR>");
-  printWebString += F("Channel1State: "); printWebString += Inverter->State.Channel1State;
-  printWebString += F("<BR>"); printWebString += F("Channel2State: ");
-  printWebString += Inverter->State.Channel2State; printWebString += F("<BR>");
-  printWebString += F("AlarmState: "); printWebString += Inverter->State.AlarmState; printWebString += F("<BR>");
+  printWebString += F("TransmissionState: "); printWebString += Inverter->ReadState(0); printWebString += F("<BR>");
+  printWebString += F("GlobalState: "); printWebString += Inverter->ReadState(1); printWebString += F("<BR>");
+  printWebString += F("InverterState: "); printWebString += Inverter->ReadState(2); printWebString += F("<BR>");
+  printWebString += F("Channel1State: "); printWebString += Inverter->ReadState(3); printWebString += F("<BR>");
+  printWebString += F("Channel2State: "); printWebString += Inverter->ReadState(4); printWebString += F("<BR>");
+  printWebString += F("AlarmState: "); printWebString += Inverter->ReadState(5); printWebString += F("<BR>");
 
-  Inverter->ReadDSP(21,0);
-  printWebString += F("Inverter Temperature (C): "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(22,0);
-  printWebString += F("Booster Temperature (C): "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(23,1);
-  printWebString += F("Input 1 Voltage (Volt): "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(25,1);
-  printWebString += F("Input 1 Current (Ampere): "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(26,1);
-  printWebString += F("Input 2 Voltage (Volt): "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(27,1);
-  printWebString += F("Input 2 Current (Ampere): "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(30,0);
-  printWebString += F("Riso : "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(34,0);
-  printWebString += F("Power Peak (Watt): ");printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
-  Inverter->ReadDSP(35,0);
-  printWebString += F("Power Peak Today (Watt): "); printWebString += Inverter->DSP.Valore; printWebString += F("<BR>");
+  printWebString += F("Inverter Temperature (C): "); printWebString += Inverter->ReadDSP(21,0); printWebString += F("<BR>");
+  printWebString += F("Booster Temperature (C): "); printWebString += Inverter->ReadDSP(22,0); printWebString += F("<BR>");
+  printWebString += F("Input 1 Voltage (Volt): "); printWebString += Inverter->ReadDSP(23,1); printWebString += F("<BR>");
+  printWebString += F("Input 1 Current (Ampere): "); printWebString += Inverter->ReadDSP(25,1); printWebString += F("<BR>");
+  printWebString += F("Input 2 Voltage (Volt): "); printWebString += Inverter->ReadDSP(26,1); printWebString += F("<BR>");
+  printWebString += F("Input 2 Current (Ampere): "); printWebString += Inverter->ReadDSP(27,1); printWebString += F("<BR>");
+  printWebString += F("Riso : "); printWebString += Inverter->ReadDSP(30,0); printWebString += F("<BR>");
+  printWebString += F("Power Peak (Watt): ");printWebString += Inverter->ReadDSP(34,0); printWebString += F("<BR>");
+  printWebString += F("Power Peak Today (Watt): "); printWebString += Inverter->ReadDSP(35,0); printWebString += F("<BR>");
 //  addLog(LOG_LEVEL_INFO,log);
 }
 
