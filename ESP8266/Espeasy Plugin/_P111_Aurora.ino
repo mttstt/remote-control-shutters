@@ -88,6 +88,7 @@ String TransmissionState(byte id) {
   }
 }
 
+/*
 String DcDcState(byte id) {
   switch (id)
   {
@@ -135,6 +136,7 @@ String DcDcState(byte id) {
     return F("Sconosciuto"); break;
   }
 }
+*/
 
 String GlobalState(byte id) {
   switch (id)
@@ -1083,7 +1085,7 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
           Device[deviceCount].PullUpOption = false;
           Device[deviceCount].InverseLogicOption = false;
           Device[deviceCount].FormulaOption = false;
-          Device[deviceCount].ValueCount = 3;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
+          Device[deviceCount].ValueCount = 1;  //number of output variables. The value should match the number of keys PLUGIN_VALUENAME1_xxx
           Device[deviceCount].TimerOption = true;
           Device[deviceCount].TimerOptional = false;
           Device[deviceCount].GlobalSyncOption = true;
@@ -1102,8 +1104,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //called when the user opens the module configuration page
            //it allows to add a new row for each output variable of the plugin
            strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[0], PSTR(PLUGIN_VALUENAME1_111));
-           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
-           strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
+           //strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[1], PSTR(PLUGIN_VALUENAME2_111));
+           //strcpy_P(ExtraTaskSettings.TaskDeviceValueNames[2], PSTR(PLUGIN_VALUENAME3_111));
            break;
         }
 
@@ -1172,8 +1174,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
            //It is executed according to the delay configured on the device configuration page, only once
            //after the plugin has read data successfuly, set success and break
            UserVar[event->BaseVarIndex + 0] = Inverter->ReadCumulatedEnergy(0);
-           UserVar[event->BaseVarIndex + 1] = Inverter->ReadCumulatedEnergy(3);
-           UserVar[event->BaseVarIndex + 2] = Inverter->ReadCumulatedEnergy(4);
+           //UserVar[event->BaseVarIndex + 1] = Inverter->ReadCumulatedEnergy(3);
+           //UserVar[event->BaseVarIndex + 2] = Inverter->ReadCumulatedEnergy(4);
 
            success = true;
            break;
@@ -1215,8 +1217,8 @@ boolean Plugin_111(byte function, struct EventStruct *event, String& string)
 
 void read_day( int day, int pconfig ){
   printWebString += F("Aurora Inverter - PVI Address: "); printWebString += String(pconfig); printWebString += F("<BR>");
-  printWebString += F("<BR>Use URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask");
-  printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask"); printWebString += F("</a>");
+  printWebString += F("URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask");
+  printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask"); printWebString += F("</a><BR>");
 
   printWebString += F("Data time: "); printWebString += stampaDataTime(Inverter->ReadTimeDate()); printWebString += F("<BR><BR>");
 
@@ -1228,7 +1230,7 @@ void read_day( int day, int pconfig ){
 void read_RS485(int pconfig){
   printWebString += F("Aurora Inverter - PVI Address: "); printWebString += String(pconfig); printWebString += F("<BR>");
   printWebString += F("<BR>Use URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask");
-  printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask"); printWebString += F("</a>");
+  printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=aurora,ask"); printWebString += F("</a><BR>");
 
   printWebString += F("Data time: ");printWebString += stampaDataTime(Inverter->ReadTimeDate()); printWebString += F("<BR><BR>");
 
