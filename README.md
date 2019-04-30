@@ -17,9 +17,7 @@ See logs
 
     sudo journalctl -u shutter
 
-
 https://stackoverflow.com/questions/4018154/how-do-i-run-a-node-js-app-as-a-background-service
-
 
 ### Command
 http://xxx.ddns.net:7000/?shutter=up6
@@ -30,7 +28,11 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [x] Implmented HTTPS domain using letscript
 - [ ] Use HTTPS for shutters
 - [x] Alpha test Google actions in order to avoid beging test message 
-- [ ] Migrate blind programs from Raspberry to ESP8266
-- [ ] Migrate 8266 program to plugin EspEasy
-- [ ] Interrogate Inverter Aurora with ESp8266
+- [x] Migrate blind programs from Raspberry to ESP8266
+- [x] Migrate 8266 program to plugin EspEasy
+- [x] Interrogate Inverter Aurora with ESp8266
 
+### Powerline wifi extender AV500 Tplink Problem
+There are problems:
+- I upgraded the firmware
+- MQTT use TCP: some types of traffic are not being bridged by Powerline wifi
