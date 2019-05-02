@@ -543,8 +543,7 @@ private:
     SendData[8] = lowByte(crc);
     SendData[9] = highByte(crc);
     clearReceiveData();
-    /*
-    =================================================
+/*  =================================================
     String log = "AURORA - Send data:";
     log += SendData[0]; log +=',';
     log += SendData[1]; log +=',';
@@ -557,8 +556,7 @@ private:
     log += SendData[8]; log +=',';
     log += SendData[9]; log +='-';
     addLog(LOG_LEVEL_INFO,log);
-   =================================================
-   */
+*/  =================================================
     for (int i = 0; i < MaxAttempt; i++)
     {
       digitalWrite(SSerialTxControl, RS485Transmit);
@@ -568,8 +566,8 @@ private:
         SendStatus = true;
         digitalWrite(SSerialTxControl, RS485Receive);
         int rec = Serial.readBytes(ReceiveData, sizeof(ReceiveData));
-        /*
-        =================================================
+        
+    /*  =================================================
         String log = "AURORA - Received data: ";
         log += ReceiveData[0]; log +=',';
         log += ReceiveData[1]; log +=',';
@@ -581,8 +579,8 @@ private:
         log += ReceiveData[7]; log +='-';
         log += rec;
         addLog(LOG_LEVEL_INFO,log);
-        =================================================
-        */
+    */  =================================================
+      
         if (rec != 0) {
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
@@ -819,6 +817,8 @@ public:
     return ((unsigned long)ReceiveData[2] << 24) + ((unsigned long)ReceiveData[3] << 16) + ((unsigned long)ReceiveData[4] << 8) + (unsigned long)ReceiveData[5];
     //return TimeDate.ReadState;
   }
+   
+   
 /*
   typedef struct {
     byte TransmissionState;
@@ -877,7 +877,6 @@ bool ReadJunctionBoxVal(byte nj, byte par) {
   } DataSystemPN;
   DataSystemPN SystemPN;
 */
-
   String ReadSystemPN() {
     Send(Address, (byte)52, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
     return String(String((char)ReceiveData[0]) + String((char)ReceiveData[1]) + String((char)ReceiveData[2]) + String((char)ReceiveData[3]) + String((char)ReceiveData[4]) + String((char)ReceiveData[5]));
@@ -935,7 +934,6 @@ bool ReadJunctionBoxVal(byte nj, byte par) {
   } DataFirmwareRelease;
   DataFirmwareRelease FirmwareRelease;
 */
-
   String ReadFirmwareRelease() {
     bool b = Send(Address, (byte)72, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
     if (b == false) {
@@ -998,6 +996,7 @@ bool ReadJunctionBoxVal(byte nj, byte par) {
         ulo.asBytes[3] = ReceiveData[2];
         return ulo.asUlong;
     }
+    if (b == false) { return "missing reading" }
 }
 
 
