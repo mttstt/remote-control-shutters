@@ -996,7 +996,7 @@ bool ReadJunctionBoxVal(byte nj, byte par) {
         ulo.asBytes[3] = ReceiveData[2];
         return ulo.asUlong;
     }
-    if (b == false) { return "missing reading" }
+    if (b == false) { return ''; }
 }
 
 
