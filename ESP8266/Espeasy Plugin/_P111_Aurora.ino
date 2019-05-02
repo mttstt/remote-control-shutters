@@ -556,7 +556,7 @@ private:
     log += SendData[8]; log +=',';
     log += SendData[9]; log +='-';
     addLog(LOG_LEVEL_INFO,log);
-*/  =================================================
+  ================================================= */
     for (int i = 0; i < MaxAttempt; i++)
     {
       digitalWrite(SSerialTxControl, RS485Transmit);
@@ -566,7 +566,7 @@ private:
         SendStatus = true;
         digitalWrite(SSerialTxControl, RS485Receive);
         int rec = Serial.readBytes(ReceiveData, sizeof(ReceiveData));
-        
+
     /*  =================================================
         String log = "AURORA - Received data: ";
         log += ReceiveData[0]; log +=',';
@@ -579,8 +579,8 @@ private:
         log += ReceiveData[7]; log +='-';
         log += rec;
         addLog(LOG_LEVEL_INFO,log);
-    */  =================================================
-      
+      ================================================= */
+
         if (rec != 0) {
           if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
             ReceiveStatus = true;
@@ -817,8 +817,8 @@ public:
     return ((unsigned long)ReceiveData[2] << 24) + ((unsigned long)ReceiveData[3] << 16) + ((unsigned long)ReceiveData[4] << 8) + (unsigned long)ReceiveData[5];
     //return TimeDate.ReadState;
   }
-   
-   
+
+
 /*
   typedef struct {
     byte TransmissionState;
@@ -996,7 +996,7 @@ bool ReadJunctionBoxVal(byte nj, byte par) {
         ulo.asBytes[3] = ReceiveData[2];
         return ulo.asUlong;
     }
-    if (b == false) { return ''; }
+    if (b == false) { return 0; }
 }
 
 
