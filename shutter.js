@@ -7,6 +7,11 @@
 //   are used in conjunction with "Actions on Google" Node.js client library for temperature and humidity in rooms
 // 
 // HTTP GET calls 
+//
+// => NEW con IFTT
+// http://xxx.dlinkddns.com:7000/?shutter={{TextField}}&where=st
+//
+// => OLD
 //   are used in conjuction with IFTTT for move shutters and gate
 //   Here some examples oh http GET calls:
 //     http://XXX.dlinkddns.com:7000/?shutter=do6&up7&do8
