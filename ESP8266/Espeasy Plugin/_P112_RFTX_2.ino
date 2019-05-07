@@ -11,9 +11,9 @@
 
       http://<ESP IP address>/control?cmd=RFSEND,canc
       http://<ESP IP address>/control?cmd=RFSEND,up7
-      
+
       ????????????
-      http://xxx.dlinkddns.com:7000/?shutter={{TextField}}&where=st
+      http://xxx.dlinkddns.com:7000/?rftx={{TextField}},st
       ????????????
 
    Learn codes via _P112_RFTX_NORCSwitch.ino plugin!
@@ -37,7 +37,6 @@
 #define PLUGIN_NAME_112       "RF Custom Transmit - FS1000A alike sender "
 #define PLUGIN_xxx_DEBUG  false             //set to true for extra log info in the debug
 
-
 int Plugin_112_Repeat;
 int txPin_112;
 
@@ -53,54 +52,40 @@ String canc = "01111010010000";
 //# -----Blinds------------
 const int pulse = 360; //μs
 
-const unsigned long upH = 3423141888;
-const unsigned long stH = 3422945280;
-const unsigned long doH = 3422683136;
-
-const unsigned long 0L =  424780288;
-const unsigned long 6L = 3103891968;
-const unsigned long 7L = 2038342144;
 
 
 
-/*
-String up0 = "110011000000100100000000000000000001100101010001101000100000000000";
-String st0 = "110011000000011000000000000000000001100101010001101000100000000000";
-String do0 = "110011000000001000000000000000000001100101010001101000100000000000";
-String up1 = "?";
-String st1 = "?";
-String do1 = "?";
-String up2 = "110011000000100100000000000000001001100100010001101000100000000000";
-String st2 = "110011000000011000000000000000001001100100010001101000100000000000";
-String do2 = "110011000000001000000000000000001001100100010001101000100000000000";
-String up3 = "110011000000100100000000000000000101100101100001101000100000000000";
-String st3 = "110011000000011000000000000000000101100101100001101000100000000000";
-String do3 = "110011000000001000000000000000000101100101100001101000100000000000";
-String up4 = "110011000000100100000000000000001101100100100001101000100000000000";
-String st4 = "110011000000011000000000000000001101100100100001101000100000000000";
-String do4 = "110011000000001000000000000000001101100100100001101000100000000000";
-String up5 = "110011000000100100000000000000000011100101000001101000100000000000";
-String st5 = "110011000000011000000000000000000011100101000001101000100000000000";
-String do5 = "110011000000001000000000000000000011100101000001101000100000000000";
-String up6 = "110011000000100100000000000000001011100100000001101000100000000000";
-String st6 = "110011000000011000000000000000001011100100000001101000100000000000";
-String do6 = "110011000000001000000000000000001011100100000001101000100000000000";
-String up7 = "110011000000100100000000000000000111100101111110101000100000000000";
-String st7 = "110011000000011000000000000000000111100101111110101000100000000000";
-String do7 = "110011000000001000000000000000000111100101111110101000100000000000";
-String up8 = "110011000000100100000000000000001111100100111110101000100000000000";
-String st8 = "110011000000011000000000000000001111100100111110101000100000000000";
-String do8 = "110011000000001000000000000000001111100100111110101000100000000000";
-String up9 = "110011000000100100000000000000000000010101011110101000100000000000";
-String st9 = "110011000000011000000000000000000000010101011110101000100000000000";
-String do9 = "110011000000001000000000000000000000010101011110101000100000000000";
-String up88 ="010101010000100100000000000000001111100100111110101000100000000000";
-String st88 ="010101010000011000000000000000001111100100111110101000100000000000";
-String do88 ="010101010000001000000000000000001111100100111110101000100000000000";
-String up99 ="010101010000100100000000000000000000010101011110101000100000000000";
-String st99 ="010101010000011000000000000000000000010101011110101000100000000000";
-String do99 ="010101010000001000000000000000000000010101011110101000100000000000";
-*/
+const uint64_t up0 = 0b0101010100001001000000000000000000011001010100011010001000000000; //+00
+st0 = '010101010000011000000000000000000001100101010001101000100000000000'
+do0 = '010101010000001000000000000000000001100101010001101000100000000000'
+up1 = '?'
+st1 = '?'
+do1 = '?'
+up2 = '010101010000100100000000000000001001100100010001101000100000000000'
+st2 = '010101010000011000000000000000001001100100010001101000100000000000'
+do2 = '010101010000001000000000000000001001100100010001101000100000000000'
+up3 = '010101010000100100000000000000000101100101100001101000100000000000'
+st3 = '010101010000011000000000000000000101100101100001101000100000000000'
+do3 = '010101010000001000000000000000000101100101100001101000100000000000'
+up4 = '010101010000100100000000000000001101100100100001101000100000000000'
+st4 = '010101010000011000000000000000001101100100100001101000100000000000'
+do4 = '010101010000001000000000000000001101100100100001101000100000000000'
+up5 = '010101010000100100000000000000000011100101000001101000100000000000'
+st5 = '010101010000011000000000000000000011100101000001101000100000000000'
+do5 = '010101010000001000000000000000000011100101000001101000100000000000'
+up6 = '010101010000100100000000000000001011100100000001101000100000000000'
+st6 = '010101010000011000000000000000001011100100000001101000100000000000'
+do6 = '010101010000001000000000000000001011100100000001101000100000000000'
+up7 = '010101010000100100000000000000000111100101111110101000100000000000'
+st7 = '010101010000011000000000000000000111100101111110101000100000000000'
+do7 = '010101010000001000000000000000000111100101111110101000100000000000'
+up8 = '010101010000100100000000000000001111100100111110101000100000000000'
+st8 = '010101010000011000000000000000001111100100111110101000100000000000'
+do8 = '010101010000001000000000000000001111100100111110101000100000000000'
+up9 = '010101010000100100000000000000000000010101011110101000100000000000'
+st9 = '010101010000011000000000000000000000010101011110101000100000000000'
+do9 = '010101010000001000000000000000000000010101011110101000100000000000'
+
 
 boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 {
@@ -140,14 +125,12 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 addFormNumericBox(F("Repeat (default=1)"), F("plugin_112_repeat"), Plugin_112_Repeat, 1, 20);
                 success = true;
                 break;
-
         }
 
 
         case PLUGIN_WEBFORM_SAVE:
         {
                 Plugin_112_Repeat = getFormItemInt(F("plugin_112_repeat"));
-
                 if (Plugin_112_Repeat > 20) Plugin_112_Repeat = 1;
                 ExtraTaskSettings.TaskDevicePluginConfigLong[0] = Plugin_112_Repeat;
                 SaveTaskSettings(event->TaskIndex);
@@ -166,12 +149,9 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
         case PLUGIN_INIT:
         {
                 LoadTaskSettings(event->TaskIndex);
-
                 Plugin_112_Repeat = ExtraTaskSettings.TaskDevicePluginConfigLong[0];
                 txPin_112 = Settings.TaskDevicePin1[event->TaskIndex];
-                
               //  Serial.println("txPin_112: "); Serial.println(txPin_112);
-
                 if (txPin_112 != -1)
                 {
                     addLog(LOG_LEVEL_INFO, F("INIT: RF433 TX created!"));
@@ -189,28 +169,34 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WRITE:
         {
-
-           String TmpStr1;
-           String rfType;
-           
            char command[6] = parseString(string, 1);
            char shutter[1] = parseString(string, 2);
            char where[2] = parseString(string, 3);
-           
-           if ( GetArgv(string.c_str(), TmpStr1, 2) ) rfType = TmpStr1.c_str();
-           
 
-           if (command == F("rfsend")) {
+           if (command == F("rftx")) {
+              addLog(LOG_LEVEL_INFO, F("command: RFTX "));
+              addLog(LOG_LEVEL_INFO, shutter); Serial.println(shutter);
 
-        
-             
-              addLog(LOG_LEVEL_INFO, F("command: RFSEND "));
-              addLog(LOG_LEVEL_INFO, rfType); Serial.println(rfType);
-
-             if ( rfType.equalsIgnoreCase("canc") ) { transmit_gate_code(canc); success = true; }
+              if ( shutter.equalsIgnoreCase("canc") ) { transmit_gate_code(canc); success = true; }
               else {
-                      transmit_code(ch); success = true;
-                      rfType == "up0";                     
+
+                if (where.equals(F("up0"))) sendRFCode(up0);
+                if (where.equals(F("st0"))) sendRFCode(st0);
+                if (where.equals(F("do0"))) sendRFCode(do0);
+
+                if (shutter.equals(F("up0"))) sendRFCode(0L);
+                if (shutter.equals(F("1"))) sendRFCode(1L);
+                if (shutter.equals(F("2"))) sendRFCode(2L);
+                if (shutter.equals(F("3"))) sendRFCode(3L);
+                if (shutter.equals(F("4"))) sendRFCode(4L);
+                if (shutter.equals(F("5"))) sendRFCode(5L);
+                if (shutter.equals(F("6"))) sendRFCode(6L);
+                if (shutter.equals(F("7"))) sendRFCode(7L);
+                if (shutter.equals(F("8"))) sendRFCode(8L);
+                if (shutter.equals(F("9"))) sendRFCode(9L);
+
+                transmit_code(shutter, where); success = true;
+
                }
             }
 
@@ -240,9 +226,26 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 //==========================================================================
 
 
-void transmit_code(String code){
+void transmit_code(char shutter, char where){
   addLog(LOG_LEVEL_INFO, F("trasmitting")); Serial.println(F("trasmitting"));
-  int len = code.length();
+
+  if (where.equals(F("up"))) sendRFCode(upH);
+  if (where.equals(F("st"))) sendRFCode(stH);
+  if (where.equals(F("do"))) sendRFCode(doL);
+
+  if (shutter.equals(F("0"))) sendRFCode(0L);
+  if (shutter.equals(F("1"))) sendRFCode(1L);
+  if (shutter.equals(F("2"))) sendRFCode(2L);
+  if (shutter.equals(F("3"))) sendRFCode(3L);
+  if (shutter.equals(F("4"))) sendRFCode(4L);
+  if (shutter.equals(F("5"))) sendRFCode(5L);
+  if (shutter.equals(F("6"))) sendRFCode(6L);
+  if (shutter.equals(F("7"))) sendRFCode(7L);
+  if (shutter.equals(F("8"))) sendRFCode(8L);
+  if (shutter.equals(F("9"))) sendRFCode(9L);
+
+
+
   for (int i = 0; i < Plugin_112_Repeat; i++)
   {
       // ----------------------- Preamble ----------------------
@@ -258,23 +261,32 @@ void transmit_code(String code){
       digitalWrite(txPin_112, LOW);
       delayMicroseconds(3500); // added 3,5 millis
 
+
+
+
+
       for (int j=0;j<len;++j)
       {
-         char ch = code.charAt(j);
-         if (ch == '1')
-         {
-           digitalWrite(txPin_112, HIGH);
-           delayMicroseconds(pulse);
-           digitalWrite(txPin_112, LOW);
-           delayMicroseconds(pulse*2);
-         }
-         else
-         {
-           digitalWrite( txPin_112, HIGH );
-           delayMicroseconds( pulse * 2 );
-           digitalWrite( txPin_112, LOW );
-           delayMicroseconds( pulse );
-         }
+
+
+        if (c & (1 << bits)) {
+            Serial.print("1");
+            digitalWrite(txPin_112, HIGH);
+            delayMicroseconds(pulse);
+            digitalWrite(txPin_112, LOW);
+            delayMicroseconds(pulse*2);
+          }
+        else {
+            Serial.print("0");
+            digitalWrite( txPin_112, HIGH );
+            delayMicroseconds( pulse * 2 );
+            digitalWrite( txPin_112, LOW );
+            delayMicroseconds( pulse );
+        }
+
+
+
+
       }
       digitalWrite(txPin_112, LOW);
       delayMicroseconds(5000); // added 2 millis
