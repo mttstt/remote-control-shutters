@@ -7,11 +7,11 @@
    Version: 2.0
    Description: use this script to send RF with a cheap FS1000A alike sender.
                 This plugin differs from the original one as it allows you to send custom messages
-                
+
    Example of usage:
-   http://192.168.1.xxx/?command=rftx,up7
-   http://192.168.1.xxx/?command=rftx,do7
-     
+   http://192.168.1.124/control?cmd=rftx,up6
+   http://192.168.1.124/control?cmd=rftx,do6
+
    Learn codes via _P112_RFTX_NORCSwitch.ino plugin!
    Needs: EspEasy
    Tested on GPIO:14
@@ -45,6 +45,7 @@ String canc = "01111010010000";
 
 //# -----Blinds------------
 const int pulse = 360; //μs
+
 const uint64_t up0 = 0b0101010100001001000000000000000000011001010100011010001000000000; //+00
 const uint64_t st0 = 0b0101010100000110000000000000000000011001010100011010001000000000;
 const uint64_t do0 = 0b0101010100000010000000000000000000011001010100011010001000000000;
@@ -60,8 +61,8 @@ const uint64_t do3 = 0b010101010000001000000000000000000101100101100001101000100
 const uint64_t up4 = 0b0101010100001001000000000000000011011001001000011010001000000000;
 const uint64_t st4 = 0b0101010100000110000000000000000011011001001000011010001000000000;
 const uint64_t do4 = 0b0101010100000010000000000000000011011001001000011010001000000000;
-const uint64_tu p5 = 0b0101010100001001000000000000000000111001010000011010001000000000;
-const uint64_ts t5 = 0b0101010100000110000000000000000000111001010000011010001000000000;
+const uint64_t up5 = 0b0101010100001001000000000000000000111001010000011010001000000000;
+const uint64_t st5 = 0b0101010100000110000000000000000000111001010000011010001000000000;
 const uint64_t do5 = 0b0101010100000010000000000000000000111001010000011010001000000000;
 const uint64_t up6 = 0b0101010100001001000000000000000010111001000000011010001000000000;
 const uint64_t st6 = 0b0101010100000110000000000000000010111001000000011010001000000000;
@@ -158,15 +159,16 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WRITE:
         {
-           char command[6] = parseString(string, 1);
-           char shutter[3] = parseString(string, 2);
-
+          String command;
+          String shutter;
+          command = parseString(string, 1);
+          shutter = parseString(string, 2);
            if (command == F("rftx")) {
               addLog(LOG_LEVEL_INFO, F("command: ")); Serial.println(F("command: "));
-              addLog(LOG_LEVEL_INFO, command); Serial.println(command);             
+              addLog(LOG_LEVEL_INFO, command); Serial.println(command);
               addLog(LOG_LEVEL_INFO, shutter); Serial.println(shutter);
-                            
-              if ( shutter.equalsIgnoreCase("canc") ) { transmit_gate_code(canc); success = true; }
+
+              if ( shutter.equalsIgnoreCase(F("canc"))) { transmit_gate_code(canc); success = true; }
               else {
                 success = false;
                 if (shutter.equalsIgnoreCase(F("up0"))) {sendRFCode(up0); success = true;};
@@ -198,25 +200,20 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 if (shutter.equalsIgnoreCase(F("do8"))) {sendRFCode(do8); success = true;};
                 if (shutter.equalsIgnoreCase(F("up9"))) {sendRFCode(up9); success = true;};
                 if (shutter.equalsIgnoreCase(F("st9"))) {sendRFCode(st9); success = true;};
-                if (shutter.equalsIgnoreCase(F("do9"))) {sendRFCode(do9); success = true;};                     
+                if (shutter.equalsIgnoreCase(F("do9"))) {sendRFCode(do9); success = true;};
                }
             }
 
             if (success) {
-                            String url = String(Settings.Name) + "/control?cmd=" + string;
-                            addLog(LOG_LEVEL_INFO, "To send this command again, ");
+                            String url = String(WiFi.localIP().toString()) + "/control?cmd=" + string;
+                            addLog(LOG_LEVEL_INFO, F("To send this command again, "));
                             addLog(LOG_LEVEL_INFO, "use this: <a href=\"http://" + url + "\">URL</a>");
                             if (printToWeb)
                               {
-                                 printWebString += F("RCSwitch Code Sent!");
-                                 printWebString += F("<BR>Repeats: ");
-                                 printWebString += String(Plugin_112_Repeat);
-                                 printWebString += F("<BR><BR>");
-                                 printWebString += F("<BR>Use URL: <a href=\"http://");
-                                 printWebString += url;
-                                 printWebString += F("\">http://");
-                                 printWebString += url;
-                                 printWebString += F("</a>");
+                                printWebString += F("RFTX Gateway <BR>");
+                                printWebString += F("URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=rftx,up6");
+                                printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=rftx,up6"); printWebString += F("</a><BR>");
+
                                }
                           }
             break;
@@ -229,9 +226,9 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 void sendRFCode(uint64_t code){
   addLog(LOG_LEVEL_INFO, F("trasmitting")); Serial.println(F("trasmitting"));
   addLog(LOG_LEVEL_INFO, uint64ToString(code) ); Serial.println( uint64ToString(code) );
-  
+
   for (int i = 0; i < Plugin_112_Repeat; i++)
-    {     
+    {
       // ----------------------- Preamble ----------------------
       for (int y = 0; y < 12; ++y)
       {
@@ -253,7 +250,7 @@ void sendRFCode(uint64_t code){
             delayMicroseconds(pulse);
             digitalWrite(txPin_112, LOW);
             delayMicroseconds(pulse*2);
-          }         
+          }
         else {
             Serial.print(F("0"));
             digitalWrite( txPin_112, HIGH );
@@ -326,6 +323,4 @@ String uint64ToString(uint64_t input) {
   } while (input);
   return result;
 }
-
-
 #endif
