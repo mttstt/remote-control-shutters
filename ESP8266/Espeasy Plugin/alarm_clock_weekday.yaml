@@ -1,0 +1,214 @@
+automation:
+  - id: 'alarm_clock_weekday'
+    alias: Alarm Clock Weekday
+    trigger:
+    - platform: time_pattern
+      minutes: /1
+      seconds: 1
+    condition:
+    - condition: state
+      entity_id: input_boolean.alarm_weekday_enabled
+      state: 'on'
+    - condition: time
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+    - condition: template
+      value_template: '{{ states.sensor.time.state == states.sensor.alarm_weekday_time.state }}'
+    action:
+      - data: {}
+        service: script.wake_up
+  - id: 'alarm_clock_weekend'
+    alias: Alarm Clock Weekend
+    trigger:
+    - platform: time_pattern
+      minutes: /1
+      seconds: 1
+    condition:
+    - condition: state
+      entity_id: input_boolean.alarm_weekend_enabled
+      state: 'on'
+    - condition: time
+      weekday:
+      - sat
+      - sun
+    - condition: template
+      value_template: '{{ states.sensor.time.state == states.sensor.alarm_weekend_time.state }}'
+    action:
+      - data: {} 
+        service: script.wake_up
+
+input_number:
+  alarm_weekday_hour:
+    name: Hours
+    icon: mdi:timer
+#    initial: 8
+    min: 0
+    max: 23
+    step: 1
+#    mode: box
+  alarm_weekday_minutes:
+    name: Minutes
+    icon: mdi:timer
+#    initial: 0
+    min: 0
+    max: 59
+    step: 1
+#    mode: box
+  alarm_weekend_hour:
+    name: Hours
+    icon: mdi:timer
+#    initial: 10
+    min: 0
+    max: 23
+    step: 1
+#    mode: box
+  alarm_weekend_minutes:
+    name: Minutes
+    icon: mdi:timer
+#    initial: 0
+    min: 0
+    max: 59
+    step: 1     
+#    mode: box
+
+input_boolean:
+  alarm_weekday_enabled:
+    name: Weekdays
+#    initial: off
+    icon: mdi:calendar
+  alarm_weekend_enabled:
+    name: Weekend
+#    initial: off
+    icon: mdi:calendar
+
+sensor:
+  - platform: template
+    sensors:
+      alarm_weekday_time:
+          friendly_name: 'Alarm Time Weekdays'
+          value_template: >-
+              {{ "%0.02d:%0.02d" | format(states("input_number.alarm_weekday_hour") | int, states("input_number.alarm_weekday_minutes") | int) }}
+      alarm_weekend_time:
+          friendly_name: 'Alarm Time Weekend'
+          value_template: >-
+              {{ "%0.02d:%0.02d" | format(states("input_number.alarm_weekend_hour") | int, states("input_number.alarm_weekend_minutes") | int) }}
+  - platform: time_date
+    display_options:
+      - 'time'
+
+# Optional
+group:
+  alarm_2:
+    name: Alarm Clock2
+    entities:
+      - input_boolean.alarm_weekday_enabled
+      - sensor.alarm_weekday_time
+      - input_number.alarm_weekday_hour
+      - input_number.alarm_weekday_minutes
+      - input_boolean.alarm_weekend_enabled
+      - sensor.alarm_weekend_time
+      - input_number.alarm_weekend_hour
+      - input_number.alarm_weekend_minutes
+      - sensor.time
+
+# If not enabled elsewhere:
+  time:
+    name: Time
+    entities:
+      - time_date.time
+
+script:
+  wake_up:
+    alias: sveglia
+    sequence:
+      # Chromecast
+      - service: homeassistant.turn_on
+        entity_id: media_player.chromecast
+      - service: media_player.volume_set
+        data_template:
+          entity_id: media_player.chromecast
+          volume_level: 0.2
+      - service: media_extractor.play_media
+        data:
+          entity_id: media_player.chromecast
+          media_content_id: https://music.youtube.com/watch?v=vCQTiI_ESl0&list=RDAMVMvCQTiI_ESl0
+          media_content_type: video/youtube
+      # Google Home
+      - service: homeassistant.turn_on
+        entity_id: media_player.google_home
+      - service: media_player.volume_set
+        data_template:
+          entity_id: media_player.google_home
+          volume_level: 0.3
+      - service: tts.google_say
+        entity_id: media_player.google_home 
+        data_template:
+          message: > 
+            La temperatura in sala è pari a {{states.sensor.temperatura_sala.state}} gradi centigradi.
+            L'umidità è pari a {{states.sensor.umidita_sala.state}} percento.       
+      - service: media_player.play_media
+        entity_id: media_player.google_home
+        data_template:
+          media_content_id: http://icecast.unitedradio.it/Radio105.mp3
+          media_content_type: 'audio/mp3'
+          
+      - delay:
+          minutes: 2
+      # Alza la taparella
+      - service: shell_command.open_blind_cam
+      - delay:
+         seconds: 1
+      - service: shell_command.open_blind_bagno_pic
+      - delay:
+          seconds: 1
+      - service: shell_command.open_blind_rip
+      - delay:
+          seconds: 1
+      - service: shell_command.open_blind_cuc
+      - delay:
+          seconds: 1
+      - service: shell_command.stop_blind_cam
+      - delay:
+          seconds: 1
+      - service: shell_command.open_blind_sala
+      - delay:
+          seconds: 1
+      - service: shell_command.open_blind_sala_pic
+      - delay:
+          minutes: 3
+      #Spegni i diposisitivi
+      #- service: shell_command.open_blind_cam
+      - service: homeassistant.turn_off
+        entity_id: media_player.chromecast
+      - service: homeassistant.turn_off
+        entity_id: media_player.google_home
+      - service: media_player.media_stop
+        entity_id: media_player.chromecast    
+      - service: shell_command.log
+        data:
+          text: Alarm_1 time {{ states.sensor.time.state }} alarm_1_time_minus_offset {{ states.sensor.alarm_1_time_minus_offset.state  }}
+  
+  test:
+    alias: test
+    sequence:
+      # Google Home
+      - service: homeassistant.turn_on
+        entity_id: media_player.google_home
+      - service: media_player.volume_set
+        data_template:
+          entity_id: media_player.google_home
+          volume_level: 0.4
+          
+      - service: tts.google_say
+        entity_id: media_player.google_home 
+        data_template:
+          message: > 
+            La temperatura in sala è pari a {{states.sensor.temperatura_sala.state}} gradi centigradi.
+            L'umidità è pari a {{states.sensor.umidita_sala.state}} percento.
+          
+
+   
