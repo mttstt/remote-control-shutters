@@ -35,7 +35,7 @@
 #define PLUGIN_112
 #define PLUGIN_ID_112         112
 #define PLUGIN_NAME_112       "RF Custom Transmit - FS1000A alike sender "
-#define PLUGIN_xxx_DEBUG  false             //set to true for extra log info in the debug
+#define PLUGIN_112_DEBUG  true      //set to true for extra log info in the debug
 
 int Plugin_112_Repeat;
 int txPin_112;
@@ -51,41 +51,36 @@ String canc = "01111010010000";
 
 //# -----Blinds------------
 const int pulse = 360; //μs
-
-
-
-
 const uint64_t up0 = 0b0101010100001001000000000000000000011001010100011010001000000000; //+00
-st0 = '010101010000011000000000000000000001100101010001101000100000000000'
-do0 = '010101010000001000000000000000000001100101010001101000100000000000'
-up1 = '?'
-st1 = '?'
-do1 = '?'
-up2 = '010101010000100100000000000000001001100100010001101000100000000000'
-st2 = '010101010000011000000000000000001001100100010001101000100000000000'
-do2 = '010101010000001000000000000000001001100100010001101000100000000000'
-up3 = '010101010000100100000000000000000101100101100001101000100000000000'
-st3 = '010101010000011000000000000000000101100101100001101000100000000000'
-do3 = '010101010000001000000000000000000101100101100001101000100000000000'
-up4 = '010101010000100100000000000000001101100100100001101000100000000000'
-st4 = '010101010000011000000000000000001101100100100001101000100000000000'
-do4 = '010101010000001000000000000000001101100100100001101000100000000000'
-up5 = '010101010000100100000000000000000011100101000001101000100000000000'
-st5 = '010101010000011000000000000000000011100101000001101000100000000000'
-do5 = '010101010000001000000000000000000011100101000001101000100000000000'
-up6 = '010101010000100100000000000000001011100100000001101000100000000000'
-st6 = '010101010000011000000000000000001011100100000001101000100000000000'
-do6 = '010101010000001000000000000000001011100100000001101000100000000000'
-up7 = '010101010000100100000000000000000111100101111110101000100000000000'
-st7 = '010101010000011000000000000000000111100101111110101000100000000000'
-do7 = '010101010000001000000000000000000111100101111110101000100000000000'
-up8 = '010101010000100100000000000000001111100100111110101000100000000000'
-st8 = '010101010000011000000000000000001111100100111110101000100000000000'
-do8 = '010101010000001000000000000000001111100100111110101000100000000000'
-up9 = '010101010000100100000000000000000000010101011110101000100000000000'
-st9 = '010101010000011000000000000000000000010101011110101000100000000000'
-do9 = '010101010000001000000000000000000000010101011110101000100000000000'
-
+const uint64_t st0 = 0b0101010100000110000000000000000000011001010100011010001000000000;
+const uint64_t do0 = 0b0101010100000010000000000000000000011001010100011010001000000000;
+const uint64_t up1 = 0b0;
+const uint64_t st1 = 0b0;
+const uint64_t do1 = 0b0;
+const uint64_t up2 = 0b0101010100001001000000000000000010011001000100011010001000000000;
+const uint64_t st2 = 0b0101010100000110000000000000000010011001000100011010001000000000;
+const uint64_t do2 = 0b0101010100000010000000000000000010011001000100011010001000000000;
+const uint64_t up3 = 0b0101010100001001000000000000000001011001011000011010001000000000;
+const uint64_t st3 = 0b0101010100000110000000000000000001011001011000011010001000000000;
+const uint64_t do3 = 0b0101010100000010000000000000000001011001011000011010001000000000;
+const uint64_t up4 = 0b0101010100001001000000000000000011011001001000011010001000000000;
+const uint64_t st4 = 0b0101010100000110000000000000000011011001001000011010001000000000;
+const uint64_t do4 = 0b0101010100000010000000000000000011011001001000011010001000000000;
+const uint64_tu p5 = 0b0101010100001001000000000000000000111001010000011010001000000000;
+const uint64_ts t5 = 0b0101010100000110000000000000000000111001010000011010001000000000;
+const uint64_t do5 = 0b0101010100000010000000000000000000111001010000011010001000000000;
+const uint64_t up6 = 0b0101010100001001000000000000000010111001000000011010001000000000;
+const uint64_t st6 = 0b0101010100000110000000000000000010111001000000011010001000000000;
+const uint64_t do6 = 0b0101010100000010000000000000000010111001000000011010001000000000;
+const uint64_t up7 = 0b0101010100001001000000000000000001111001011111101010001000000000;
+const uint64_t st7 = 0b0101010100000110000000000000000001111001011111101010001000000000;
+const uint64_t do7 = 0b0101010100000010000000000000000001111001011111101010001000000000;
+const uint64_t up8 = 0b0101010100001001000000000000000011111001001111101010001000000000;
+const uint64_t st8 = 0b0101010100000110000000000000000011111001001111101010001000000000;
+const uint64_t do8 = 0b0101010100000010000000000000000011111001001111101010001000000000;
+const uint64_t up9 = 0b0101010100001001000000000000000000000101010111101010001000000000;
+const uint64_t st9 = 0b0101010100000110000000000000000000000101010111101010001000000000;
+const uint64_t do9 = 0b0101010100000010000000000000000000000101010111101010001000000000;
 
 boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 {
@@ -170,33 +165,46 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
         case PLUGIN_WRITE:
         {
            char command[6] = parseString(string, 1);
-           char shutter[1] = parseString(string, 2);
-           char where[2] = parseString(string, 3);
+           char shutter[3] = parseString(string, 2);
 
            if (command == F("rftx")) {
-              addLog(LOG_LEVEL_INFO, F("command: RFTX "));
+              addLog(LOG_LEVEL_INFO, F("command: ")); Serial.println(F("command: "));
+              addLog(LOG_LEVEL_INFO, command); Serial.println(command);             
               addLog(LOG_LEVEL_INFO, shutter); Serial.println(shutter);
-
+                            
               if ( shutter.equalsIgnoreCase("canc") ) { transmit_gate_code(canc); success = true; }
               else {
-
-                if (where.equals(F("up0"))) sendRFCode(up0);
-                if (where.equals(F("st0"))) sendRFCode(st0);
-                if (where.equals(F("do0"))) sendRFCode(do0);
-
-                if (shutter.equals(F("up0"))) sendRFCode(0L);
-                if (shutter.equals(F("1"))) sendRFCode(1L);
-                if (shutter.equals(F("2"))) sendRFCode(2L);
-                if (shutter.equals(F("3"))) sendRFCode(3L);
-                if (shutter.equals(F("4"))) sendRFCode(4L);
-                if (shutter.equals(F("5"))) sendRFCode(5L);
-                if (shutter.equals(F("6"))) sendRFCode(6L);
-                if (shutter.equals(F("7"))) sendRFCode(7L);
-                if (shutter.equals(F("8"))) sendRFCode(8L);
-                if (shutter.equals(F("9"))) sendRFCode(9L);
-
-                transmit_code(shutter, where); success = true;
-
+                success = false;
+                if (shutter.equalsIgnoreCase(F("up0"))) {sendRFCode(up0); success = true;};
+                if (shutter.equalsIgnoreCase(F("st0"))) {sendRFCode(st0); success = true;};
+                if (shutter.equalsIgnoreCase(F("do0"))) {sendRFCode(do0); success = true;};
+                if (shutter.equalsIgnoreCase(F("up1"))) {sendRFCode(up1); success = true;};
+                if (shutter.equalsIgnoreCase(F("st1"))) {sendRFCode(st1); success = true;};
+                if (shutter.equalsIgnoreCase(F("do1"))) {sendRFCode(do1); success = true;};
+                if (shutter.equalsIgnoreCase(F("up2"))) {sendRFCode(up2); success = true;};
+                if (shutter.equalsIgnoreCase(F("st2"))) {sendRFCode(st2); success = true;};
+                if (shutter.equalsIgnoreCase(F("do2"))) {sendRFCode(do2); success = true;};
+                if (shutter.equalsIgnoreCase(F("up3"))) {sendRFCode(up3); success = true;};
+                if (shutter.equalsIgnoreCase(F("st3"))) {sendRFCode(st3); success = true;};
+                if (shutter.equalsIgnoreCase(F("do3"))) {sendRFCode(do3); success = true;};
+                if (shutter.equalsIgnoreCase(F("up4"))) {sendRFCode(up4); success = true;};
+                if (shutter.equalsIgnoreCase(F("st4"))) {sendRFCode(st4); success = true;};
+                if (shutter.equalsIgnoreCase(F("do4"))) {sendRFCode(do4); success = true;};
+                if (shutter.equalsIgnoreCase(F("up5"))) {sendRFCode(up5); success = true;};
+                if (shutter.equalsIgnoreCase(F("st5"))) {sendRFCode(st5); success = true;};
+                if (shutter.equalsIgnoreCase(F("do5"))) {sendRFCode(do5); success = true;};
+                if (shutter.equalsIgnoreCase(F("up6"))) {sendRFCode(up6); success = true;};
+                if (shutter.equalsIgnoreCase(F("st6"))) {sendRFCode(st6); success = true;};
+                if (shutter.equalsIgnoreCase(F("do6"))) {sendRFCode(do6); success = true;};
+                if (shutter.equalsIgnoreCase(F("up7"))) {sendRFCode(up7); success = true;};
+                if (shutter.equalsIgnoreCase(F("st7"))) {sendRFCode(st7); success = true;};
+                if (shutter.equalsIgnoreCase(F("do7"))) {sendRFCode(do7); success = true;};
+                if (shutter.equalsIgnoreCase(F("up8"))) {sendRFCode(up8); success = true;};
+                if (shutter.equalsIgnoreCase(F("st8"))) {sendRFCode(st8); success = true;};
+                if (shutter.equalsIgnoreCase(F("do8"))) {sendRFCode(do8); success = true;};
+                if (shutter.equalsIgnoreCase(F("up9"))) {sendRFCode(up9); success = true;};
+                if (shutter.equalsIgnoreCase(F("st9"))) {sendRFCode(st9); success = true;};
+                if (shutter.equalsIgnoreCase(F("do9"))) {sendRFCode(do9); success = true;};                     
                }
             }
 
@@ -226,28 +234,11 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 //==========================================================================
 
 
-void transmit_code(char shutter, char where){
+void sendRFCode(uint64_t code){
   addLog(LOG_LEVEL_INFO, F("trasmitting")); Serial.println(F("trasmitting"));
-
-  if (where.equals(F("up"))) sendRFCode(upH);
-  if (where.equals(F("st"))) sendRFCode(stH);
-  if (where.equals(F("do"))) sendRFCode(doL);
-
-  if (shutter.equals(F("0"))) sendRFCode(0L);
-  if (shutter.equals(F("1"))) sendRFCode(1L);
-  if (shutter.equals(F("2"))) sendRFCode(2L);
-  if (shutter.equals(F("3"))) sendRFCode(3L);
-  if (shutter.equals(F("4"))) sendRFCode(4L);
-  if (shutter.equals(F("5"))) sendRFCode(5L);
-  if (shutter.equals(F("6"))) sendRFCode(6L);
-  if (shutter.equals(F("7"))) sendRFCode(7L);
-  if (shutter.equals(F("8"))) sendRFCode(8L);
-  if (shutter.equals(F("9"))) sendRFCode(9L);
-
-
-
+  
   for (int i = 0; i < Plugin_112_Repeat; i++)
-  {
+    {     
       // ----------------------- Preamble ----------------------
       for (int y = 0; y < 12; ++y)
       {
@@ -261,33 +252,36 @@ void transmit_code(char shutter, char where){
       digitalWrite(txPin_112, LOW);
       delayMicroseconds(3500); // added 3,5 millis
 
-
-
-
-
-      for (int j=0;j<len;++j)
+      for (int bits = 0; bits < 64 ; ++bits )
       {
-
-
-        if (c & (1 << bits)) {
-            Serial.print("1");
+        if (code & ((uint64_t) (1 >> bits))) {
+            Serial.print(F("1"));
             digitalWrite(txPin_112, HIGH);
             delayMicroseconds(pulse);
             digitalWrite(txPin_112, LOW);
             delayMicroseconds(pulse*2);
-          }
+          }         
         else {
-            Serial.print("0");
+            Serial.print(F("0"));
             digitalWrite( txPin_112, HIGH );
             delayMicroseconds( pulse * 2 );
             digitalWrite( txPin_112, LOW );
             delayMicroseconds( pulse );
         }
-
-
-
-
       }
+     
+      // -------------------Close--Segnal:00 ---------------
+      addLog(LOG_LEVEL_INFO, F("00")); Serial.println(F("00"));
+      digitalWrite( txPin_112, HIGH );
+      delayMicroseconds( pulse * 2 );
+      digitalWrite( txPin_112, LOW );
+      delayMicroseconds( pulse );
+      digitalWrite( txPin_112, HIGH );
+      delayMicroseconds( pulse * 2 );
+      digitalWrite( txPin_112, LOW );
+      delayMicroseconds( pulse );
+     // -------------------Close--Segnal:00 ---------------
+     
       digitalWrite(txPin_112, LOW);
       delayMicroseconds(5000); // added 2 millis
     // ---------------------End Segnal --------------------------
@@ -320,10 +314,7 @@ void transmit_gate_code(String code){
            addLog(LOG_LEVEL_INFO, F("cancello: 0"));
          }
       }
-      //digitalWrite(txPin_112, LOW);
-      //delayMicroseconds(extended_delay); // added 2 millis
       delay(extended_delay);
-    //  digitalWrite(LED_BUILTIN, LOW);
     }
 }
 
