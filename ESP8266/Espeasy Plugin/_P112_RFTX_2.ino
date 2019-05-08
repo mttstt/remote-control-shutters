@@ -247,7 +247,7 @@ void sendRFCode(uint64_t code){
 
       for (int bits = 0; bits < 64 ; ++bits )
       {
-        if (code & ((uint64_t) (1 >> bits))) {
+        if (code & ((uint64_t) (1ULL >> bits))) {
             Serial.print(F("1"));
             digitalWrite(txPin_112, HIGH);
             delayMicroseconds(pulse);
