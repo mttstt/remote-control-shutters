@@ -228,6 +228,7 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
 void sendRFCode(uint64_t code){
   addLog(LOG_LEVEL_INFO, F("trasmitting")); Serial.println(F("trasmitting"));
+  addLog(LOG_LEVEL_INFO, uint64ToString(code) ); Serial.println( uint64ToString(code) );
   
   for (int i = 0; i < Plugin_112_Repeat; i++)
     {     
@@ -308,5 +309,23 @@ void transmit_gate_code(String code){
       delay(extended_delay);
     }
 }
+
+String uint64ToString(uint64_t input) {
+  String result = "";
+  uint8_t base = 10;
+
+  do {
+    char c = input % base;
+    input /= base;
+
+    if (c < 10)
+      c +='0';
+    else
+      c += 'A' - 10;
+    result = c + result;
+  } while (input);
+  return result;
+}
+
 
 #endif
