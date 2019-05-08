@@ -7,15 +7,11 @@
    Version: 2.0
    Description: use this script to send RF with a cheap FS1000A alike sender.
                 This plugin differs from the original one as it allows you to send custom messages
+                
    Example of usage:
-
-      http://<ESP IP address>/control?cmd=RFSEND,canc
-      http://<ESP IP address>/control?cmd=RFSEND,up7
-
-      ????????????
-      http://xxx.dlinkddns.com:7000/?rftx={{TextField}},st
-      ????????????
-
+   http://192.168.1.xxx/?command=rftx,up7
+   http://192.168.1.xxx/?command=rftx,do7
+     
    Learn codes via _P112_RFTX_NORCSwitch.ino plugin!
    Needs: EspEasy
    Tested on GPIO:14
@@ -40,8 +36,6 @@
 int Plugin_112_Repeat;
 int txPin_112;
 
-
-//==============================================================================
 
 //# ------- gate ---------
 const int short_delay =    760; //μs
@@ -231,8 +225,6 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
      return success;
 }
 
-//==========================================================================
-
 
 void sendRFCode(uint64_t code){
   addLog(LOG_LEVEL_INFO, F("trasmitting")); Serial.println(F("trasmitting"));
@@ -269,19 +261,18 @@ void sendRFCode(uint64_t code){
             delayMicroseconds( pulse );
         }
       }
-     
       // -------------------Close--Segnal:00 ---------------
       addLog(LOG_LEVEL_INFO, F("00")); Serial.println(F("00"));
       digitalWrite( txPin_112, HIGH );
       delayMicroseconds( pulse * 2 );
       digitalWrite( txPin_112, LOW );
       delayMicroseconds( pulse );
+      //
       digitalWrite( txPin_112, HIGH );
       delayMicroseconds( pulse * 2 );
       digitalWrite( txPin_112, LOW );
       delayMicroseconds( pulse );
      // -------------------Close--Segnal:00 ---------------
-     
       digitalWrite(txPin_112, LOW);
       delayMicroseconds(5000); // added 2 millis
     // ---------------------End Segnal --------------------------
