@@ -1,0 +1,74 @@
+19-05-08 00:41:24 INFO (SyncWorker_3) [root] Sending handshake.
+2019-05-08 00:41:24 INFO (SyncWorker_3) [root] Sending control command: KEY
+2019-05-08 00:41:26 INFO (MainThread) [homeassistant.helpers.script] Running script
+2019-05-08 00:41:26 INFO (MainThread) [homeassistant.helpers.script] Executing step call service
+2019-05-08 00:41:27 INFO (MainThread) [homeassistant.helpers.script] Executing step call service
+2019-05-08 00:41:35 INFO (SyncWorker_6) [root] Sending handshake.
+2019-05-08 00:41:35 INFO (SyncWorker_6) [root] Sending control command: KEY
+2019-05-08 00:41:58 INFO (MainThread) [homeassistant.components.websocket_api.http.connection.140026750654728] Connection closed by client
+2019-05-08 02:19:40 WARNING (Thread-3) [pychromecast.socket_client] [Google Home:8009] Heartbeat timeout, resetting connection
+2019-05-08 02:41:47 INFO (SyncWorker_17) [root] Sending handshake.
+2019-05-08 02:41:47 INFO (SyncWorker_17) [root] Sending control command: KEY
+2019-05-08 02:41:58 INFO (SyncWorker_4) [root] Sending control command: KEY
+2019-05-08 02:42:09 INFO (SyncWorker_0) [root] Sending control command: KEY
+2019-05-08 02:42:19 INFO (SyncWorker_11) [root] Sending control command: KEY
+2019-05-08 03:03:09 WARNING (Thread-4) [pychromecast.socket_client] [Chromecast:8009] Heartbeat timeout, resetting connection
+2019-05-08 07:26:01 INFO (MainThread) [homeassistant.components.automation] Executing Alarm Clock Weekday
+2019-05-08 07:26:01 INFO (MainThread) [homeassistant.helpers.script] Script Alarm Clock Weekday: Running script
+2019-05-08 07:26:01 INFO (MainThread) [homeassistant.helpers.script] Script Alarm Clock Weekday: Executing step call service
+2019-05-08 07:26:01 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Running script
+2019-05-08 07:26:01 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:26:01 INFO (SyncWorker_4) [pychromecast] Quiting current app
+2019-05-08 07:26:01 INFO (SyncWorker_4) [pychromecast.controllers] Receiver:Stopping current app 'E8C28D3C'
+2019-05-08 07:26:01 INFO (SyncWorker_4) [pychromecast.controllers] Receiver:Launching app CC1AD845
+2019-05-08 07:26:01 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:26:01 INFO (SyncWorker_18) [pychromecast.controllers] Receiver:setting volume to 0.2
+2019-05-08 07:26:01 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:26:11 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:26:11 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:26:11 INFO (SyncWorker_9) [pychromecast.controllers] Receiver:setting volume to 0.3
+2019-05-08 07:26:11 INFO (Thread-3) [pychromecast.controllers] Receiver:Launching app CC1AD845
+2019-05-08 07:26:11 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:26:12 INFO (SyncWorker_7) [pychromecast.controllers] Not launching app CC1AD845 - already running
+2019-05-08 07:26:12 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:26:12 INFO (SyncWorker_6) [pychromecast.controllers] Not launching app CC1AD845 - already running
+2019-05-08 07:26:12 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:02:00
+2019-05-08 07:26:15 WARNING (SyncWorker_8) [homeassistant.components.media_extractor] Playlists are not supported, looking for the first video
+2019-05-08 07:26:17 ERROR (SyncWorker_8) [homeassistant.components.media_extractor] ERROR: vCQTiI_ESl0: "token" parameter not in video info for unknown reason; please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output.
+2019-05-08 07:26:17 ERROR (SyncWorker_8) [homeassistant.components.media_extractor] Could not extract stream for the query: worst
+2019-05-08 07:26:17 ERROR (SyncWorker_8) [homeassistant.components.media_extractor] Wrong query format: worst
+2019-05-08 07:28:13 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:28:14 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:00:01
+2019-05-08 07:28:16 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:28:16 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:00:01
+2019-05-08 07:28:18 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:28:18 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:00:01
+2019-05-08 07:28:20 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:28:20 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:00:01
+2019-05-08 07:28:22 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:28:22 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:00:01
+2019-05-08 07:28:24 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:28:24 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:00:01
+2019-05-08 07:28:26 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:28:26 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step delay 0:03:00
+2019-05-08 07:31:27 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:31:27 INFO (SyncWorker_0) [pychromecast] Quiting current app
+2019-05-08 07:31:27 INFO (SyncWorker_0) [pychromecast.controllers] Receiver:Stopping current app 'E8C28D3C'
+2019-05-08 07:31:27 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:31:27 INFO (SyncWorker_12) [pychromecast] Quiting current app
+2019-05-08 07:31:27 INFO (SyncWorker_12) [pychromecast.controllers] Receiver:Stopping current app 'CC1AD845'
+2019-05-08 07:31:27 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 07:31:27 WARNING (SyncWorker_3) [pychromecast.controllers] STOP command requested but no session is active.
+2019-05-08 07:31:27 INFO (MainThread) [homeassistant.helpers.script] Script sveglia: Executing step call service
+2019-05-08 08:20:32 INFO (MainThread) [homeassistant.helpers.script] Running script
+2019-05-08 08:20:32 INFO (MainThread) [homeassistant.helpers.script] Executing step call service
+2019-05-08 08:20:33 INFO (MainThread) [homeassistant.helpers.script] Executing step call service
+2019-05-08 08:20:37 INFO (MainThread) [homeassistant.helpers.script] Running script
+2019-05-08 08:20:37 INFO (MainThread) [homeassistant.helpers.script] Executing step call service
+2019-05-08 08:20:38 INFO (MainThread) [homeassistant.helpers.script] Executing step call service
+2019-05-08 09:00:35 INFO (MainThread) [homeassistant.components.updater] Submitted analytics to Home Assistant servers. Information submitted includes {'version': '0.92.2', 'dev': False, 'hassio': False, 'virtualenv': False, 'python_version': '3.7.3', 'docker': True, 'arch': 'x86_64', 'timezone': 'Europe/Rome', 'os_name': 'Linux', 'distribution': 'debian', 'os_version': '9', 'huuid': '248a0cc8a7174f42bac17b88d1757b3a'}
+2019-05-08 09:00:35 INFO (MainThread) [homeassistant.components.updater] You are on the latest version (0.92.2) of Home Assistant
+2019-05-08 17:14:30 INFO (SyncWorker_3) [root] Sending handshake.
+2019-05-08 17:14:30 INFO (SyncWorker_3) [root] Sending control command: KEY
+2019-05-08 17:14:41 INFO (SyncWorker_4) [root] Sending control command: KEY
+2019-05-08 17:14:52 INFO (SyncWorker_4) [root] Sending control command: KEY
