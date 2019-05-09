@@ -11,6 +11,8 @@
    Example of usage:
    http://192.168.1.124/control?cmd=rftx,up6
    http://192.168.1.124/control?cmd=rftx,do6
+   http://192.168.1.124/control?cmd=rftx,canc
+   http://192.168.1.124/control?cmd=rftx,upZg
 
    Learn codes via _P112_RFTX_NORCSwitch.ino plugin!
    Needs: EspEasy
