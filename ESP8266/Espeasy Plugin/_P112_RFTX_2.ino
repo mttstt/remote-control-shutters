@@ -44,9 +44,8 @@ const int extended_delay = 0.5;
 //String canc = "01111010010000";
 const uint16_t canc = "0b0111101001000000"; //-00
 
-//# -----Blinds------------
+//# -----Shutters------------
 const int pulse = 360; //μs
-
 const uint64_t up0 = 0b0101010100001001000000000000000000011001010100011010001000000000; //+00
 const uint64_t st0 = 0b0101010100000110000000000000000000011001010100011010001000000000;
 const uint64_t do0 = 0b0101010100000010000000000000000000011001010100011010001000000000;
@@ -217,19 +216,17 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                                                         sendRFCode(do6); success = true;
                                                        };                           
             }
-
             if (success) {
-                            String url = String(WiFi.localIP().toString()) + "/control?cmd=" + string;
-                            addLog(LOG_LEVEL_INFO, F("To send this command again, "));
-                            addLog(LOG_LEVEL_INFO, "use this: <a href=\"http://" + url + "\">URL</a>");
-                            if (printToWeb)
-                              {
-                                printWebString += F("RFTX Gateway <BR>");
-                                printWebString += F("URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=rftx,up6");
-                                printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=rftx,up6"); printWebString += F("</a><BR>");
-
-                               }
+                       String url = String(WiFi.localIP().toString()) + "/control?cmd=" + string;
+                       addLog(LOG_LEVEL_INFO, F("To send this command again, "));
+                       addLog(LOG_LEVEL_INFO, "use this: <a href=\"http://" + url + "\">URL</a>");
+                       if (printToWeb)
+                         {
+                           printWebString += F("RFTX Gateway <BR>");
+                           printWebString += F("URL: <a href=\"http://"); printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=rftx,up6");
+                           printWebString += F("\">http://");printWebString += String(WiFi.localIP().toString());printWebString += F("/control?cmd=rftx,up6"); printWebString += F("</a><BR>");
                           }
+                        }
             break;
         }
      }
@@ -293,6 +290,9 @@ void sendRFCode(uint64_t code){
 
 
 void sendRFCode_canc(uint16_t code){
+  addLog(LOG_LEVEL_INFO, F("trasmitting")); Serial.println(F("trasmitting"));
+  addLog(LOG_LEVEL_INFO, uint64ToString(code) ); Serial.println( uint64ToString(code) );
+   
   for (int i = 0; i < Plugin_112_Repeat; i++)
   {      
       for (int bits = 0; bits < 14 ; ++bits )
