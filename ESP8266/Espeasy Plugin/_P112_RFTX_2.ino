@@ -203,17 +203,17 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
               if (shutter.equalsIgnoreCase(F("upZg"))) {sendRFCode(up9); delay(1500);
                                                         sendRFCode(up8); delay(1500);
                                                         sendRFCode(up7); delay(1500);
-                                                        sendRFCode(up6); success = true;
+                                                        sendRFCode(up6); success=true;
                                                        };
               if (shutter.equalsIgnoreCase(F("stZg"))) {sendRFCode(st9); delay(1500);
                                                         sendRFCode(st8); delay(1500);
                                                         sendRFCode(st7); delay(1500);
-                                                        sendRFCode(st6); success = true;
+                                                        sendRFCode(st6); success=true;
                                                        };
-              if (shutter.equalsIgnoreCase(F("doZg"))) {sendRFCode(do9); delay(1000);
-                                                        sendRFCode(do8); delay(1000);
-                                                        sendRFCode(do7); delay(1000);
-                                                        sendRFCode(do6); success = true;
+              if (shutter.equalsIgnoreCase(F("doZg"))) {sendRFCode(do9); delay(1500);
+                                                        sendRFCode(do8); delay(1500);
+                                                        sendRFCode(do7); delay(1500);
+                                                        sendRFCode(do6); success=true;
                                                        };                           
             }
             if (success) {
