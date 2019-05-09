@@ -41,7 +41,8 @@ int txPin_112;
 const int short_delay =    760; //μs
 const int long_delay =    1520; //μs
 const int extended_delay = 0.5;
-String canc = "01111010010000";
+//String canc = "01111010010000";
+const uint16_t canc = "0b0111101001000000"; //-00
 
 //# -----Blinds------------
 const int pulse = 360; //μs
@@ -161,47 +162,60 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
         {
           String command;
           String shutter;
+          success = false;
           command = parseString(string, 1);
           shutter = parseString(string, 2);
-           if (command == F("rftx")) {
+          if (command == F("rftx")) {
               addLog(LOG_LEVEL_INFO, F("command: ")); Serial.println(F("command: "));
               addLog(LOG_LEVEL_INFO, command); Serial.println(command);
               addLog(LOG_LEVEL_INFO, shutter); Serial.println(shutter);
 
-              if ( shutter.equalsIgnoreCase(F("canc"))) { transmit_gate_code(canc); success = true; }
-              else {
-                success = false;
-                if (shutter.equalsIgnoreCase(F("up0"))) {sendRFCode(up0); success = true;};
-                if (shutter.equalsIgnoreCase(F("st0"))) {sendRFCode(st0); success = true;};
-                if (shutter.equalsIgnoreCase(F("do0"))) {sendRFCode(do0); success = true;};
-                if (shutter.equalsIgnoreCase(F("up1"))) {sendRFCode(up1); success = true;};
-                if (shutter.equalsIgnoreCase(F("st1"))) {sendRFCode(st1); success = true;};
-                if (shutter.equalsIgnoreCase(F("do1"))) {sendRFCode(do1); success = true;};
-                if (shutter.equalsIgnoreCase(F("up2"))) {sendRFCode(up2); success = true;};
-                if (shutter.equalsIgnoreCase(F("st2"))) {sendRFCode(st2); success = true;};
-                if (shutter.equalsIgnoreCase(F("do2"))) {sendRFCode(do2); success = true;};
-                if (shutter.equalsIgnoreCase(F("up3"))) {sendRFCode(up3); success = true;};
-                if (shutter.equalsIgnoreCase(F("st3"))) {sendRFCode(st3); success = true;};
-                if (shutter.equalsIgnoreCase(F("do3"))) {sendRFCode(do3); success = true;};
-                if (shutter.equalsIgnoreCase(F("up4"))) {sendRFCode(up4); success = true;};
-                if (shutter.equalsIgnoreCase(F("st4"))) {sendRFCode(st4); success = true;};
-                if (shutter.equalsIgnoreCase(F("do4"))) {sendRFCode(do4); success = true;};
-                if (shutter.equalsIgnoreCase(F("up5"))) {sendRFCode(up5); success = true;};
-                if (shutter.equalsIgnoreCase(F("st5"))) {sendRFCode(st5); success = true;};
-                if (shutter.equalsIgnoreCase(F("do5"))) {sendRFCode(do5); success = true;};
-                if (shutter.equalsIgnoreCase(F("up6"))) {sendRFCode(up6); success = true;};
-                if (shutter.equalsIgnoreCase(F("st6"))) {sendRFCode(st6); success = true;};
-                if (shutter.equalsIgnoreCase(F("do6"))) {sendRFCode(do6); success = true;};
-                if (shutter.equalsIgnoreCase(F("up7"))) {sendRFCode(up7); success = true;};
-                if (shutter.equalsIgnoreCase(F("st7"))) {sendRFCode(st7); success = true;};
-                if (shutter.equalsIgnoreCase(F("do7"))) {sendRFCode(do7); success = true;};
-                if (shutter.equalsIgnoreCase(F("up8"))) {sendRFCode(up8); success = true;};
-                if (shutter.equalsIgnoreCase(F("st8"))) {sendRFCode(st8); success = true;};
-                if (shutter.equalsIgnoreCase(F("do8"))) {sendRFCode(do8); success = true;};
-                if (shutter.equalsIgnoreCase(F("up9"))) {sendRFCode(up9); success = true;};
-                if (shutter.equalsIgnoreCase(F("st9"))) {sendRFCode(st9); success = true;};
-                if (shutter.equalsIgnoreCase(F("do9"))) {sendRFCode(do9); success = true;};
-               }
+              if (shutter.equalsIgnoreCase(F("canc"))) {sendRFCode_canc(canc); success = true; }                             
+              if (shutter.equalsIgnoreCase(F("up0")))  {sendRFCode(up0); success = true;};
+              if (shutter.equalsIgnoreCase(F("st0")))  {sendRFCode(st0); success = true;};
+              if (shutter.equalsIgnoreCase(F("do0")))  {sendRFCode(do0); success = true;};
+              if (shutter.equalsIgnoreCase(F("up1")))  {sendRFCode(up1); success = true;};
+              if (shutter.equalsIgnoreCase(F("st1")))  {sendRFCode(st1); success = true;};
+              if (shutter.equalsIgnoreCase(F("do1")))  {sendRFCode(do1); success = true;};
+              if (shutter.equalsIgnoreCase(F("up2")))  {sendRFCode(up2); success = true;};
+              if (shutter.equalsIgnoreCase(F("st2")))  {sendRFCode(st2); success = true;};
+              if (shutter.equalsIgnoreCase(F("do2")))  {sendRFCode(do2); success = true;};
+              if (shutter.equalsIgnoreCase(F("up3")))  {sendRFCode(up3); success = true;};
+              if (shutter.equalsIgnoreCase(F("st3")))  {sendRFCode(st3); success = true;};
+              if (shutter.equalsIgnoreCase(F("do3")))  {sendRFCode(do3); success = true;};
+              if (shutter.equalsIgnoreCase(F("up4")))  {sendRFCode(up4); success = true;};
+              if (shutter.equalsIgnoreCase(F("st4")))  {sendRFCode(st4); success = true;};
+              if (shutter.equalsIgnoreCase(F("do4")))  {sendRFCode(do4); success = true;};
+              if (shutter.equalsIgnoreCase(F("up5")))  {sendRFCode(up5); success = true;};
+              if (shutter.equalsIgnoreCase(F("st5")))  {sendRFCode(st5); success = true;};
+              if (shutter.equalsIgnoreCase(F("do5")))  {sendRFCode(do5); success = true;};
+              if (shutter.equalsIgnoreCase(F("up6")))  {sendRFCode(up6); success = true;};
+              if (shutter.equalsIgnoreCase(F("st6")))  {sendRFCode(st6); success = true;};
+              if (shutter.equalsIgnoreCase(F("do6")))  {sendRFCode(do6); success = true;};
+              if (shutter.equalsIgnoreCase(F("up7")))  {sendRFCode(up7); success = true;};
+              if (shutter.equalsIgnoreCase(F("st7")))  {sendRFCode(st7); success = true;};
+              if (shutter.equalsIgnoreCase(F("do7")))  {sendRFCode(do7); success = true;};
+              if (shutter.equalsIgnoreCase(F("up8")))  {sendRFCode(up8); success = true;};
+              if (shutter.equalsIgnoreCase(F("st8")))  {sendRFCode(st8); success = true;};
+              if (shutter.equalsIgnoreCase(F("do8")))  {sendRFCode(do8); success = true;};
+              if (shutter.equalsIgnoreCase(F("up9")))  {sendRFCode(up9); success = true;};
+              if (shutter.equalsIgnoreCase(F("st9")))  {sendRFCode(st9); success = true;};
+              if (shutter.equalsIgnoreCase(F("do9")))  {sendRFCode(do9); success = true;};
+              if (shutter.equalsIgnoreCase(F("upZg"))) {sendRFCode(up9); delay(1500);
+                                                        sendRFCode(up8); delay(1500);
+                                                        sendRFCode(up7); delay(1500);
+                                                        sendRFCode(up6); success = true;
+                                                       };
+              if (shutter.equalsIgnoreCase(F("stZg"))) {sendRFCode(st9); delay(1500);
+                                                        sendRFCode(st8); delay(1500);
+                                                        sendRFCode(st7); delay(1500);
+                                                        sendRFCode(st6); success = true;
+                                                       };
+              if (shutter.equalsIgnoreCase(F("doZg"))) {sendRFCode(do9); delay(1000);
+                                                        sendRFCode(do8); delay(1000);
+                                                        sendRFCode(do7); delay(1000);
+                                                        sendRFCode(do6); success = true;
+                                                       };                           
             }
 
             if (success) {
@@ -278,29 +292,26 @@ void sendRFCode(uint64_t code){
 }
 
 
-void transmit_gate_code(String code){
-  int len = code.length();
+void sendRFCode_canc(uint16_t code){
   for (int i = 0; i < Plugin_112_Repeat; i++)
-  {
-      //digitalWrite(txPin_112, LOW);
-      for (int j=0;j<len;++j)
+  {      
+      for (int bits = 0; bits < 14 ; ++bits )
       {
-         char ch = code.charAt(j);
-         if (ch == '1')
+         if (code & (1U >> bits) )
          {
+           Serial.print(F("1")); addLog(LOG_LEVEL_INFO, F("cancello: 1"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(short_delay);
            digitalWrite(txPin_112, LOW);
-           delayMicroseconds(long_delay);
-           addLog(LOG_LEVEL_INFO, F("cancello: 1"));
+           delayMicroseconds(long_delay);          
          }
          else
          {
+           Serial.print(F("0")); addLog(LOG_LEVEL_INFO, F("cancello: 0"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(long_delay);
            digitalWrite(txPin_112, LOW);
-           delayMicroseconds(short_delay);
-           addLog(LOG_LEVEL_INFO, F("cancello: 0"));
+           delayMicroseconds(short_delay);        
          }
       }
       delay(extended_delay);
