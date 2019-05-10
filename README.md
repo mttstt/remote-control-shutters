@@ -38,7 +38,7 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [ ] Upgrade APPS IFTTT to point from RPI to RFGateway
 - [ ] Upgrade configuration.yaml HA in order to use the new RFgateway
 - [ ] Shutdown RPI
-- [ ] Test esp_wifi_report outdoor
+- [ ] Test esp_wifi_repeater outdoor
 
 ### Powerline wifi extender AV500 Tplink Problem (abbandoned solution)
 There are problems:
