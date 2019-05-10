@@ -31,8 +31,16 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [x] Migrate blind programs from Raspberry to ESP8266
 - [x] Migrate 8266 program to plugin EspEasy
 - [x] Interrogate Inverter Aurora with ESp8266
+- [ ] Integrate Tenvis webcam in HA
+- [ ] Upgrade RFTX, and test it
+- [ ] Move rfgateway in order to make adeguate test
+- [ ] Upgrade ESP and RFGateway ESP
+- [ ] Upgrade APPS IFTTT to point from RPI to RFGateway
+- [ ] Upgrade configuration.yaml HA in order to use the new RFgateway
+- [ ] Shutdown RPI
+- [ ] Test esp_wifi_report outdoor
 
-### Powerline wifi extender AV500 Tplink Problem
+### Powerline wifi extender AV500 Tplink Problem (abbandoned solution)
 There are problems:
 - I upgraded the firmware
 - MQTT use TCP: some types of traffic are not being bridged by Powerline wifi
