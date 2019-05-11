@@ -7,10 +7,12 @@
    Version: 2.0
    Description: use this script to send RF with a cheap FS1000A alike sender.
                 This plugin differs from the original one as it allows you to send custom messages
-   Example of usage:
 
-      http://<ESP IP address>/control?cmd=RFSEND,canc
-      http://<ESP IP address>/control?cmd=RFSEND,up7
+   Example of usage:
+   http://192.168.1.124/control?cmd=rftx,up6
+   http://192.168.1.124/control?cmd=rftx,do6
+   http://192.168.1.124/control?cmd=rftx,canc
+   http://192.168.1.124/control?cmd=rftx,upZg
 
    Learn codes via _P112_RFTX_NORCSwitch.ino plugin!
    Needs: EspEasy
@@ -31,60 +33,51 @@
 #define PLUGIN_112
 #define PLUGIN_ID_112         112
 #define PLUGIN_NAME_112       "RF Custom Transmit - FS1000A alike sender "
-#define PLUGIN_xxx_DEBUG  false             //set to true for extra log info in the debug
-
+#define PLUGIN_112_DEBUG  true      //set to true for extra log info in the debug
 
 int Plugin_112_Repeat;
 int txPin_112;
 
 
-//==============================================================================
-
 //# ------- gate ---------
 const int short_delay =    760; //μs
 const int long_delay =    1520; //μs
 const int extended_delay = 0.5;
-String canc = "01111010010000";
+//String canc = "01111010010000";
+const uint16_t canc = 0b0111101001000000; //-00
 
-//# -----Blinds------------
+//# -----Shutters------------
 const int pulse = 360; //μs
-String up0 = "110011000000100100000000000000000001100101010001101000100000000000";
-String st0 = "110011000000011000000000000000000001100101010001101000100000000000";
-String do0 = "110011000000001000000000000000000001100101010001101000100000000000";
-String up1 = "?";
-String st1 = "?";
-String do1 = "?";
-String up2 = "110011000000100100000000000000001001100100010001101000100000000000";
-String st2 = "110011000000011000000000000000001001100100010001101000100000000000";
-String do2 = "110011000000001000000000000000001001100100010001101000100000000000";
-String up3 = "110011000000100100000000000000000101100101100001101000100000000000";
-String st3 = "110011000000011000000000000000000101100101100001101000100000000000";
-String do3 = "110011000000001000000000000000000101100101100001101000100000000000";
-String up4 = "110011000000100100000000000000001101100100100001101000100000000000";
-String st4 = "110011000000011000000000000000001101100100100001101000100000000000";
-String do4 = "110011000000001000000000000000001101100100100001101000100000000000";
-String up5 = "110011000000100100000000000000000011100101000001101000100000000000";
-String st5 = "110011000000011000000000000000000011100101000001101000100000000000";
-String do5 = "110011000000001000000000000000000011100101000001101000100000000000";
-String up6 = "110011000000100100000000000000001011100100000001101000100000000000";
-String st6 = "110011000000011000000000000000001011100100000001101000100000000000";
-String do6 = "110011000000001000000000000000001011100100000001101000100000000000";
-String up7 = "110011000000100100000000000000000111100101111110101000100000000000";
-String st7 = "110011000000011000000000000000000111100101111110101000100000000000";
-String do7 = "110011000000001000000000000000000111100101111110101000100000000000";
-String up8 = "110011000000100100000000000000001111100100111110101000100000000000";
-String st8 = "110011000000011000000000000000001111100100111110101000100000000000";
-String do8 = "110011000000001000000000000000001111100100111110101000100000000000";
-String up9 = "110011000000100100000000000000000000010101011110101000100000000000";
-String st9 = "110011000000011000000000000000000000010101011110101000100000000000";
-String do9 = "110011000000001000000000000000000000010101011110101000100000000000";
-String up88 ="010101010000100100000000000000001111100100111110101000100000000000";
-String st88 ="010101010000011000000000000000001111100100111110101000100000000000";
-String do88 ="010101010000001000000000000000001111100100111110101000100000000000";
-String up99 ="010101010000100100000000000000000000010101011110101000100000000000";
-String st99 ="010101010000011000000000000000000000010101011110101000100000000000";
-String do99 ="010101010000001000000000000000000000010101011110101000100000000000";
-
+const uint64_t up0 = 0b0101010100001001000000000000000000011001010100011010001000000000; //+00
+const uint64_t st0 = 0b0101010100000110000000000000000000011001010100011010001000000000;
+const uint64_t do0 = 0b0101010100000010000000000000000000011001010100011010001000000000;
+const uint64_t up1 = 0b0;
+const uint64_t st1 = 0b0;
+const uint64_t do1 = 0b0;
+const uint64_t up2 = 0b0101010100001001000000000000000010011001000100011010001000000000;
+const uint64_t st2 = 0b0101010100000110000000000000000010011001000100011010001000000000;
+const uint64_t do2 = 0b0101010100000010000000000000000010011001000100011010001000000000;
+const uint64_t up3 = 0b0101010100001001000000000000000001011001011000011010001000000000;
+const uint64_t st3 = 0b0101010100000110000000000000000001011001011000011010001000000000;
+const uint64_t do3 = 0b0101010100000010000000000000000001011001011000011010001000000000;
+const uint64_t up4 = 0b0101010100001001000000000000000011011001001000011010001000000000;
+const uint64_t st4 = 0b0101010100000110000000000000000011011001001000011010001000000000;
+const uint64_t do4 = 0b0101010100000010000000000000000011011001001000011010001000000000;
+const uint64_t up5 = 0b0101010100001001000000000000000000111001010000011010001000000000;
+const uint64_t st5 = 0b0101010100000110000000000000000000111001010000011010001000000000;
+const uint64_t do5 = 0b0101010100000010000000000000000000111001010000011010001000000000;
+const uint64_t up6 = 0b0101010100001001000000000000000010111001000000011010001000000000;
+const uint64_t st6 = 0b0101010100000110000000000000000010111001000000011010001000000000;
+const uint64_t do6 = 0b0101010100000010000000000000000010111001000000011010001000000000;
+const uint64_t up7 = 0b0101010100001001000000000000000001111001011111101010001000000000;
+const uint64_t st7 = 0b0101010100000110000000000000000001111001011111101010001000000000;
+const uint64_t do7 = 0b0101010100000010000000000000000001111001011111101010001000000000;
+const uint64_t up8 = 0b0101010100001001000000000000000011111001001111101010001000000000;
+const uint64_t st8 = 0b0101010100000110000000000000000011111001001111101010001000000000;
+const uint64_t do8 = 0b0101010100000010000000000000000011111001001111101010001000000000;
+const uint64_t up9 = 0b0101010100001001000000000000000000000101010111101010001000000000;
+const uint64_t st9 = 0b0101010100000110000000000000000000000101010111101010001000000000;
+const uint64_t do9 = 0b0101010100000010000000000000000000000101010111101010001000000000;
 
 boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 {
@@ -124,14 +117,12 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
                 addFormNumericBox(F("Repeat (default=1)"), F("plugin_112_repeat"), Plugin_112_Repeat, 1, 20);
                 success = true;
                 break;
-
         }
 
 
         case PLUGIN_WEBFORM_SAVE:
         {
                 Plugin_112_Repeat = getFormItemInt(F("plugin_112_repeat"));
-
                 if (Plugin_112_Repeat > 20) Plugin_112_Repeat = 1;
                 ExtraTaskSettings.TaskDevicePluginConfigLong[0] = Plugin_112_Repeat;
                 SaveTaskSettings(event->TaskIndex);
@@ -150,20 +141,17 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
         case PLUGIN_INIT:
         {
                 LoadTaskSettings(event->TaskIndex);
-
                 Plugin_112_Repeat = ExtraTaskSettings.TaskDevicePluginConfigLong[0];
                 txPin_112 = Settings.TaskDevicePin1[event->TaskIndex];
-                
               //  Serial.println("txPin_112: "); Serial.println(txPin_112);
-
                 if (txPin_112 != -1)
                 {
-                    addLog(LOG_LEVEL_INFO, "INIT: RF433 TX created!");
+                    addLog(LOG_LEVEL_INFO, F("INIT: RF433 TX created!"));
                     pinMode(txPin_112,OUTPUT);
                 }
                 if (txPin_112 == -1)
                 {
-                    addLog(LOG_LEVEL_INFO, "INIT: RF433 TX REMOVED!");
+                    addLog(LOG_LEVEL_INFO, F("INIT: RF433 TX REMOVED!"));
                     pinMode(txPin_112,INPUT);
                 }
                 success = true;
@@ -173,91 +161,86 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
 
         case PLUGIN_WRITE:
         {
+          String command;
+          String shutter;
+          command = parseString(string, 1);
+          shutter = parseString(string, 2);
+          if (command == F("rftx")) {
+              success = true;
+              //addLog(LOG_LEVEL_INFO, F("command: ")); Serial.println(F("command: "));
+              //addLog(LOG_LEVEL_INFO, command); Serial.println(command);
+              //addLog(LOG_LEVEL_INFO, shutter); Serial.println(shutter);
 
-           String TmpStr1;
-           String rfType;
-           String command = parseString(string, 1);
-
-           if (command == F("rfsend")) {
-
-             String taskName = parseString(string, 2);
-             //int8_t taskIndex = getTaskIndexByName(taskName);
-
-             if ( GetArgv(string.c_str(), TmpStr1, 2) ) rfType = TmpStr1.c_str();
-              addLog(LOG_LEVEL_INFO, "command: RFSEND ");
-              addLog(LOG_LEVEL_INFO, rfType); Serial.println(rfType);
-
-             if ( rfType.equalsIgnoreCase("canc") ) { transmit_gate_code(canc); success = true; }
-              else {
-                       String ch;
-                       if ( rfType == "up0" ) { ch = up0; }
-                       else if ( rfType == "st0") { ch = st0; }
-                       else if ( rfType == "do0" ) { ch = do0; }
-                       else if ( rfType == "up1" ) { ch = up1; }
-                       else if ( rfType == "st1" ) { ch = st1; }
-                       else if ( rfType == "do1" ) { ch = do1; }
-                       else if ( rfType == "up2" ) { ch = up2; }
-                       else if ( rfType == "st2" ) { ch = st2; }
-                       else if ( rfType == "do2" ) { ch = do2; }
-                       else if ( rfType == "up3" ) { ch = up3; }
-                       else if ( rfType == "st3" ) { ch = st3; }
-                       else if ( rfType == "do3" ) { ch = do3; }
-                       else if ( rfType == "up4" ) { ch = up4; }
-                       else if ( rfType == "st4" ) { ch = st4; }
-                       else if ( rfType == "do4" ) { ch = do4; }
-                       else if ( rfType == "up5" ) { ch = up5; }
-                       else if ( rfType == "st5" ) { ch = st5; }
-                       else if ( rfType == "do5" ) { ch = do5; }
-                       else if ( rfType == "up6" ) { ch = up6; }
-                       else if ( rfType == "st6" ) { ch = st6; }
-                       else if ( rfType == "do6" ) { ch = do6; }
-                       else if ( rfType == "up7" ) { ch = up7; }
-                       else if ( rfType == "st7" ) { ch = st7; }
-                       else if ( rfType == "do7" ) { ch = do7; }
-                       else if ( rfType == "up8" ) { ch = up8; }
-                       else if ( rfType == "st8" ) { ch = st8; }
-                       else if ( rfType == "do8" ) { ch = do8; }
-                       else if ( rfType == "up9" ) { ch = up9; }
-                       else if ( rfType == "st9" ) { ch = st9; }
-                       else if ( rfType == "do9" ) { ch = do9; }
-                      
-                       if (ch) { transmit_code(ch); success = true; }
-                       else { addLog(LOG_LEVEL_INFO,"Input error"); success = false; }
-                 
-               }
+              if (shutter.equalsIgnoreCase(F("canc"))) {sendRFCode_canc(canc); }
+              if (shutter.equalsIgnoreCase(F("up0")))  {sendRFCode(up0); };
+              if (shutter.equalsIgnoreCase(F("st0")))  {sendRFCode(st0); };
+              if (shutter.equalsIgnoreCase(F("do0")))  {sendRFCode(do0); };
+              if (shutter.equalsIgnoreCase(F("up1")))  {sendRFCode(up1); };
+              if (shutter.equalsIgnoreCase(F("st1")))  {sendRFCode(st1); };
+              if (shutter.equalsIgnoreCase(F("do1")))  {sendRFCode(do1); };
+              if (shutter.equalsIgnoreCase(F("up2")))  {sendRFCode(up2); };
+              if (shutter.equalsIgnoreCase(F("st2")))  {sendRFCode(st2); };
+              if (shutter.equalsIgnoreCase(F("do2")))  {sendRFCode(do2); };
+              if (shutter.equalsIgnoreCase(F("up3")))  {sendRFCode(up3); };
+              if (shutter.equalsIgnoreCase(F("st3")))  {sendRFCode(st3); };
+              if (shutter.equalsIgnoreCase(F("do3")))  {sendRFCode(do3); };
+              if (shutter.equalsIgnoreCase(F("up4")))  {sendRFCode(up4); };
+              if (shutter.equalsIgnoreCase(F("st4")))  {sendRFCode(st4); };
+              if (shutter.equalsIgnoreCase(F("do4")))  {sendRFCode(do4); };
+              if (shutter.equalsIgnoreCase(F("up5")))  {sendRFCode(up5); };
+              if (shutter.equalsIgnoreCase(F("st5")))  {sendRFCode(st5); };
+              if (shutter.equalsIgnoreCase(F("do5")))  {sendRFCode(do5); };
+              if (shutter.equalsIgnoreCase(F("up6")))  {sendRFCode(up6); };
+              if (shutter.equalsIgnoreCase(F("st6")))  {sendRFCode(st6); };
+              if (shutter.equalsIgnoreCase(F("do6")))  {sendRFCode(do6); };
+              if (shutter.equalsIgnoreCase(F("up7")))  {sendRFCode(up7); };
+              if (shutter.equalsIgnoreCase(F("st7")))  {sendRFCode(st7); };
+              if (shutter.equalsIgnoreCase(F("do7")))  {sendRFCode(do7); };
+              if (shutter.equalsIgnoreCase(F("up8")))  {sendRFCode(up8); };
+              if (shutter.equalsIgnoreCase(F("st8")))  {sendRFCode(st8); };
+              if (shutter.equalsIgnoreCase(F("do8")))  {sendRFCode(do8); };
+              if (shutter.equalsIgnoreCase(F("up9")))  {sendRFCode(up9); };
+              if (shutter.equalsIgnoreCase(F("st9")))  {sendRFCode(st9); };
+              if (shutter.equalsIgnoreCase(F("do9")))  {sendRFCode(do9); };
+              if (shutter.equalsIgnoreCase(F("upZg"))) {sendRFCode(up9); delay(1500);
+                                                        sendRFCode(up8); delay(1500);
+                                                        sendRFCode(up7); delay(1500);
+                                                        sendRFCode(up6);
+                                                       };
+              if (shutter.equalsIgnoreCase(F("stZg"))) {sendRFCode(st9); delay(1500);
+                                                        sendRFCode(st8); delay(1500);
+                                                        sendRFCode(st7); delay(1500);
+                                                        sendRFCode(st6);
+                                                       };
+              if (shutter.equalsIgnoreCase(F("doZg"))) {sendRFCode(do9); delay(1500);
+                                                        sendRFCode(do8); delay(1500);
+                                                        sendRFCode(do7); delay(1500);
+                                                        sendRFCode(do6);
+                                                       };
+             printWebString += F("RfGateway<BR>");
+             printWebString += F("URL: <a href=\"http://");
+             printWebString += String(WiFi.localIP().toString());
+             printWebString += F("/control?cmd=");
+             printWebString += string;
+             printWebString += F("\">http://");
+             printWebString += String(WiFi.localIP().toString());
+             printWebString += F("/control?cmd=");
+             printWebString += string;
+             printWebString += F("</a><BR>");
             }
-
-            if (success)   {
-                                    String url = String(Settings.Name) + "/control?cmd=" + string;
-                                    addLog(LOG_LEVEL_INFO, "To send this command again, ");
-                                    addLog(LOG_LEVEL_INFO, "use this: <a href=\"http://" + url + "\">URL</a>");
-                                    if (printToWeb)
-                                    {
-                                            printWebString += F("RCSwitch Code Sent!");
-                                            printWebString += F("<BR>Repeats: ");
-                                            printWebString += String(Plugin_112_Repeat);
-                                            printWebString += F("<BR><BR>");
-                                            printWebString += F("<BR>Use URL: <a href=\"http://");
-                                            printWebString += url;
-                                            printWebString += F("\">http://");
-                                            printWebString += url;
-                                            printWebString += F("</a>");
-                                    }
-                            }
             break;
         }
      }
      return success;
 }
 
-//==========================================================================
 
+void sendRFCode(uint64_t code){
+  addLog(LOG_LEVEL_INFO, F("trasmitting")); Serial.println(F("trasmitting"));
+  // addLog(LOG_LEVEL_INFO, uint64ToString(code) ); Serial.println( uint64ToString(code) );
 
-void transmit_code(String code){
-  addLog(LOG_LEVEL_INFO, "trasmitting"); Serial.println("trasmitting");
-  int len = code.length();
   for (int i = 0; i < Plugin_112_Repeat; i++)
-  {
+    {
       // ----------------------- Preamble ----------------------
       for (int y = 0; y < 12; ++y)
       {
@@ -271,24 +254,35 @@ void transmit_code(String code){
       digitalWrite(txPin_112, LOW);
       delayMicroseconds(3500); // added 3,5 millis
 
-      for (int j=0;j<len;++j)
+      for (int bits = 63; bits > -1 ; --bits )
       {
-         char ch = code.charAt(j);
-         if (ch == '1')
-         {
-           digitalWrite(txPin_112, HIGH);
-           delayMicroseconds(pulse);
-           digitalWrite(txPin_112, LOW);
-           delayMicroseconds(pulse*2);
-         }
-         else
-         {
-           digitalWrite( txPin_112, HIGH );
-           delayMicroseconds( pulse * 2 );
-           digitalWrite( txPin_112, LOW );
-           delayMicroseconds( pulse );
-         }
+        if (code & (1ULL << bits) ) {
+          //  Serial.print(F("(1)\n"));
+            digitalWrite(txPin_112, HIGH);
+            delayMicroseconds(pulse);
+            digitalWrite(txPin_112, LOW);
+            delayMicroseconds(pulse*2);
+          }
+        else {
+          //  Serial.print(F("(0)\n"));
+            digitalWrite( txPin_112, HIGH );
+            delayMicroseconds( pulse * 2 );
+            digitalWrite( txPin_112, LOW );
+            delayMicroseconds( pulse );
+        }
       }
+      // -------------------Close--Segnal:00 ---------------
+    //  addLog(LOG_LEVEL_INFO, F("00")); Serial.println(F("00"));
+      digitalWrite( txPin_112, HIGH );
+      delayMicroseconds( pulse * 2 );
+      digitalWrite( txPin_112, LOW );
+      delayMicroseconds( pulse );
+      //
+      digitalWrite( txPin_112, HIGH );
+      delayMicroseconds( pulse * 2 );
+      digitalWrite( txPin_112, LOW );
+      delayMicroseconds( pulse );
+     // -------------------Close--Segnal:00 ---------------
       digitalWrite(txPin_112, LOW);
       delayMicroseconds(5000); // added 2 millis
     // ---------------------End Segnal --------------------------
@@ -296,36 +290,51 @@ void transmit_code(String code){
 }
 
 
-void transmit_gate_code(String code){
-  int len = code.length();
+void sendRFCode_canc(uint16_t code){
+  addLog(LOG_LEVEL_INFO, F("trasmitting canc")); Serial.println(F("trasmitting canc"));
+  //addLog(LOG_LEVEL_INFO, uint64ToString(code) ); Serial.println( uint64ToString(code) );
+
   for (int i = 0; i < Plugin_112_Repeat; i++)
   {
-      //digitalWrite(txPin_112, LOW);
-      for (int j=0;j<len;++j)
+      for (int bits = 15; bits > 1 ; --bits )
       {
-         char ch = code.charAt(j);
-         if (ch == '1')
+         if (code & (1U << bits) )
          {
+           Serial.print(F("1")); addLog(LOG_LEVEL_INFO, F("cancello: 1"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(short_delay);
            digitalWrite(txPin_112, LOW);
            delayMicroseconds(long_delay);
-           addLog(LOG_LEVEL_INFO, "cancello: 1");
          }
          else
          {
+           Serial.print(F("0")); addLog(LOG_LEVEL_INFO, F("cancello: 0"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(long_delay);
            digitalWrite(txPin_112, LOW);
            delayMicroseconds(short_delay);
-           addLog(LOG_LEVEL_INFO, "cancello: 0");
          }
       }
-      //digitalWrite(txPin_112, LOW);
-      //delayMicroseconds(extended_delay); // added 2 millis
       delay(extended_delay);
-    //  digitalWrite(LED_BUILTIN, LOW);
+      Serial.print(F("delay\n"));
     }
+}
+
+String uint64ToString(uint64_t input) {
+  String result = "";
+  uint8_t base = 10;
+
+  do {
+    char c = input % base;
+    input /= base;
+
+    if (c < 10)
+      c +='0';
+    else
+      c += 'A' - 10;
+    result = c + result;
+  } while (input);
+  return result;
 }
 
 #endif
