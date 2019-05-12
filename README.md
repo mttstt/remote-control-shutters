@@ -34,8 +34,11 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [X] Upgrade RFTX, and test it
 - [X] Move rfgateway in order to make adeguate test
 - [X] Upgrade RFGateway ESP
-- [ ] Upgrade Aurota ESP
+- [ ] Upgrade Aurora ESP
+- [ ] find api to call from outside
+- [ ] password in file
 - [ ] Upgrade APPS IFTTT to point from RPI to RFGateway
+- [ ] bug extractor install release 0.93
 - [X] Upgrade configuration.yaml HA in order to use the new RFgateway
 - [ ] search up1
 - [ ] Change portforward modem-router
