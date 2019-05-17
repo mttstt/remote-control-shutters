@@ -37,11 +37,14 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [x] Upgrade Aurora ESP
 - [x] find api to call from outside
 - [x] password in file
-- [ ] Upgrade APPS IFTTT to point from RPI to RFGateway
-- [ ] bug extractor install release 0.93
+- [x] Upgrade APPS IFTTT to point from RPI to RFGateway
+- [X] bug extractor install release 0.93
 - [X] Upgrade configuration.yaml HA in order to use the new RFgateway
-- [ ] search up1
-- [ ] Change portforward modem-router
+- [ ]
+- [ ] search RF 433 frequency"camera bimbe" blind
+- [ ] tests from vocal order
+- [ ] test cancello
+- [ ] Close ports on modem-router
 - [ ] Shutdown RPI
 - [ ] Test esp_wifi_repeater outdoor
 
