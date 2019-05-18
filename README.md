@@ -42,8 +42,8 @@ http://xxx.ddns.net:7000/?shutter=up6
 - [X] Upgrade configuration.yaml HA in order to use the new RFgateway
 - [ ] search RF 433 frequency"camera bimbe" blind
 - [ ] tests from vocal order
-- [ ] test cancello
-- [X] Close ports on modem-router
+- [x] test cancello
+- [x] Close ports on modem-router
 - [ ] Shutdown RPI
 - [ ] Test esp_wifi_repeater outdoor
 
