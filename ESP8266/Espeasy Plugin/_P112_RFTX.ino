@@ -45,7 +45,7 @@ const int long_delay =    1520; //μs
 const int extended_delay = 0.5;
 //String canc = "01111010010000";
 const uint16_t canc = 0b0111101001000000; //-00
-
+                     
 //# -----Shutters------------
 const int pulse = 360; //μs
 const uint64_t up0 = 0b0101010100001001000000000000000000011001010100011010001000000000; //+00
@@ -292,15 +292,14 @@ void sendRFCode(uint64_t code){
 
 void sendRFCode_canc(uint16_t code){
   addLog(LOG_LEVEL_INFO, F("trasmitting canc")); Serial.println(F("trasmitting canc"));
-  //addLog(LOG_LEVEL_INFO, uint64ToString(code) ); Serial.println( uint64ToString(code) );
-
+ 
   for (int i = 0; i < Plugin_112_Repeat; i++)
   {
       for (int bits = 15; bits > 1 ; --bits )
       {
          if (code & (1U << bits) )
          {
-           Serial.print(F("1")); addLog(LOG_LEVEL_INFO, F("cancello: 1"));
+           Serial.print(F("1")); addLog(LOG_LEVEL_INFO, F("1"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(short_delay);
            digitalWrite(txPin_112, LOW);
@@ -308,7 +307,7 @@ void sendRFCode_canc(uint16_t code){
          }
          else
          {
-           Serial.print(F("0")); addLog(LOG_LEVEL_INFO, F("cancello: 0"));
+           Serial.print(F("0")); addLog(LOG_LEVEL_INFO, F("0"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(long_delay);
            digitalWrite(txPin_112, LOW);
