@@ -42,10 +42,10 @@ int txPin_112;
 //# ------- gate ---------
 const int short_delay =    760; //μs
 const int long_delay =    1520; //μs
-const int extended_delay = 0.5;
+const int extended_delay = 0.3;
 //String canc = "01111010010000";
 const uint16_t canc = 0b0111101001000000; //-00
-                     
+
 //# -----Shutters------------
 const int pulse = 360; //μs
 const uint64_t up0 = 0b0101010100001001000000000000000000011001010100011010001000000000; //+00
@@ -168,8 +168,8 @@ boolean Plugin_112(byte function, struct EventStruct *event, String& string)
           if (command == F("rftx")) {
               success = true;
               //addLog(LOG_LEVEL_INFO, F("command: ")); Serial.println(F("command: "));
-              //addLog(LOG_LEVEL_INFO, command); Serial.println(command);
-              //addLog(LOG_LEVEL_INFO, shutter); Serial.println(shutter);
+              addLog(LOG_LEVEL_INFO, command); Serial.println(command);
+              addLog(LOG_LEVEL_INFO, shutter); Serial.println(shutter);
 
               if (shutter.equalsIgnoreCase(F("canc"))) {sendRFCode_canc(canc); }
               if (shutter.equalsIgnoreCase(F("up0")))  {sendRFCode(up0); };
@@ -291,15 +291,16 @@ void sendRFCode(uint64_t code){
 
 
 void sendRFCode_canc(uint16_t code){
-  addLog(LOG_LEVEL_INFO, F("trasmitting canc")); Serial.println(F("trasmitting canc"));
- 
+  //addLog(LOG_LEVEL_INFO, F("trasmitting canc")); Serial.println(F("trasmitting canc"));
+
   for (int i = 0; i < Plugin_112_Repeat; i++)
   {
-      for (int bits = 15; bits > 1 ; --bits )
+      for (int bits = 15; bits > 1 ; bits-- )
       {
+         // Serial.print("=>" + String(bits));
          if (code & (1U << bits) )
          {
-           Serial.print(F("1")); addLog(LOG_LEVEL_INFO, F("1"));
+           // Serial.print(F("1\n"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(short_delay);
            digitalWrite(txPin_112, LOW);
@@ -307,14 +308,15 @@ void sendRFCode_canc(uint16_t code){
          }
          else
          {
-           Serial.print(F("0")); addLog(LOG_LEVEL_INFO, F("0"));
+           // Serial.print(F("0\n"));
            digitalWrite(txPin_112, HIGH);
            delayMicroseconds(long_delay);
            digitalWrite(txPin_112, LOW);
            delayMicroseconds(short_delay);
          }
       }
-      delay(extended_delay);
+      delayMicroseconds(3000);
+      //delay(extended_delay);
       Serial.print(F("delay\n"));
     }
 }
