@@ -1,4 +1,4 @@
-const Pin_112 = ??; GPIO
+const txPin_112 = ??; GPIO
 int Plugin_112_Repeat = 10;
 
 //# ------- gate ---------
