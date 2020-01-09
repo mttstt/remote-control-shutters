@@ -1,11 +1,10 @@
 const Pin_112 = ??; GPIO
-int Plugin_112_Repeat =10;
+int Plugin_112_Repeat = 10;
 
 //# ------- gate ---------
 const int short_delay =    760; //μs
 const int long_delay =    1520; //μs
 const int extended_delay = 0.3;
-//String canc = "01111010010000";
 const uint16_t canc = 0b0111101001000000; //-00
 
 
@@ -49,7 +48,7 @@ class MyCustomComponent : public Component, public CustomAPIDevice {
   void setup() override {
     // This will be called once to set up the component
     // think of it as the setup() call in Arduino
-    pinMode(6, OUTPUT);
+    pinMode(Pin_112, OUTPUT);
 
     // Declare a service "hello_world"
     //  - Service will be called "esphome.<NODE_NAME>_hello_world" in Home Assistant.
@@ -57,18 +56,13 @@ class MyCustomComponent : public Component, public CustomAPIDevice {
     //  - The function on_hello_world declared below will attached to the service.
     register_service(&MyCustomComponent::on_hello_world, "hello_world");
 
-    // Declare a second service "start_washer_cycle"
+    // Declare a second service "shutter"
     //  - Service will be called "esphome.<NODE_NAME>_start_washer_cycle" in Home Assistant.
-    //  - The service has three arguments (type inferred from method definition):
-    //     - cycle_duration: integer
-    //     - silent: boolean
+    //  - The service has one argument (type inferred from method definition):
     //     - string_argument: string
-    //  - The function on_hello_world declared below will attached to the service.
-    register_service(&MyCustomComponent::on_start_washer_cycle, "start_washer_cycle",
-                     {"cycle_duration", "silent", "string_argument"});
-
+    //  - The function shutter declared below will attached to the service.
+    register_service(&MyCustomComponent::shutter, "shutter", {"shutter"} );
   }
-  
   
   void on_hello_world() {
     ESP_LOGD("custom", "Hello World!");
@@ -78,20 +72,60 @@ class MyCustomComponent : public Component, public CustomAPIDevice {
     }
   }
   
-  
-  
-  void on_start_washer_cycle(int cycle_duration, bool silent, std::string string_argument) {
-    ESP_LOGD("custom", "Starting washer cycle!");
-    digitalWrite(8, HIGH);
-    // do something with arguments
-
+  void shutter(std::string shutter) {
+    ESP_LOGD("custom", "Starting shutter!");
+              if (shutter.equalsIgnoreCase(F("canc"))) {sendRFCode_canc(canc); }
+              if (shutter.equalsIgnoreCase(F("up0")))  {sendRFCode(up0); };
+              if (shutter.equalsIgnoreCase(F("st0")))  {sendRFCode(st0); };
+              if (shutter.equalsIgnoreCase(F("do0")))  {sendRFCode(do0); };
+              if (shutter.equalsIgnoreCase(F("up1")))  {sendRFCode(up1); };
+              if (shutter.equalsIgnoreCase(F("st1")))  {sendRFCode(st1); };
+              if (shutter.equalsIgnoreCase(F("do1")))  {sendRFCode(do1); };
+              if (shutter.equalsIgnoreCase(F("up2")))  {sendRFCode(up2); };
+              if (shutter.equalsIgnoreCase(F("st2")))  {sendRFCode(st2); };
+              if (shutter.equalsIgnoreCase(F("do2")))  {sendRFCode(do2); };
+              if (shutter.equalsIgnoreCase(F("up3")))  {sendRFCode(up3); };
+              if (shutter.equalsIgnoreCase(F("st3")))  {sendRFCode(st3); };
+              if (shutter.equalsIgnoreCase(F("do3")))  {sendRFCode(do3); };
+              if (shutter.equalsIgnoreCase(F("up4")))  {sendRFCode(up4); };
+              if (shutter.equalsIgnoreCase(F("st4")))  {sendRFCode(st4); };
+              if (shutter.equalsIgnoreCase(F("do4")))  {sendRFCode(do4); };
+              if (shutter.equalsIgnoreCase(F("up5")))  {sendRFCode(up5); };
+              if (shutter.equalsIgnoreCase(F("st5")))  {sendRFCode(st5); };
+              if (shutter.equalsIgnoreCase(F("do5")))  {sendRFCode(do5); };
+              if (shutter.equalsIgnoreCase(F("up6")))  {sendRFCode(up6); };
+              if (shutter.equalsIgnoreCase(F("st6")))  {sendRFCode(st6); };
+              if (shutter.equalsIgnoreCase(F("do6")))  {sendRFCode(do6); };
+              if (shutter.equalsIgnoreCase(F("up7")))  {sendRFCode(up7); };
+              if (shutter.equalsIgnoreCase(F("st7")))  {sendRFCode(st7); };
+              if (shutter.equalsIgnoreCase(F("do7")))  {sendRFCode(do7); };
+              if (shutter.equalsIgnoreCase(F("up8")))  {sendRFCode(up8); };
+              if (shutter.equalsIgnoreCase(F("st8")))  {sendRFCode(st8); };
+              if (shutter.equalsIgnoreCase(F("do8")))  {sendRFCode(do8); };
+              if (shutter.equalsIgnoreCase(F("up9")))  {sendRFCode(up9); };
+              if (shutter.equalsIgnoreCase(F("st9")))  {sendRFCode(st9); };
+              if (shutter.equalsIgnoreCase(F("do9")))  {sendRFCode(do9); };
+              if (shutter.equalsIgnoreCase(F("upZg"))) {sendRFCode(up9); delay(1500);
+                                                        sendRFCode(up8); delay(1500);
+                                                        sendRFCode(up7); delay(1500);
+                                                        sendRFCode(up6);
+                                                       };
+              if (shutter.equalsIgnoreCase(F("stZg"))) {sendRFCode(st9); delay(1500);
+                                                        sendRFCode(st8); delay(1500);
+                                                        sendRFCode(st7); delay(1500);
+                                                        sendRFCode(st6);
+                                                       };
+              if (shutter.equalsIgnoreCase(F("doZg"))) {sendRFCode(do9); delay(1500);
+                                                        sendRFCode(do8); delay(1500);
+                                                        sendRFCode(do7); delay(1500);
+                                                        sendRFCode(do6);
+                                                       };
     // Call a homeassistant service
     call_homeassistant_service("homeassistant.service");
   }
 
 
 void sendRFCode_canc(uint16_t code){
-  
   for (int i = 0; i < Plugin_112_Repeat; i++)
   {
       for (int bits = 15; bits > 1 ; bits-- )
@@ -112,7 +146,6 @@ void sendRFCode_canc(uint16_t code){
          }
       }
       delayMicroseconds(3000);
-      Serial.print(F("delay\n"));
     }
 }
 
