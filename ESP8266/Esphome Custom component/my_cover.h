@@ -58,16 +58,6 @@ class MyCustomCover  : public Component, public Cover {
      traits.set_supports_tilt(false);
      return traits;
     }
-
-    // Declare a second service "shutter"
-    //  - Service will be called "esphome.<NODE_NAME>_start_washer_cycle" in Home Assistant.
-    //  - The service has one argument (type inferred from method definition):
-    //     - string_argument: string
-    //  - The function shutter declared below will attached to the service.
-    register_service(&MyCustomComponent::shutter, "shutter", {"shutter"} );
-  }
-  
- 
  
   void control(const CoverCall &call) override {
     // This will be called every time the user requests a state change.
