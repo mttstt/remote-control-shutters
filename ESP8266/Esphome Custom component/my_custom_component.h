@@ -45,18 +45,19 @@ const uint64_t do9 = 0b010101010000001000000000000000000000010101011110101000100
 
 
 
-class MyCustomComponent : public Component, public CustomAPIDevice {
+class MyCustomCover  : public Component, public Cover {
  public:
   void setup() override {
-    // This will be called once to set up the component
-    // think of it as the setup() call in Arduino
+    // This will be called by App.setup()
     pinMode(Pin_112, OUTPUT);
-
-    // Declare a service "hello_world"
-    //  - Service will be called "esphome.<NODE_NAME>_hello_world" in Home Assistant.
-    //  - The service has no arguments
-    //  - The function on_hello_world declared below will attached to the service.
-    register_service(&MyCustomComponent::on_hello_world, "hello_world");
+   
+    CoverTraits get_traits() override {
+     auto traits = CoverTraits();
+     traits.set_is_assumed_state(false);
+     traits.set_supports_position(true);
+     traits.set_supports_tilt(false);
+     return traits;
+    }
 
     // Declare a second service "shutter"
     //  - Service will be called "esphome.<NODE_NAME>_start_washer_cycle" in Home Assistant.
@@ -66,13 +67,26 @@ class MyCustomComponent : public Component, public CustomAPIDevice {
     register_service(&MyCustomComponent::shutter, "shutter", {"shutter"} );
   }
   
-  void on_hello_world() {
-    ESP_LOGD("custom", "Hello World!");
+ 
+ 
+  void control(const CoverCall &call) override {
+    // This will be called every time the user requests a state change.
+    if (call.get_position().has_value()) {
+      float pos = *call.get_position();
+      // Write pos (range 0-1) to cover
+      // ...
 
-    if (is_connected()) {
-      // Example check to see if a client is connected
+      // Publish new state
+      this->position = pos;
+      this->publish_state();
+    }
+    if (call.get_stop()) {
+      // User requested cover stop
     }
   }
+ 
+ 
+ 
   
   void shutter(std::string shutter) {
     ESP_LOGD("custom", "Starting shutter!");
@@ -201,7 +215,4 @@ void sendRFCode(uint64_t code){
 }
 
 
-
-
-  }
 };
