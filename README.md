@@ -1,3 +1,23 @@
+# EspHome
+remote_transmitter:
+  pin: D1
+  carrier_duty_percent: 50% 
+  repeat: 10
+  wait_time: 0s
+
+switch:
+  - platform: remote_transmitter
+    name: "Cancello"
+    rc_switch_raw:
+      code: '..............'
+      protocol:
+        pulse_length: 360
+        sync: [12, 12]
+        zero: [1, 2]
+        one: [2, 1]
+        inverted: False
+
+
 # remote-control-shutters
 Remote control shutter using Raspberry and pigpio library
 
