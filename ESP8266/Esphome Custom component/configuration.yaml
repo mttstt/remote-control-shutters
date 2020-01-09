@@ -1,8 +1,24 @@
 esphome:
   includes:
-    - my_custom_component.h
+    - my_cover.h
 
-custom_component:
-- lambda: |-
-    auto my_custom = new MyCustomComponent();
-    return {my_custom};
+sensor:
+  - platform: dht
+    pin: D2
+    temperature:
+      name: "Temperatura corridoio"
+    humidity:
+      name: "Umidità corridoio"
+    update_interval: 60s
+
+
+cover:
+- platform: custom
+  lambda: |-
+    auto cucina_cover = new CucinaCover();
+    App.register_component(cucina_cover);
+    return {cucina_cover};
+
+  covers:
+    - name: "Cucina Cover"
+
