@@ -20,6 +20,22 @@ api:
 # Enable ota
 ota:
     
+esp32_camera:
+  name: Corridoio
+  external_clock:
+    pin: GPIO27
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO25
+    scl: GPIO23
+  data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
+  vsync_pin: GPIO22
+  href_pin: GPIO26
+  pixel_clock_pin: GPIO21
+  reset_pin: GPIO15
+  resolution: 640x480
+  jpeg_quality: 10
+
 sensor:
   - platform: dht
     pin: D2
