@@ -45,41 +45,38 @@ const uint64_t do9 = 0b010101010000001000000000000000000000010101011110101000100
 
 
 
-class MyCustomCover  : public Component, public Cover {
+class MyCustomComponent : public Component, public CustomAPIDevice {
  public:
   void setup() override {
-    // This will be called by App.setup()
+    // This will be called once to set up the component
     pinMode(Pin_112, OUTPUT);
-   
-    CoverTraits get_traits() override {
-     auto traits = CoverTraits();
-     traits.set_is_assumed_state(false);
-     traits.set_supports_position(true);
-     traits.set_supports_tilt(false);
-     return traits;
-    }
- 
-  void control(const CoverCall &call) override {
-    // This will be called every time the user requests a state change.
-    if (call.get_position().has_value()) {
-      float pos = *call.get_position();
-      // Write pos (range 0-1) to cover
-      // ...
 
-      // Publish new state
-      this->position = pos;
-      this->publish_state();
-    }
-    if (call.get_stop()) {
-      // User requested cover stop
-    }
+    // Declare a service "hello_world"
+    //  - Service will be called "esphome.<NODE_NAME>_hello_world" in Home Assistant.
+    //  - The service has no arguments
+    //  - The function on_hello_world declared below will attached to the service.
+    register_service(&MyCustomComponent::on_hello_world, "hello_world");
+   
+    // Declare a second service "start_shutter"
+    //  - Service will be called "esphome.<NODE_NAME>_start_shutter" in Home Assistant.
+    //  - The service has three arguments (type inferred from method definition):
+    //     - cycle_duration: integer
+    //     - silent: boolean
+    //     - string_argument: string
+    //  - The function on_start_shutter declared below will attached to the service.
+    register_service(&MyCustomComponent::on_start_shutter, "start_shutter", {"shutter"});
   }
  
+  void on_hello_world() {
+    ESP_LOGD("custom", "Hello World!");
+    if (is_connected()) {
+      // Example check to see if a client is connected
+    }
+  }
+
  
- 
-  
-  void shutter(std::string shutter) {
-    ESP_LOGD("custom", "Starting shutter!");
+  void on_start_shutter(std::string shutter) {
+    ESP_LOGD("custom", "Starting shutter command!");
               if (shutter.equalsIgnoreCase(F("canc"))) {sendRFCode_canc(canc); }
               if (shutter.equalsIgnoreCase(F("up0")))  {sendRFCode(up0); };
               if (shutter.equalsIgnoreCase(F("st0")))  {sendRFCode(st0); };
