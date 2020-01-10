@@ -1,7 +1,25 @@
 esphome:
+  name: a_test_board
+  platform: ESP32
+  board: nodemcu-32s
   includes:
-    - my_cover.h
+    - my_custom_component.h
 
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+
+# Enable captive portal
+captive_portal:
+# Enable logging
+logger:
+  level: DEBUG
+# Enable Home Assistant API
+api:
+# Enable ota
+ota:
+    
 sensor:
   - platform: dht
     pin: D2
@@ -10,6 +28,7 @@ sensor:
     humidity:
       name: "Umidità corridoio"
     update_interval: 60s
+
 
 custom_component:
   -  lambda: |-
