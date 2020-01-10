@@ -11,14 +11,71 @@ sensor:
       name: "Umidità corridoio"
     update_interval: 60s
 
+custom_component:
+  -  lambda: |-
+     auto my_custom = new MyCustomComponent();
+     App.register_component(my_custom);
+     return {my_custom};
 
 cover:
-- platform: custom
-  lambda: |-
-    auto cucina_cover = new CucinaCover();
-    App.register_component(cucina_cover);
-    return {cucina_cover};
-
-  covers:
-    - name: "Cucina Cover"
-
+  - platform: template
+    name: "Cucina"
+    id: cucina
+    device_class: shutter
+    open_action:
+      - custom_component.on_start_shutter:
+          shutter: up0
+    close_action:
+      - custom_component.on_start_shutter:
+          shutter: do0
+    stop_action:
+      - custom_component.on_start_shutter:
+          shutter: st0      
+    optimistic: True
+    
+  - platform: template
+    name: "Camera bimbe"
+    id: camera bimbe
+    device_class: shutter
+    open_action:
+      - custom_component.on_start_shutter:
+          shutter: up1
+    close_action:
+      - custom_component.on_start_shutter:
+          shutter: do1
+    stop_action:
+      - custom_component.on_start_shutter:
+          shutter: st1      
+    optimistic: True
+    
+  - platform: template
+    name: "Camera nonna"
+    id: camera_nonna
+    device_class: shutter
+    open_action:
+      - custom_component.on_start_shutter:
+          shutter: up2
+    close_action:
+      - custom_component.on_start_shutter:
+          shutter: do2
+    stop_action:
+      - custom_component.on_start_shutter:
+          shutter: st2      
+    optimistic: True
+    
+  - platform: template
+    name: "Bagno grande"
+    id: bagno_grande
+    device_class: shutter
+    open_action:
+      - custom_component.on_start_shutter:
+          shutter: up3
+    close_action:
+      - custom_component.on_start_shutter:
+          shutter: do3
+    stop_action:
+      - custom_component.on_start_shutter:
+          shutter: st3      
+    optimistic: True   
+ 
+ 
