@@ -8,7 +8,7 @@ esphome:
 
 wifi:
   ssid: "MTT_2.4"
-  password: "999999999"
+  password: ""
   
  # Optional manual IP
   manual_ip:
@@ -32,6 +32,10 @@ api:
 # Enable ota
 ota:
     
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
 esp32_camera:
   name: corridoio
   external_clock:
