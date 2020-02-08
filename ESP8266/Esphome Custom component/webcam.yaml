@@ -1,0 +1,115 @@
+esphome:
+  name: esp32cam
+  platform: ESP32
+  board: esp32dev
+  arduino_version: latest
+  includes:
+     - cover.h
+
+wifi:
+  ssid: "MTT_2.4"
+  password: "?????????????"
+  
+ # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.1.99
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+# Enable captive portal
+captive_portal:
+
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+#  level: DEBUG
+
+# Enable Home Assistant API
+api:
+
+# Enable ota
+ota:
+    
+esp32_camera:
+  name: corridoio
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+  jpeg_quality: 10
+#  resolution: 1600x1200
+
+sensor:
+  - platform: dht
+    model: AM2302
+    pin: GPIO15
+    temperature:
+      name: "Temperatura corridoio"
+    humidity:
+      name: "Umidità corridoio"
+    update_interval: 60s
+
+switch: 
+  - platform: gpio
+    pin: GPIO4
+    name: Luce webcam”  
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO13
+    name: "PIR Sensor"
+    device_class: motion
+  - platform: status
+    name: "Webcam Status"   
+
+cover:
+- platform: custom
+  lambda: |-
+    auto my_cover1 = new MyCustomCover();
+    App.register_component(my_cover1);
+    auto my_cover2 = new MyCustomCover();
+    App.register_component(my_cover2);
+    auto my_cover3 = new MyCustomCover();
+    App.register_component(my_cover3);
+    auto my_cover4 = new MyCustomCover();
+    App.register_component(my_cover4);
+    auto my_cover5 = new MyCustomCover();
+    App.register_component(my_cover5);
+    auto my_cover6 = new MyCustomCover();
+    App.register_component(my_cover6);
+    auto my_cover7 = new MyCustomCover();
+    App.register_component(my_cover7);
+    auto my_cover8 = new MyCustomCover();
+    App.register_component(my_cover8);
+    auto my_cover9 = new MyCustomCover();
+    App.register_component(my_cover9);
+    return {my_cover1, my_cover2,my_cover3, my_cover4,my_cover5, my_cover6, my_cover7, my_cover7,my_cover9};
+
+  covers:
+    - name: "Camere bimbe"
+      device_class: shutter
+    - name: "Camera nonna"
+      device_class: shutter
+    - name: "Bagno grande"
+      device_class: shutter
+    - name: "Camera genitori"
+      device_class: shutter
+    - name: "Bagno piccolo"
+      device_class: shutter
+    - name: "Sala piccola"
+      device_class: shutter
+    - name: "Sala grande"
+      device_class: shutter
+    - name: "Ripostiglio"
+      device_class: shutter
+    - name: "Cucina"
+      device_class: shutter
