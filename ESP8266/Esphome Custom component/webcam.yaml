@@ -8,7 +8,7 @@ esphome:
 
 wifi:
   ssid: "MTT_2.4"
-  password: "999999999"
+  password: "??????????"
   
  # Optional manual IP
   manual_ip:
@@ -46,7 +46,8 @@ esp32_camera:
   pixel_clock_pin: GPIO22
   power_down_pin: GPIO32
   jpeg_quality: 10
-#  resolution: 1600x1200
+  horizontal_mirror: false 
+  #resolution: 800x600
 
 sensor:
   - platform: dht
@@ -92,7 +93,9 @@ cover:
     App.register_component(my_cover8);
     auto my_cover9 = new MyCustomCover();
     App.register_component(my_cover9);
-    return {my_cover1, my_cover2,my_cover3, my_cover4,my_cover5, my_cover6, my_cover7, my_cover8,my_cover9};
+    auto cancello = new MyCustomCover();
+    App.register_component(cancello);
+    return {my_cover1, my_cover2, my_cover3, my_cover4, my_cover5, my_cover6, my_cover7, my_cover8, my_cover9, cancello};
 
 
   covers:
@@ -114,3 +117,5 @@ cover:
       device_class: shutter
     - name: "Cucina"
       device_class: shutter
+    - name: "Cancello"
+      device_class: door
