@@ -1,7 +1,7 @@
 #include "esphome.h"
 
-const int txPin_112 = 5; //GPIO
-int Plugin_112_Repeat = 10;
+const int txPin = 12; //GPIO
+int Plugin_Repeat = 10;
 
 //# ------- gate ---------
 const int short_delay =    760; //μs
@@ -46,7 +46,7 @@ class MyCustomCover : public Component, public Cover {
  public:
   void setup() override {
     // This will be called by App.setup()
-    pinMode(Plugin_112_Repeat, INPUT);
+    pinMode(txPin, OUTPUT);
   }
   CoverTraits get_traits() override {
     auto traits = CoverTraits();
@@ -59,26 +59,25 @@ class MyCustomCover : public Component, public Cover {
     // This will be called every time the user requests a state change.
 	// ESP_LOGD("'%s' Command", this->get_name().c_str());
     if (call.get_position().has_value()) {		
-         float pos = *call.get_position();
-  
-	     if ((strcmp(this->get_name().c_str(), "Camera bimbe") == 0) && (pos ==0)) {sendRFCode(up1); };
-	     if ((strcmp(this->get_name().c_str(), "Camera bimbe") == 0) && (pos ==1)) {sendRFCode(do1); };
-	     if ((strcmp(this->get_name().c_str(), "Camera nonna") == 0) && (pos ==0)) {sendRFCode(up2); };
-	     if ((strcmp(this->get_name().c_str(), "Camera nonna") == 0) && (pos ==1)) {sendRFCode(do2); };
-	     if ((strcmp(this->get_name().c_str(), "Bagno grande") == 0) && (pos ==0)) {sendRFCode(up3); };
-	     if ((strcmp(this->get_name().c_str(), "Bagno grande") == 0) && (pos ==1)) {sendRFCode(do3); };
-	     if ((strcmp(this->get_name().c_str(), "Camera genitori") == 0) && (pos ==0)) {sendRFCode(up4); };
-	     if ((strcmp(this->get_name().c_str(), "Camera genitori") == 0) && (pos ==1)) {sendRFCode(do4); };
-	     if ((strcmp(this->get_name().c_str(), "Bagno piccolo") == 0) && (pos ==0)) {sendRFCode(up5); };
-	     if ((strcmp(this->get_name().c_str(), "Bagno piccolo") == 0) && (pos ==1)) {sendRFCode(do5); };
-	     if ((strcmp(this->get_name().c_str(), "Sala piccola") == 0) && (pos ==0)) {sendRFCode(up6); };
-	     if ((strcmp(this->get_name().c_str(), "Sala piccola") == 0) && (pos ==1)) {sendRFCode(do6); };
-	     if ((strcmp(this->get_name().c_str(), "Sala grande") == 0) && (pos ==0)) {sendRFCode(up7); };
-	     if ((strcmp(this->get_name().c_str(), "Sala grande") == 0) && (pos ==1)) {sendRFCode(do7); };
-	     if ((strcmp(this->get_name().c_str(), "Ripostiglio") == 0) && (pos ==0)) {sendRFCode(up8); };
-	     if ((strcmp(this->get_name().c_str(), "Ripostiglio") == 0) && (pos ==1)) {sendRFCode(do8); };
-	     if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==0)) {sendRFCode(up9); };
-	     if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==1)) {sendRFCode(do9); };
+        float pos = *call.get_position();
+	    if ((strcmp(this->get_name().c_str(), "Camera bimbe") == 0) && (pos ==1)) {sendRFCode(up1); };
+	    if ((strcmp(this->get_name().c_str(), "Camera bimbe") == 0) && (pos ==0)) {sendRFCode(do1); };
+	    if ((strcmp(this->get_name().c_str(), "Camera nonna") == 0) && (pos ==1)) {sendRFCode(up2); };
+	    if ((strcmp(this->get_name().c_str(), "Camera nonna") == 0) && (pos ==0)) {sendRFCode(do2); };
+	    if ((strcmp(this->get_name().c_str(), "Bagno grande") == 0) && (pos ==1)) {sendRFCode(up3); };
+	    if ((strcmp(this->get_name().c_str(), "Bagno grande") == 0) && (pos ==0)) {sendRFCode(do3); };
+	    if ((strcmp(this->get_name().c_str(), "Camera genitori") == 0) && (pos ==1)) {sendRFCode(up4); };
+	    if ((strcmp(this->get_name().c_str(), "Camera genitori") == 0) && (pos ==0)) {sendRFCode(do4); };
+	    if ((strcmp(this->get_name().c_str(), "Bagno piccolo") == 0) && (pos ==1)) {sendRFCode(up5); };
+	    if ((strcmp(this->get_name().c_str(), "Bagno piccolo") == 0) && (pos ==0)) {sendRFCode(do5); };
+	    if ((strcmp(this->get_name().c_str(), "Sala piccola") == 0) && (pos ==1)) {sendRFCode(up6); };
+	    if ((strcmp(this->get_name().c_str(), "Sala piccola") == 0) && (pos ==0)) {sendRFCode(do6); };
+	    if ((strcmp(this->get_name().c_str(), "Sala grande") == 0) && (pos ==1)) {sendRFCode(up7); };
+	    if ((strcmp(this->get_name().c_str(), "Sala grande") == 0) && (pos ==0)) {sendRFCode(do7); };
+	    if ((strcmp(this->get_name().c_str(), "Ripostiglio") == 0) && (pos ==1)) {sendRFCode(up8); };
+	    if ((strcmp(this->get_name().c_str(), "Ripostiglio") == 0) && (pos ==0)) {sendRFCode(do8); };
+	    if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==1)) {sendRFCode(up9); };
+	    if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==0)) {sendRFCode(do9); };
 
       // Publish new state
       this->position = pos;
@@ -86,39 +85,36 @@ class MyCustomCover : public Component, public Cover {
     }
     if (call.get_stop()) {
       // User requested cover stop
-
-	     if (strcmp(this->get_name().c_str(), "Camera bimbe") == 0) {sendRFCode(st1); };
-	     if (strcmp(this->get_name().c_str(), "Camera nonna") == 0) {sendRFCode(st2); };
-	     if (strcmp(this->get_name().c_str(), "Bagno grande") == 0) {sendRFCode(st3); };
-	     if (strcmp(this->get_name().c_str(), "Camera genitori") == 0) {sendRFCode(st4); };
-	     if (strcmp(this->get_name().c_str(), "Bagno piccolo") == 0) {sendRFCode(st5); };
-	     if (strcmp(this->get_name().c_str(), "Sala piccola") == 0) {sendRFCode(st6); };
-	     if (strcmp(this->get_name().c_str(), "Sala grande") == 0) {sendRFCode(st7); };
-	     if (strcmp(this->get_name().c_str(), "Ripostiglio") == 0) {sendRFCode(st8); };
-	     if (strcmp(this->get_name().c_str(), "Cucina") == 0) {sendRFCode(st9); }; 
+	    if (strcmp(this->get_name().c_str(), "Camera bimbe") == 0) {sendRFCode(st1); };
+	    if (strcmp(this->get_name().c_str(), "Camera nonna") == 0) {sendRFCode(st2); };
+	    if (strcmp(this->get_name().c_str(), "Bagno grande") == 0) {sendRFCode(st3); };
+	    if (strcmp(this->get_name().c_str(), "Camera genitori") == 0) {sendRFCode(st4); };
+	    if (strcmp(this->get_name().c_str(), "Bagno piccolo") == 0) {sendRFCode(st5); };
+	    if (strcmp(this->get_name().c_str(), "Sala piccola") == 0) {sendRFCode(st6); };
+	    if (strcmp(this->get_name().c_str(), "Sala grande") == 0) {sendRFCode(st7); };
+	    if (strcmp(this->get_name().c_str(), "Ripostiglio") == 0) {sendRFCode(st8); };
+	    if (strcmp(this->get_name().c_str(), "Cucina") == 0) {sendRFCode(st9); }; 
     }
   }
  
- 
- 
  	void sendRFCode_canc(uint16_t code){
 	  ESP_LOGD("custom", "SendRFCode!");
-	  for (int i = 0; i < Plugin_112_Repeat; i++)
+	  for (int i = 0; i < Plugin_Repeat; i++)
 	  {
 		  for (int bits = 15; bits > 1 ; bits-- )
 		  {
 			 if (code & (1U << bits) )
 			 {       
-			   digitalWrite(txPin_112, HIGH);
+			   digitalWrite(txPin, HIGH);
 			   delayMicroseconds(short_delay);
-			   digitalWrite(txPin_112, LOW);
+			   digitalWrite(txPin, LOW);
 			   delayMicroseconds(long_delay);
 			 }
 			 else
 			 {           
-			   digitalWrite(txPin_112, HIGH);
+			   digitalWrite(txPin, HIGH);
 			   delayMicroseconds(long_delay);
-			   digitalWrite(txPin_112, LOW);
+			   digitalWrite(txPin, LOW);
 			   delayMicroseconds(short_delay);
 			 }
 		  }
@@ -126,54 +122,51 @@ class MyCustomCover : public Component, public Cover {
 		}
 	}
 
-
-
 	void sendRFCode(uint64_t code){
 	  ESP_LOGD("custom", "SendRFCode!");
-	  for (int i = 0; i < Plugin_112_Repeat; i++)
+	  for (int i = 0; i < Plugin_Repeat; i++)
 		{
 		  // ----------------------- Preamble ----------------------
 		  for (int y = 0; y < 12; ++y)
 		  {
-			digitalWrite(txPin_112, HIGH);
+			digitalWrite(txPin, HIGH);
 			delayMicroseconds(pulse);
-			digitalWrite(txPin_112, LOW);
+			digitalWrite(txPin, LOW);
 			delayMicroseconds(pulse);
 		  }
 		  // -------------------End Preamble--Segnal ---------------
-		  digitalWrite(txPin_112, LOW);
+		  digitalWrite(txPin, LOW);
 		  delayMicroseconds(3500); // added 3,5 millis
 
 		  for (int bits = 63; bits > -1 ; --bits )
 		  {
 			if (code & (1ULL << bits) ) {
-				digitalWrite(txPin_112, HIGH);
+				digitalWrite(txPin, HIGH);
 				delayMicroseconds(pulse);
-				digitalWrite(txPin_112, LOW);
+				digitalWrite(txPin, LOW);
 				delayMicroseconds(pulse*2);
 			  }
 			else {
-				digitalWrite( txPin_112, HIGH );
+				digitalWrite( txPin, HIGH );
 				delayMicroseconds( pulse * 2 );
-				digitalWrite( txPin_112, LOW );
+				digitalWrite( txPin, LOW );
 				delayMicroseconds( pulse );
 			}
 		  }
 		  // -------------------Close--Segnal:00 ---------------
-		  digitalWrite( txPin_112, HIGH );
+		  digitalWrite( txPin, HIGH );
 		  delayMicroseconds( pulse * 2 );
-		  digitalWrite( txPin_112, LOW );
+		  digitalWrite( txPin, LOW );
 		  delayMicroseconds( pulse );
 		  //
-		  digitalWrite( txPin_112, HIGH );
+		  digitalWrite( txPin, HIGH );
 		  delayMicroseconds( pulse * 2 );
-		  digitalWrite( txPin_112, LOW );
+		  digitalWrite( txPin, LOW );
 		  delayMicroseconds( pulse );
 		 // -------------------Close--Segnal:00 ---------------
-		  digitalWrite(txPin_112, LOW);
+		  digitalWrite(txPin, LOW);
 		  delayMicroseconds(5000); // added 2 millis
 		// ---------------------End Segnal --------------------------
 		}
 	}
- 
 };
