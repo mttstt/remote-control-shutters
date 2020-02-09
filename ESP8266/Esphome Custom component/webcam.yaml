@@ -8,7 +8,7 @@ esphome:
 
 wifi:
   ssid: "MTT_2.4"
-  password: "?????????????"
+  password: "999999999"
   
  # Optional manual IP
   manual_ip:
@@ -56,7 +56,7 @@ sensor:
       name: "Temperatura corridoio"
     humidity:
       name: "Umidità corridoio"
-    update_interval: 60s
+    update_interval: 300s
 
 switch: 
   - platform: gpio
@@ -92,7 +92,8 @@ cover:
     App.register_component(my_cover8);
     auto my_cover9 = new MyCustomCover();
     App.register_component(my_cover9);
-    return {my_cover1, my_cover2,my_cover3, my_cover4,my_cover5, my_cover6, my_cover7, my_cover7,my_cover9};
+    return {my_cover1, my_cover2,my_cover3, my_cover4,my_cover5, my_cover6, my_cover7, my_cover8,my_cover9};
+
 
   covers:
     - name: "Camere bimbe"
