@@ -78,6 +78,7 @@ class MyCustomCover : public Component, public Cover {
 	    if ((strcmp(this->get_name().c_str(), "Ripostiglio") == 0) && (pos ==0)) {sendRFCode(do8); };
 	    if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==1)) {sendRFCode(up9); };
 	    if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==0)) {sendRFCode(do9); };
+	    if (strcmp(this->get_name().c_str(), "Cancello") == 0) {sendRFCode_canc(canc); };
 
       // Publish new state
       this->position = pos;
@@ -169,4 +170,5 @@ class MyCustomCover : public Component, public Cover {
 		// ---------------------End Segnal --------------------------
 		}
 	}
+ 
 };
