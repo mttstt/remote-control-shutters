@@ -8,7 +8,7 @@ esphome:
 
 wifi:
   ssid: "MTT_2.4"
-  password: "??????????"
+  password: "999999999"
   
  # Optional manual IP
   manual_ip:
@@ -93,9 +93,11 @@ cover:
     App.register_component(my_cover8);
     auto my_cover9 = new MyCustomCover();
     App.register_component(my_cover9);
+    auto my_cover10 = new MyCustomCover();
+    App.register_component(my_cover10);
     auto cancello = new MyCustomCover();
     App.register_component(cancello);
-    return {my_cover1, my_cover2, my_cover3, my_cover4, my_cover5, my_cover6, my_cover7, my_cover8, my_cover9, cancello};
+    return {my_cover1, my_cover2, my_cover3, my_cover4, my_cover5, my_cover6, my_cover7, my_cover8, my_cover9, my_cover10, cancello};
 
 
   covers:
@@ -117,5 +119,7 @@ cover:
       device_class: shutter
     - name: "Cucina"
       device_class: shutter
+    - name: "All"
+      device_class: shutter  
     - name: "Cancello"
       device_class: door
