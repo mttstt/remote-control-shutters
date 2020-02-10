@@ -78,6 +78,8 @@ class MyCustomCover : public Component, public Cover {
 	    if ((strcmp(this->get_name().c_str(), "Ripostiglio") == 0) && (pos ==0)) {sendRFCode(do8); };
 	    if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==1)) {sendRFCode(up9); };
 	    if ((strcmp(this->get_name().c_str(), "Cucina") == 0) && (pos ==0)) {sendRFCode(do9); };
+	    if ((strcmp(this->get_name().c_str(), "All") == 0) && (pos ==1)) {sendRFCode(up0); };
+	    if ((strcmp(this->get_name().c_str(), "All") == 0) && (pos ==0)) {sendRFCode(do0); };
 	    if (strcmp(this->get_name().c_str(), "Cancello") == 0) {sendRFCode_canc(canc); };
 
       // Publish new state
@@ -94,7 +96,8 @@ class MyCustomCover : public Component, public Cover {
 	    if (strcmp(this->get_name().c_str(), "Sala piccola") == 0) {sendRFCode(st6); };
 	    if (strcmp(this->get_name().c_str(), "Sala grande") == 0) {sendRFCode(st7); };
 	    if (strcmp(this->get_name().c_str(), "Ripostiglio") == 0) {sendRFCode(st8); };
-	    if (strcmp(this->get_name().c_str(), "Cucina") == 0) {sendRFCode(st9); }; 
+	    if (strcmp(this->get_name().c_str(), "Cucina") == 0) {sendRFCode(st9); };
+	    if (strcmp(this->get_name().c_str(), "All") == 0) {sendRFCode(st0); }; 
     }
   }
  
