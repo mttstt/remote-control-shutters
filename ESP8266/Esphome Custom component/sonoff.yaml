@@ -1,0 +1,62 @@
+esphome:
+  name: sonoff
+  platform: ESP8266
+  board: esp01_1m  
+  
+  
+wifi:
+  ssid: "MTT_2.4"
+  password: "999999999"
+  
+ # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.1.107
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+# Enable captive portal
+captive_portal:
+
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+#  level: DEBUG
+
+# Enable Home Assistant API
+api:
+
+# Enable ota
+ota:
+    
+sensor:
+  - platform: dht
+    pin: GPIO3
+    temperature:
+      name: "Temperatura sala"
+    humidity:
+      name: "Umidità sala"
+    update_interval: 30s
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Sonoff Basic Button"
+    on_press:
+      - switch.toggle: relay
+
+switch:
+  - platform: gpio
+    icon: "mdi:lightbulb"
+    name: "Bajour sala"
+    pin: GPIO12
+    id: relay
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
