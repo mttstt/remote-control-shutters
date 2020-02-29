@@ -5,8 +5,8 @@ esphome:
   
   
 wifi:
-  ssid: "MTT_2.4"
-  password: "999999999"
+  ssid: "???"
+  password: "???"
   
  # Optional manual IP
   manual_ip:
@@ -45,16 +45,24 @@ binary_sensor:
       number: GPIO0
       mode: INPUT_PULLUP
       inverted: True
-    name: "Sonoff Basic Button"
+    id: button_1 
     on_press:
-      - switch.toggle: relay
+      then:
+        - light.toggle: light_1
+        
+  - platform: status
+    name: "Sonoff Status"
 
-switch:
+light:
+  - platform: binary
+    name: "Lampada"
+    id: light_1
+    output: relay_1    
+    
+output:
   - platform: gpio
-    icon: "mdi:lightbulb"
-    name: "Bajour sala"
     pin: GPIO12
-    id: relay
+    id: relay_1
 
 status_led:
   pin:
