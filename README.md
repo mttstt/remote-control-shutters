@@ -71,3 +71,8 @@ http://xxx.ddns.net:7000/?shutter=up6
 There are problems:
 - I upgraded the firmware
 - MQTT use TCP: some types of traffic are not being bridged by Powerline wifi
+
+### Esp-link
+command in order to program a ESP01 1Mb
+
+    python "../../esptool/esptool.py" --port COM6 --baud 115200 write_flash --flash_freq 40m --flash_mode qio --flash_size 1MB 0x0000 boot_v1.7.bin 0x1000 user1.bin 0xFC000 esp_init_data_default.bin 0xFE000 blank.bin
