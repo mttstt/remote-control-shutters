@@ -1,0 +1,51 @@
+esphome:
+  name: aurora
+  platform: ESP8266
+  board: esp01
+  includes:
+    - aurora.h
+  libraries:
+    - "ABB Aurora"
+
+wifi:
+  ssid: "MTT_2.4"
+  password: "999999999"
+
+ # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.1.98
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1
+    dns2: 8.8.8.8
+
+# Enable captive portal
+captive_portal:
+
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+  level: DEBUG
+#  esp8266_store_log_strings_in_flash: False
+
+# Enable Home Assistant API
+api:
+
+# Enable ota
+ota:
+
+sensor:
+- platform: custom
+  lambda: |-
+    auto inverter = new MyCustomSensor();
+    App.register_component(inverter);
+    return {inverter->DspValue_sensor, inverter->ReadCumulatedEnergy_sensor};
+
+  sensors:
+  - name: "Dsp Value"
+    accuracy_decimals: 0
+  - name: "Cumulated energy"
+    unit_of_measurement: 'kW'
+    accuracy_decimals: 2
