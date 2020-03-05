@@ -1,7 +1,7 @@
 esphome:
-  name: aurora
+  name: Aurora
   platform: ESP8266
-  board: esp01 
+  board: esp01
   #board: esp01_1m //D1 Mini
   includes:
     - aurora.h
@@ -10,7 +10,7 @@ esphome:
 
 wifi:
   ssid: "MTT_2.4"
-  password: "???"
+  password: "999999999"
 
  # Optional manual IP
   manual_ip:
@@ -47,16 +47,16 @@ text_sensor:
   lambda: |-
     auto inverter = new MyCustomSensor();
     App.register_component(inverter);
-    return {inverter->DspValue_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor, inverter->TransmissionState_sensor, inverter->GlobalState_sensor };
+    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor, inverter->TransmissionState_sensor, inverter->GlobalState_sensor };
+
 
   #sensors:
   text_sensors:
-  - name: "Dsp Value"
-    #accuracy_decimals: 0
+  - name: "PowerIn1_sensor"
+  - name: "PowerIn1_sensor"
+  - name: "GridPower_sensor"
   - name: "Cumulated energy (day)"
-    #unit_of_measurement: 'kW'
-    #accuracy_decimals: 2
-   - name: "Cumulated energy (Month)"
-   - name: "Cumulated energy (Year)"
-   - name: "TransmissionState" 
-   - name: GlobalState" 
+  - name: "Cumulated energy (Month)"
+  - name: "Cumulated energy (Year)"
+  - name: "TransmissionState"
+  - name: "GlobalState"
