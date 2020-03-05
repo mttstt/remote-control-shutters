@@ -10,7 +10,7 @@ esphome:
 
 wifi:
   ssid: "MTT_2.4"
-  password: "999999999"
+  password: "???"
 
  # Optional manual IP
   manual_ip:
