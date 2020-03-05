@@ -6,7 +6,8 @@
 #define INVERTER_ADDRESS 2
 #define TX_CONTROL_GPIO 16 	// GPIO-16
 
-class MyCustomSensor : public PollingComponent {
+// class MyCustomSensor : public PollingComponent {
+class MyCustomSensor : public PollingComponent, public TextSensor {
  public:
   ABBAurora *inverter;
 
@@ -18,7 +19,7 @@ class MyCustomSensor : public PollingComponent {
   Sensor *TransmissionState_sensor = new Sensor();
   Sensor *GlobalState = new Sensor();
 
-  MyCustomSensor() : PollingComponent(15000) { }
+  MyCustomSensor() : PollingComponent(15000) { }  
 
   void setup() override 
   {
