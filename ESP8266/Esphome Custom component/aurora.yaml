@@ -36,6 +36,10 @@ api:
 # Enable ota
 ota:
 
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
 #sensor:
 text_sensor:
 - platform: custom
