@@ -1,7 +1,8 @@
 esphome:
   name: aurora
   platform: ESP8266
-  board: esp01
+  board: esp01 
+  #board: esp01_1m //D1 Mini
   includes:
     - aurora.h
   libraries:
