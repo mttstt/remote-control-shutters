@@ -1,10 +1,10 @@
 #include "esphome.h"
 #include "ABBAurora.h"
 
-#define RX2 16
-#define TX2 17
+#define RX1 3			// GPIO-1
+#define TX1 1			// GPIO-3
 #define INVERTER_ADDRESS 2
-#define TX_CONTROL_GPIO 4
+#define TX_CONTROL_GPIO 16 	// GPIO-16
 
 class MyCustomSensor : public PollingComponent {
  public:
@@ -16,14 +16,14 @@ class MyCustomSensor : public PollingComponent {
   MyCustomSensor() : PollingComponent(15000) { }
 
   void setup() override {
-    ESP_LOGD("aurora", "Init setup()");
+    ESP_LOGD("Aurora", "Init setup()");
     Serial.begin(115200);
-    ABBAurora::setup(Serial1, RX2, TX2, TX_CONTROL_GPIO);
+    ABBAurora::setup(Serial1, RX1, TX1, TX_CONTROL_GPIO);
 		inverter = new ABBAurora(INVERTER_ADDRESS);
 		ESP_LOGD("aurora", "Finish setup()");
   }
   void update() override {
-    ESP_LOGD("aurora", "Init update aurora");
+    ESP_LOGD("Aurora", "Init update aurora");
   	if (inverter->ReadDSPValue(POWER_IN_1, MODULE_MESSUREMENT))
       {
   		//String version = inverter->Version.Par1;
