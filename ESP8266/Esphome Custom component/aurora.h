@@ -1,65 +1,62 @@
-#include "esphome.h"
-#include "ABBAurora.h"
+esphome:
+  name: Aurora
+  platform: ESP8266
+  board: esp01
+  #board: esp01_1m //D1 Mini
+  includes:
+    - aurora.h
+  libraries:
+    - "ABB Aurora"
 
-#define RX1 3			// GPIO-1
-#define TX1 1			// GPIO-3
-#define INVERTER_ADDRESS 2
-#define TX_CONTROL_GPIO 16 	// GPIO-16
+wifi:
+  ssid: "MTT_2.4"
+  password: "???"
 
-// class MyCustomSensor : public PollingComponent {
-class MyCustomSensor : public PollingComponent, public TextSensor {
- public:
-  ABBAurora *inverter;
+ # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.1.98
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1
+    dns2: 8.8.8.8
 
-  Sensor *DspValue_sensor = new Sensor();
-  Sensor *ReadCumulatedEnergy_sensor = new Sensor();
-  Sensor *DayCumulatedEnergy_sensor = new Sensor();
-  Sensor *MonthCumulatedEnergy_sensor = new Sensor();
-  Sensor *YearCumulatedEnergy_sensor = new Sensor();
-  Sensor *TransmissionState_sensor = new Sensor();
-  Sensor *GlobalState = new Sensor();
+# Enable captive portal
+captive_portal:
 
-  MyCustomSensor() : PollingComponent(15000) { }  
+web_server:
+  port: 80
 
-  void setup() override 
-  {
-    ESP_LOGD("Aurora", "Init setup()");
-    Serial.begin(115200);
-    ABBAurora::setup(Serial1, RX1, TX1, TX_CONTROL_GPIO);
-    inverter = new ABBAurora(INVERTER_ADDRESS);
-    ESP_LOGD("aurora", "Finish setup()");
-  }
+# Enable logging
+logger:
+  level: DEBUG
+#  esp8266_store_log_strings_in_flash: False
 
-	
-  void update() override 
-  {
-    ESP_LOGD("Aurora", "Init aurora update data");
-    if (inverter->ReadDSPValue(POWER_IN_1, MODULE_MESSUREMENT))
-      {
-      	ESP_LOGD("Aurora", "DSP.Value sensor is: %f", inverter->DSP.Value);
-  	DspValue_sensor->publish_state(inverter->DSP.Value);
-      }
-    if (inverter->ReadCumulatedEnergy(CURRENT_DAY))
-      {
-      	ESP_LOGD("Aurora", "CURRENT DAY Energy sensor is: %f", inverter->CumulatedEnergy.Energy);
-  	DayCumulatedEnergy_sensor->publish_state(inverter->CumulatedEnergy.Energy);
-      }	  
-    if (inverter->ReadCumulatedEnergy(CURRENT_MONTH))
-      {
-      	ESP_LOGD("Aurora", "CURRENT MONTH Energy sensor is: %f", inverter->CumulatedEnergy.Energy);
-  	MonthCumulatedEnergy_sensor->publish_state(inverter->CumulatedEnergy.Energy);
-      }
-    if (inverter->ReadCumulatedEnergy(CURRENT_YEAR))
-      {
-      	ESP_LOGD("Aurora", "CURRENT YEAR Energy sensor is: %f", inverter->CumulatedEnergy.Energy);
-  	YearCumulatedEnergy_sensor->publish_state(inverter->CumulatedEnergy.Energy);   
-      	ESP_LOGD("Aurora", "TransmissionState sensor is: %f", inverter->CumulatedEnergy.TransmissionState);
-  	TransmissionState_sensor->publish_state(inverter->CumulatedEnergy.TransmissionState);
-        ESP_LOGD("Aurora", "GlobalState sensor is: %f", inverter->CumulatedEnergy.GlobalState);
-  	GlobalState_sensor->publish_state(inverter->CumulatedEnergy.GlobalState);
-      }  	 
-  }
-	
-	
+# Enable Home Assistant API
+api:
 
-};
+# Enable ota
+ota:
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+#sensor:
+text_sensor:
+- platform: custom
+  lambda: |-
+    auto inverter = new MyCustomSensor();
+    App.register_component(inverter);
+    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor, inverter->TransmissionState_sensor, inverter->GlobalState_sensor };
+
+
+  #sensors:
+  text_sensors:
+  - name: "PowerIn1_sensor"
+  - name: "PowerIn1_sensor"
+  - name: "GridPower_sensor"
+  - name: "Cumulated energy (day)"
+  - name: "Cumulated energy (Month)"
+  - name: "Cumulated energy (Year)"
+  - name: "TransmissionState"
+  - name: "GlobalState"
