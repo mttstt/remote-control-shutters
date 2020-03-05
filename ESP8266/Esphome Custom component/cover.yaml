@@ -1,5 +1,5 @@
 esphome:
-  name: esp32cam
+  name: covers
   platform: ESP32
   board: esp32dev
   arduino_version: latest
