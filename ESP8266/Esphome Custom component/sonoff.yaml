@@ -1,13 +1,13 @@
 esphome:
   name: sonoff
   platform: ESP8266
-  board: esp01_1m  
-  
-  
+  board: esp01_1m
+
+
 wifi:
   ssid: "MTT_2.4"
-  password: "???"
-  
+  password: "999999999"
+
  # Optional manual IP
   manual_ip:
     static_ip: 192.168.1.107
@@ -29,7 +29,7 @@ api:
 
 # Enable ota
 ota:
-    
+
 sensor:
   - platform: dht
     pin: GPIO3
@@ -54,21 +54,19 @@ binary_sensor:
       number: GPIO0
       mode: INPUT_PULLUP
       inverted: True
-    id: button_1 
+    id: button_1
     on_press:
       then:
         - light.toggle: light_1
-        
   - platform: status
     name: "Sonoff Status"
 
 light:
   - platform: binary
     name: "Lampada"
-    icon: "mdi:lamp"
     id: light_1
-    output: relay_1    
-    
+    output: relay_1
+
 output:
   - platform: gpio
     pin: GPIO12
