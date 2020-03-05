@@ -5,7 +5,7 @@ esphome:
   
   
 wifi:
-  ssid: "???"
+  ssid: "MTT_2.4"
   password: "???"
   
  # Optional manual IP
@@ -38,6 +38,15 @@ sensor:
     humidity:
       name: "Umidità sala"
     update_interval: 30s
+  - platform: wifi_signal
+    name: "Sonoff WiFi"
+    update_interval: 60s
+  - platform: uptime
+    name: "Sonoff Uptime"
+
+text_sensor:
+  - platform: version
+    name: "Sonoff ESPHome Version"
 
 binary_sensor:
   - platform: gpio
@@ -56,6 +65,7 @@ binary_sensor:
 light:
   - platform: binary
     name: "Lampada"
+    icon: "mdi:lamp"
     id: light_1
     output: relay_1    
     
