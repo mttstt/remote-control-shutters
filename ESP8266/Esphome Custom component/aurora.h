@@ -26,7 +26,6 @@ class AuroraTextSensor : public PollingComponent, public TextSensor {
     inverter = new ABBAurora(INVERTER_ADDRESS);
     ESP_LOGD("Aurora", "Finish AuroraTextSensor setup()");
   }
-
   void update() override
   {
     ESP_LOGD("Aurora", "Init AuroraTextSensor update data");
@@ -59,7 +58,6 @@ class AuroraTextSensor : public PollingComponent, public TextSensor {
 class AuroraSensor : public PollingComponent {
  public:
   ABBAurora *inverter;
- 
   Sensor *PowerIn1_sensor = new Sensor();
   Sensor *PowerIn2_sensor = new Sensor();
   Sensor *GridPower_sensor = new Sensor();
@@ -68,7 +66,7 @@ class AuroraSensor : public PollingComponent {
   Sensor *DayCumulatedEnergy_sensor = new Sensor();
   Sensor *MonthCumulatedEnergy_sensor = new Sensor();
   Sensor *YearCumulatedEnergy_sensor = new Sensor();
-
+ 
   AuroraSensor() : PollingComponent(15000) { }
 
   void setup() override
