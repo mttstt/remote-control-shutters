@@ -1,5 +1,5 @@
 esphome:
-  name: Aurora
+  name: aurora
   platform: ESP8266
   board: esp01
   #board: esp01_1m //D1 Mini
@@ -53,20 +53,19 @@ text_sensor:
   - name: "Inverter State"
   - name: "AlarmState"
   - name: "Firmware"
-  
-  
-  
+
+
 sensor:
 - platform: custom
   lambda: |-
     auto inverter = new AuroraSensor ();
     App.register_component(inverter);
-    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->TemperatureInverter_sensor, inverter->TemperatureBooster_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor ; 
+    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->TemperatureInverter_sensor, inverter->TemperatureBooster_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor } ;
   sensors:
   - name: "Power In 1"
     unit_of_measurement: 'W'
     accuracy_decimals: 2
-  - name: "Power In 2
+  - name: "Power In 2"
     unit_of_measurement: 'W'
     accuracy_decimals: 2
   - name: "Grid Power"
@@ -87,4 +86,3 @@ sensor:
   - name: "Cumulated energy (year)"
     unit_of_measurement: 'W'
     accuracy_decimals: 2
-
