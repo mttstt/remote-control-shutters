@@ -9,10 +9,12 @@
 class AuroraTextSensor : public PollingComponent, public TextSensor {
  public:
   ABBAurora *inverter;
+ 
   TextSensor *TransmissionState_sensor = new TextSensor();
   TextSensor *GlobalState_sensor = new TextSensor();
-  InverterState_sensor *InverterState = new TextSensor();
-  AlarmState_sensor *AlarmState = new TextSensor();
+  TextSensor *InverterState_sensor = new TextSensor();
+  TextSensor *AlarmState_sensor = new TextSensor();
+  TextSensor *Firmware_sensor = new TextSensor();
  
   AuroraTextSensor() : PollingComponent(60000) { }
 
@@ -31,16 +33,21 @@ class AuroraTextSensor : public PollingComponent, public TextSensor {
     if ( inverter->ReadState() )
       {
        ESP_LOGD("Aurora", "TransmissionState sensor is: %s", inverter->State.TransmissionState);
-  	    TransmissionState_sensor->publish_state(inverte->State.TransmissionState);
+  	    TransmissionState_sensor->publish_state(inverter->State.TransmissionState);
      
       	ESP_LOGD("Aurora", "GlobalState sensor is: %s", inverter->State.GlobalState);
   	    GlobalState_sensor->publish_state(inverter->State.GlobalState);
      
-       ESP_LOGD("Aurora", "InverterState sensor is: %s", inverter>State.InverterState);
-  	    InverterState_sensor->publish_state(inverte->State.InverterState);
+       ESP_LOGD("Aurora", "InverterState sensor is: %s", inverter->State.InverterState);
+  	    InverterState_sensor->publish_state(inverter->State.InverterState);
           
        ESP_LOGD("Aurora", "AlarmState sensor is: %s", inverter->State.AlarmState);
-  	    AlarmState_sensor->publish_state(inverer->State.AlarmState);     
+  	    AlarmState_sensor->publish_state(inverter->State.AlarmState);     
+      }
+    if ( inverter->ReadFirmwareRelease() )
+      {
+       ESP_LOGD("Aurora", "Aurora Firmware is: %s", inverter->FirmwareRelease.Release);
+  	    Firmware_sensor->publish_state(inverter->FirmwareRelease.Release);   
       }
   }
 }; 
