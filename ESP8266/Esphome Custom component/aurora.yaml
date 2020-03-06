@@ -46,29 +46,37 @@ text_sensor:
   lambda: |-
     auto inverter = new AuroraTextSensor ();
     App.register_component(inverter);
-    return { Inverter->TransmissionState_sensor, inverter->GlobalState_sensor, Inverter->InverterState_sensor, Inverter->AlarmState_sensor };
+    return { inverter->TransmissionState_sensor, inverter->GlobalState_sensor, inverter->InverterState_sensor, inverter->AlarmState_sensor, inverter->Firmware_sensor };
   text_sensors:
-  - name: "TransmissionState"
-  - name: "GlobalState"
-  - name: "InverterState"
-  - name: "AlarmState_sensor"
-
+  - name: "Transmission State"
+  - name: "Global State"
+  - name: "Inverter State"
+  - name: "AlarmState"
+  - name: "Firmware"
+  
+  
+  
 sensor:
 - platform: custom
   lambda: |-
     auto inverter = new AuroraSensor ();
     App.register_component(inverter);
-    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor ; 
-  
+    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->TemperatureInverter_sensor, inverter->TemperatureBooster_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor ; 
   sensors:
-  - name: "PowerIn1_sensor"
+  - name: "Power In 1"
     unit_of_measurement: 'W'
     accuracy_decimals: 2
-  - name: "PowerIn1_sensor"
+  - name: "Power In 2
     unit_of_measurement: 'W'
     accuracy_decimals: 2
-  - name: "GridPower_sensor"
+  - name: "Grid Power"
     unit_of_measurement: 'W'
+    accuracy_decimals: 2
+  - name: "Temperature Inverter"
+    unit_of_measurement: °C
+    accuracy_decimals: 2
+  - name: "Temperature Booster"
+    unit_of_measurement: °C
     accuracy_decimals: 2
   - name: "Cumulated energy (day)"
     unit_of_measurement: 'W'
@@ -79,3 +87,4 @@ sensor:
   - name: "Cumulated energy (year)"
     unit_of_measurement: 'W'
     accuracy_decimals: 2
+
