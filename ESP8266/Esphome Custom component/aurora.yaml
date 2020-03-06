@@ -45,18 +45,38 @@ time:
 text_sensor:
 - platform: custom
   lambda: |-
-    auto inverter = new MyCustomSensor();
+    auto inverter = new AuroraTextSensor ();
     App.register_component(inverter);
-    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor, inverter->TransmissionState_sensor, inverter->GlobalState_sensor };
-
-
+    return { nverter->TransmissionState_sensor, inverter->GlobalState_sensor };
   #sensors:
   text_sensors:
-  - name: "PowerIn1_sensor"
-  - name: "PowerIn1_sensor"
-  - name: "GridPower_sensor"
-  - name: "Cumulated energy (day)"
-  - name: "Cumulated energy (Month)"
-  - name: "Cumulated energy (Year)"
   - name: "TransmissionState"
   - name: "GlobalState"
+
+
+sensor:
+- platform: custom
+  lambda: |-
+    auto inverter = new AuroraSensor ();
+    App.register_component(inverter);
+    return {inverter->PowerIn1_sensor, inverter->PowerIn2_sensor, inverter->GridPower_sensor, inverter->DayCumulatedEnergy_sensor, inverter->MonthCumulatedEnergy_sensor, inverter->YearCumulatedEnergy_sensor ; 
+  
+  sensors:
+  - name: "PowerIn1_sensor"
+    unit_of_measurement: 'W'
+    accuracy_decimals: 2
+  - name: "PowerIn1_sensor"
+    unit_of_measurement: 'W'
+    accuracy_decimals: 2
+  - name: "GridPower_sensor"
+    unit_of_measurement: 'W'
+    accuracy_decimals: 2
+  - name: "Cumulated energy (day)"
+    unit_of_measurement: 'W'
+    accuracy_decimals: 2
+  - name: "Cumulated energy (month)"
+    unit_of_measurement: 'W'
+    accuracy_decimals: 2
+  - name: "Cumulated energy (year)"
+    unit_of_measurement: 'W'
+    accuracy_decimals: 2
