@@ -41,18 +41,19 @@ time:
   - platform: homeassistant
     id: homeassistant_time
 
-#sensor:
 text_sensor:
 - platform: custom
   lambda: |-
     auto inverter = new AuroraTextSensor ();
     App.register_component(inverter);
-    return { nverter->TransmissionState_sensor, inverter->GlobalState_sensor };
-  #sensors:
+    return { Inverter->TransmissionState_sensor, inverter->GlobalState_sensor, Inverter->InverterState_sensor, Inverter->Channel1State_sensor, Inverter->Channel2State_sensor, Inverter->AlarmState_sensor };
   text_sensors:
   - name: "TransmissionState"
   - name: "GlobalState"
-
+  - name: "InverterState"
+  - name: "Channel1State"
+  - name: "Channel2State"
+  - name: "AlarmState_sensor"
 
 sensor:
 - platform: custom
