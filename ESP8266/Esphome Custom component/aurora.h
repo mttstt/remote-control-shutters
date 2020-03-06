@@ -56,6 +56,8 @@ class AuroraSensor : public PollingComponent {
   Sensor *PowerIn1_sensor = new Sensor();
   Sensor *PowerIn2_sensor = new Sensor();
   Sensor *GridPower_sensor = new Sensor();
+  Sensor *TemperatureInverter_sensor = new Sensor();
+  Sensor *TemperatureBooster_sensor = new Sensor();
   Sensor *DayCumulatedEnergy_sensor = new Sensor();
   Sensor *MonthCumulatedEnergy_sensor = new Sensor();
   Sensor *YearCumulatedEnergy_sensor = new Sensor();
@@ -92,6 +94,17 @@ class AuroraSensor : public PollingComponent {
       	 GridPower_sensor->publish_state(inverter->DSP.Value);
        }
 
+     if (inverter->ReadDSPValue(TEMPERATURE_INVERTER, MODULE_MESSUREMENT))
+       {
+        ESP_LOGD("Aurora", "TEMPERATURE_INVERTER sensor is: %f", inverter->DSP.Value);
+    	   TemperatureInverter_sensor->publish_state(inverter->DSP.Value);
+       }
+
+    if (inverter->ReadDSPValue(TEMPERATURE_BOOSTER, MODULE_MESSUREMENT))
+       {
+       	ESP_LOGD("Aurora", "TEMPERATURE_BOOSTER sensor is: %f", inverter->DSP.Value);
+      	 TemperatureBooster_sensor->publish_state(inverter->DSP.Value)
+    
     if (inverter->ReadCumulatedEnergy(CURRENT_DAY))
       {
       	ESP_LOGD("Aurora", "CURRENT DAY Energy sensor is: %f", inverter->CumulatedEnergy.Energy);
