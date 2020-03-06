@@ -11,6 +11,11 @@ class AuroraTextSensor : public PollingComponent, public TextSensor {
   ABBAurora *inverter;
   TextSensor *TransmissionState_sensor = new TextSensor();
   TextSensor *GlobalState_sensor = new TextSensor();
+  InverterState_sensor *InverterState = new TextSensor();
+  Channel1State_sensor *Channel1State = new TextSensor();
+  Channel2State_sensor *Channel2State = new TextSensor();
+  AlarmState_sensor *AlarmState = new TextSensor();
+ 
   AuroraTextSensor() : PollingComponent(60000) { }
 
   void setup() override
@@ -25,17 +30,25 @@ class AuroraTextSensor : public PollingComponent, public TextSensor {
   void update() override
   {
     ESP_LOGD("Aurora", "Init AuroraTextSensor update data");
-    if (inverter->ReadCumulatedEnergy(CURRENT_YEAR))
+    if ( inverter->ReadState() )
       {
-       char temp2[24];
-       dtostrf(inverter->CumulatedEnergy.GlobalState,6,2,temp2);
-       ESP_LOGD("Aurora", "GlobalState sensor is: %s", temp2);
-  	    GlobalState_sensor->publish_state(temp2);
+       ESP_LOGD("Aurora", "TransmissionState sensor is: %s", Inverte->State.TransmissionState);
+  	    TransmissionState_sensor->publish_state(Inverte->State.TransmissionState);
      
-       char temp1[43];
-       dtostrf(inverter->CumulatedEnergy.TransmissionState,6,2,temp1);
-      	ESP_LOGD("Aurora", "TransmissionState sensor is: %s", temp1);
-  	    TransmissionState_sensor->publish_state(temp1);
+      	ESP_LOGD("Aurora", "GlobalState sensor is: %s", Inverte->State.GlobalState);
+  	    GlobalState_sensor->publish_state(nverte->State.GlobalState);
+     
+       ESP_LOGD("Aurora", "State InverterState sensor is: %s", Inverte->State.InverterState);
+  	    InverterState_sensor->publish_state(nverte->State.InverterState);
+     
+       ESP_LOGD("Aurora", "State Channel1State sensor is: %s", Inverte-> State.Channel1State);
+  	    Channel1State_sensor->publish_state(nverte-> State.Channel1State);
+     
+       ESP_LOGD("Aurora", "State Channel2State sensor is: %s", Inverte->State.Channel2State);
+  	    Channel2State_sensor->publish_state(nverte->State.Channel2State);
+      
+       ESP_LOGD("Aurora", "State AlarmState sensor is: %s", Inverte->State.AlarmState);
+  	    AlarmState_sensor->publish_state(nverte->State.AlarmState);     
       }
   }
 }; 
