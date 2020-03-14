@@ -39,6 +39,7 @@
  */
 
 #include <ESPeasySerial.h>
+#include "src/Globals/ESPEasy_time.h"
 
 #define PLUGIN_111
 #define PLUGIN_ID_111         111
@@ -56,10 +57,14 @@
 #define baudrate 19200      //baudrate RS485
 #define SSerialTxControl D0 //GPIO-16 (D0)
 
+
+
 String stampaDataTime(unsigned long scn)
 {
-  String rtn=String(day())+String(F("/"))+String(month())+String(F("/"))+String(year())+String(F(" "))+String(hour())+String(F(":"))+String(minute())+String(F(":"))+String(second());
-  return rtn;
+// String rtn=String(day())+String(F("/"))+String(month())+String(F("/"))+String(year())+String(F(" "))+String(hour())+String(F(":"))+String(minute())+String(F(":"))+String(second());
+ return "qq";
+ //return rtn;
+
 };
 
 String TransmissionState(byte id) {
@@ -506,6 +511,8 @@ private:
   int MaxAttempt = 1;
   byte Address = 0;
   void clearData(byte *data, byte len) { for (int i = 0; i < len; i++) { data[i] = 0; } }
+
+
   int Crc16(byte *data, int offset, int count)
   {
     byte BccLo = 0xFF;
@@ -525,6 +532,7 @@ private:
     }
     return (int)word(~BccHi, ~BccLo);
   }
+
 
   bool Send(byte address, byte param0, byte param1, byte param2, byte param3, byte param4, byte param5, byte param6)
   {
@@ -561,53 +569,55 @@ private:
     {
       digitalWrite(SSerialTxControl, RS485Transmit);
       delay(50);
+
       if (Serial.write(SendData, sizeof(SendData)) != 0) {
-        Serial.flush();
-        SendStatus = true;
-        digitalWrite(SSerialTxControl, RS485Receive);
-        int rec = Serial.readBytes(ReceiveData, sizeof(ReceiveData));
+            Serial.flush();
+            SendStatus = true;
+            digitalWrite(SSerialTxControl, RS485Receive);
+            int rec = Serial.readBytes(ReceiveData, sizeof(ReceiveData));
+            //=================================================
+            String log = F("AURORA - Received data: ");
+            log = ReceiveData[0]; log += F(",");
+            log += ReceiveData[1]; log += F(",");
+            log += ReceiveData[2]; log += F(",");
+            log += ReceiveData[3]; log += F(",");
+            log += ReceiveData[4]; log += F(",");
+            log += ReceiveData[5]; log += F(",");
+            log += ReceiveData[6]; log += F(",");
+            log += ReceiveData[7]; log += F(":");
+            log += rec;
+            addLog(LOG_LEVEL_INFO,log);
+            //================================================= */
+            if (rec != 0) {
+              if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
+                ReceiveStatus = true;
 
-    /*  =================================================
-        String log = "AURORA - Received data: ";
-        log += ReceiveData[0]; log +=',';
-        log += ReceiveData[1]; log +=',';
-        log += ReceiveData[2]; log +=',';
-        log += ReceiveData[3]; log +=',';
-        log += ReceiveData[4]; log +=',';
-        log += ReceiveData[5]; log +=',';
-        log += ReceiveData[6]; log +=',';
-        log += ReceiveData[7]; log +='-';
-        log += rec;
-        addLog(LOG_LEVEL_INFO,log);
-      ================================================= */
+                //addLog(LOG_LEVEL_INFO,F("CRC OK"));
 
-        if (rec != 0) {
-          if ((int)word(ReceiveData[7], ReceiveData[6]) == Crc16(ReceiveData, 0, 6)) {
-            ReceiveStatus = true;
-            break;
-          }
-        }
+                break;
+              }
+            }
       }
       else {
-            // addLog(LOG_LEVEL_INFO,"Error while sending data");
+            //addLog(LOG_LEVEL_INFO,F("Error while sending data"));
             digitalWrite(SSerialTxControl, RS485Receive); return(false);
            }
     }
-    //String log = F("ReceiveStatus:");
-    //log += ReceiveStatus;
-    //addLog(LOG_LEVEL_INFO,log1);
     return ReceiveStatus;
   }
+
 
   union {
     byte asBytes[4];
     float asFloat;
   } foo;
 
+
   union {
     byte asBytes[4];
     unsigned long asUlong;
   } ulo;
+
 
 public:
   bool SendStatus = false;
@@ -649,7 +659,6 @@ public:
       ReceiveData[4] = 255;
       ReceiveData[5] = 255;
     }
-
     switch (id)
       {
       case 0:
@@ -665,7 +674,6 @@ public:
       case 5:
           return String(ReceiveData[5]); break;
     }
-
 }
 
 /*
@@ -680,27 +688,17 @@ public:
   } DataVersion;
   DataVersion Version;*/
 
-  String ReadVersion(byte id) {
+  String ReadVersion() {
     bool b =  Send(Address, (byte)58, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
     if (b == false) {
         ReceiveData[0] = 255;
         ReceiveData[1] = 255;
     }
-    switch (id)
-      {
-      case 0:
-          return String(ReceiveData[0]); break;
-      case 1:
-          return String(ReceiveData[1]); break;
-      case 2:
-          return Version1(ReceiveData[2]); break;
-      case 3:
-          return Version2(ReceiveData[3]); break;
-      case 4:
-          return Version3(ReceiveData[4]); break;
-      case 5:
-          return Version4(ReceiveData[5]); break;
-    }
+    String str = Version1(ReceiveData[2]);
+    str += Version2(ReceiveData[3]);
+    str += Version3(ReceiveData[4]);
+    str += Version4(ReceiveData[5]);
+    return str;
  }
 
 /*
@@ -799,7 +797,7 @@ public:
 
 /*
   typedef struct {
-    byte TransmissionState;
+    byte TReadTimeDateransmissionState;
     byte GlobalState;
     unsigned long Secondi;
     bool ReadState;
@@ -833,7 +831,7 @@ public:
   DataLastFourAlarms LastFourAlarms;
 */
 
-  String ReadLastFourAlarms(byte id) {
+  String ReadLastFourAlarms() {
     bool b = Send(Address, (byte)86, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
     if (b == false) {
       ReceiveData[0] = 255;
@@ -843,21 +841,12 @@ public:
       ReceiveData[4] = 255;
       ReceiveData[5] = 255;
     }
-    switch (id)
-      {
-      case 0:
-          return String(ReceiveData[0]); break;
-      case 1:
-          return String(ReceiveData[1]); break;
-      case 2:
-          return String(ReceiveData[2]); break;
-      case 3:
-          return String(ReceiveData[3]); break;
-      case 4:
-          return String(ReceiveData[4]); break;
-      case 5:
-          return String(ReceiveData[5]); break;
-    }
+    String str = AlarmState((byte)ReceiveData[2]); str += F(", ");
+    str += AlarmState((byte)ReceiveData[3]); str += F(", ");
+    str += AlarmState((byte)ReceiveData[4]); str += F(", ");
+    str += AlarmState((byte)ReceiveData[5]);
+
+    return str;
  }
 
 
@@ -906,23 +895,13 @@ bool ReadJunctionBoxVal(byte nj, byte par) {
   DataManufacturingWeekYear ManufacturingWeekYear;
 */
 
-  String ReadManufacturingWeekYear(byte id) {
-    bool b = Send(Address, (byte)65, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
-    if (b == false) {
-      ReceiveData[0] = 255;
-      ReceiveData[1] = 255;
-    }
-    switch (id)
-      {
-      case 0:
-          return String(ReceiveData[0]); break;
-      case 1:
-          return String(ReceiveData[1]); break;
-      case 2:
-          return String(String((char)ReceiveData[2]) + String((char)ReceiveData[3])); break;
-      case 3:
-          return String(String((char)ReceiveData[4]) + String((char)ReceiveData[5])); break;
+  String ReadManufacturingWeekYear() {
+      bool b = Send(Address, (byte)65, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0);
+      if (b == false) {
+        ReceiveData[0] = 255;
+        ReceiveData[1] = 255;
       }
+      return String( String((char)ReceiveData[2]) + String((char)ReceiveData[3]) + F(",") + String((char)ReceiveData[4]) + String((char)ReceiveData[5]) );
   }
 
 /*
@@ -988,15 +967,17 @@ bool ReadJunctionBoxVal(byte nj, byte par) {
     }
     //CumulatedEnergy.TransmissionState = ReceiveData[0];
     //CumulatedEnergy.GlobalState = ReceiveData[1];
-
     if (b == true) {
         ulo.asBytes[0] = ReceiveData[5];
         ulo.asBytes[1] = ReceiveData[4];
         ulo.asBytes[2] = ReceiveData[3];
         ulo.asBytes[3] = ReceiveData[2];
+        addLog(LOG_LEVEL_INFO, F("AURORA: ReadCumulatedEnergy ok! "));
         return ulo.asUlong;
     }
-    if (b == false) { return 0; }
+    if (b == false) {
+       addLog(LOG_LEVEL_INFO, F("AURORA: ReadCumulatedEnergy error! "));
+       return 0; }
 }
 
 
@@ -1239,12 +1220,10 @@ void read_RS485(int pconfig){
   printWebString += F("Year Energy: "); printWebString += Inverter->ReadCumulatedEnergy(4); printWebString += F("<BR>");
 
   printWebString += F("LastFourAlarms: ");
-  printWebString += Inverter->ReadLastFourAlarms(2); printWebString += F(",");
-  printWebString += Inverter->ReadLastFourAlarms(3); printWebString += F(",");
-  printWebString += Inverter->ReadLastFourAlarms(4); printWebString += F(",");
-  printWebString += Inverter->ReadLastFourAlarms(5); printWebString += F("<BR>");
+  printWebString += Inverter->ReadLastFourAlarms(); printWebString += F("<BR>");
 
-  printWebString += F("SystemPN: "); printWebString += Inverter->ReadSystemPN(); printWebString += F("<BR>");
+  printWebString += F("SystemPN: ");
+  printWebString += Inverter->ReadSystemPN(); printWebString += F("<BR>");
 
   printWebString += F("SystemSerialNumber: ");
   printWebString += Inverter->ReadSystemSerialNumber(); printWebString += F("<BR>");
@@ -1253,14 +1232,10 @@ void read_RS485(int pconfig){
   printWebString += Inverter->ReadFirmwareRelease(); printWebString += F("<BR>");
 
   printWebString += F("ManufacturingWeekYear: ");
-  printWebString += Inverter->ReadManufacturingWeekYear(2); printWebString += F(",");
-  printWebString += Inverter->ReadManufacturingWeekYear(3); printWebString += F("<BR>");
+  printWebString += Inverter->ReadManufacturingWeekYear(); printWebString += F("<BR>");
 
   printWebString += F("Version: ");
-  printWebString += Inverter->ReadVersion(2); printWebString += F(",");
-  printWebString += Inverter->ReadVersion(3); printWebString += F(",");
-  printWebString += Inverter->ReadVersion(4); printWebString += F(",");
-  printWebString += Inverter->ReadVersion(5); printWebString += F("<BR>");
+  printWebString += Inverter->ReadVersion(); printWebString += F("<BR>");
 
   printWebString += F("TransmissionState: "); printWebString += Inverter->ReadState(0); printWebString += F("<BR>");
   printWebString += F("GlobalState: "); printWebString += Inverter->ReadState(1); printWebString += F("<BR>");
