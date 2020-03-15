@@ -1,3 +1,9 @@
-### Command ESPHome for Esp32cam
+# EspHome custom component
 
-    esphome webcam.yaml run
+Tested on ESP32cam.
+
+
+
+### Command ESPHome
+
+    esphome cover.yaml run
