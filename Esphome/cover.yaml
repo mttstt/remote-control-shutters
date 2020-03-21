@@ -7,9 +7,9 @@ esphome:
      - cover.h
 
 wifi:
-  ssid: "MTT_2.4"
-  password: "???"
-  
+  ssid: !secret Wifi_SSID
+  password: !secret Wifi_PWD
+
  # Optional manual IP
   manual_ip:
     static_ip: 192.168.1.99
@@ -31,7 +31,7 @@ api:
 
 # Enable ota
 ota:
-    
+
 esp32_camera:
   name: corridoio
   external_clock:
@@ -46,7 +46,7 @@ esp32_camera:
   pixel_clock_pin: GPIO22
   power_down_pin: GPIO32
   jpeg_quality: 10
-  horizontal_mirror: false 
+  horizontal_mirror: false
   #resolution: 800x600
 
 sensor:
@@ -59,10 +59,10 @@ sensor:
       name: "Umidità corridoio"
     update_interval: 300s
 
-switch: 
+switch:
   - platform: gpio
     pin: GPIO4
-    name: Luce webcam”  
+    name: Luce webcam”
 
 binary_sensor:
   - platform: gpio
@@ -70,7 +70,7 @@ binary_sensor:
     name: "PIR Sensor"
     device_class: motion
   - platform: status
-    name: "Webcam Status"   
+    name: "Webcam Status"
 
 cover:
 - platform: custom
@@ -120,6 +120,6 @@ cover:
     - name: "Cucina"
       device_class: shutter
     - name: "All"
-      device_class: shutter  
+      device_class: shutter
     - name: "Cancello"
       device_class: door

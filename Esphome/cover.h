@@ -58,8 +58,8 @@ class MyCustomCover : public Component, public Cover {
   void control(const CoverCall &call) override {
     // This will be called every time the user requests a state change.
 	// ESP_LOGD("'%s' Command", this->get_name().c_str());
-    if (call.get_position().has_value()) {		
-        float pos = *call.get_position();
+    if (call.get_position().has_value()) {
+      float pos = *call.get_position();
 	    if ((strcmp(this->get_name().c_str(), "Camera bimbe") == 0) && (pos ==1)) {sendRFCode(up1); };
 	    if ((strcmp(this->get_name().c_str(), "Camera bimbe") == 0) && (pos ==0)) {sendRFCode(do1); };
 	    if ((strcmp(this->get_name().c_str(), "Camera nonna") == 0) && (pos ==1)) {sendRFCode(up2); };
@@ -97,10 +97,11 @@ class MyCustomCover : public Component, public Cover {
 	    if (strcmp(this->get_name().c_str(), "Sala grande") == 0) {sendRFCode(st7); };
 	    if (strcmp(this->get_name().c_str(), "Ripostiglio") == 0) {sendRFCode(st8); };
 	    if (strcmp(this->get_name().c_str(), "Cucina") == 0) {sendRFCode(st9); };
-	    if (strcmp(this->get_name().c_str(), "All") == 0) {sendRFCode(st0); }; 
+	    if (strcmp(this->get_name().c_str(), "All") == 0) {sendRFCode(st0); };
     }
   }
- 
+
+
  	void sendRFCode_canc(uint16_t code){
 	  ESP_LOGD("custom", "SendRFCode!");
 	  for (int i = 0; i < Plugin_Repeat; i++)
@@ -108,14 +109,14 @@ class MyCustomCover : public Component, public Cover {
 		  for (int bits = 15; bits > 1 ; bits-- )
 		  {
 			 if (code & (1U << bits) )
-			 {       
+			 {
 			   digitalWrite(txPin, HIGH);
 			   delayMicroseconds(short_delay);
 			   digitalWrite(txPin, LOW);
 			   delayMicroseconds(long_delay);
 			 }
 			 else
-			 {           
+			 {
 			   digitalWrite(txPin, HIGH);
 			   delayMicroseconds(long_delay);
 			   digitalWrite(txPin, LOW);
@@ -125,6 +126,7 @@ class MyCustomCover : public Component, public Cover {
 		  delayMicroseconds(3000);
 		}
 	}
+
 
 	void sendRFCode(uint64_t code){
 	  ESP_LOGD("custom", "SendRFCode!");
@@ -173,5 +175,5 @@ class MyCustomCover : public Component, public Cover {
 		// ---------------------End Segnal --------------------------
 		}
 	}
- 
+
 };
