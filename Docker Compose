@@ -1,4 +1,4 @@
-QNAP - docker-compose:HomeAssistant + Mosquitto + Caddy + Configurator + FtpServer + Doods
+Docker-compose for QNAP: HomeAssistant + Mosquitto + Caddy + Configurator + FtpServer + Doods
 
 version: '3'
 services:
