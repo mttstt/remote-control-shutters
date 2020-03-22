@@ -1,6 +1,8 @@
 #include "esphome.h"
 
-const int txPin = 12; //GPIO
+const int txPin = 16; //GPIO D16 (d1 mini)
+//const int txPin = 12; //GPIO ? (ESP32cam)  
+
 int Plugin_Repeat = 10;
 
 //# ------- gate ---------
