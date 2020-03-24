@@ -3,8 +3,8 @@ esphome:
   platform: ESP32
   board: esp32dev
   arduino_version: latest
-#  includes:
-#     - cover.h
+  includes:
+     - coverEsp32Cam.h
 
 wifi:
   ssid: !secret Wifi_SSID
@@ -12,14 +12,14 @@ wifi:
 
  # Optional manual IP
   manual_ip:
-    static_ip: 192.168.1.99
+    static_ip: 192.168.1.98
     gateway: 192.168.1.1
     subnet: 255.255.255.0
 
 # Enable captive portal
- captive_portal:
+captive_portal:
 
-#web_server:
+web_server:
   port: 80
 
 # Enable logging
@@ -35,6 +35,9 @@ ota:
 switch:
   - platform: restart
     name: "Riavvia sensore"
+  - platform: gpio
+    pin: GPIO4
+    name: Luce webcam”
 
 esp32_camera:
   name: corridoio
@@ -64,12 +67,7 @@ sensor:
     update_interval: 300s
   - platform: wifi_signal
     name: "Segnale wifi sensore"
-    update_interval: 60s  
-
-switch:
-  - platform: gpio
-    pin: GPIO4
-    name: Luce webcam”
+    update_interval: 60s
 
 binary_sensor:
   - platform: gpio

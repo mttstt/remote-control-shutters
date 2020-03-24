@@ -4,7 +4,7 @@ esphome:
   platform: ESP8266
   board: d1_mini
   includes:
-     - cover.h
+     - coverD1Mini.h
 
 wifi:
   ssid: !secret Wifi_SSID
@@ -48,15 +48,13 @@ sensor:
     update_interval: 300s
   - platform: wifi_signal
     name: "Segnale wifi sensore"
-    update_interval: 60s  
+    update_interval: 60s
 
 binary_sensor:
   - platform: gpio
     pin: GPIO13 #D7
     name: "PIR Sensor"
     device_class: motion
-  - platform: status
-    name: "Webcam Status"
   - platform: status
     name: " Stato sensore"
 
