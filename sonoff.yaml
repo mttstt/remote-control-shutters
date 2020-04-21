@@ -4,8 +4,8 @@ esphome:
   board: esp01_1m
 
 wifi:
-  ssid: "MTT_2.4"
-  password: "???"
+  ssid: !secret Wifi_SSID
+  password: !secret Wifi_PWD
 
  # Optional manual IP
   manual_ip:
@@ -28,6 +28,10 @@ api:
 
 # Enable ota
 ota:
+
+switch:
+  - platform: restart
+    name: "Riavvia sensore"
 
 sensor:
   - platform: dht
